@@ -1,0 +1,22 @@
+{
+  "name": "blobify",
+  "version": "1.0.0",
+  "description": "HLS stream to blob",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc; node build/index.js"
+  },
+  "keywords": [
+    "atproto"
+  ],
+  "author": "hugeblank",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.1"
+  }
+}
