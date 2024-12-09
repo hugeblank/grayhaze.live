@@ -18,8 +18,12 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@types/hls-parser": "^0.8.7",
+    "@atproto/jwk-jose": "^0.1.2",
+    "@atproto/oauth-client-node": "^0.2.3",
+    "@types/express": "^5.0.0",
     "chokidar": "^4.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "hls-parser": "^0.13.3"
   }
 }
