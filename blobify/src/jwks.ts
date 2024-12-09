@@ -1,7 +1,7 @@
 import { JoseKey } from '@atproto/jwk-jose'
 import fs from 'fs/promises'
-import dotenv from 'dotenv'
 import { createHash } from 'crypto'
+import dotenv from 'dotenv'
 dotenv.config()
 // Just a little something to generate a jwk using the pkey passed in from the environment
 export async function getJWK() {
