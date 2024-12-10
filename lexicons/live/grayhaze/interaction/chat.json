@@ -1,0 +1,50 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.interaction.chat",
+    "defs": {
+        "main": {
+            "type": "record",
+            "description": "A grayhaze chat message",
+            "key": "tid",
+            "record": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+                "stream-uri": { "type": "string", "format": "at-uri" },
+                "text": {
+                    "type": "string",
+                    "maxLength": 1500,
+                    "maxGraphemes": 150,
+                    "description": "The primary post content. May be an empty string, if there are embeds."
+                },
+                "facets": {
+                    "type": "array",
+                    "description": "Annotations of text (mentions, URLs, hashtags, etc)",
+                    "items": { 
+                        "type": "union", 
+                        "refs": [
+                            "app.bsky.richtext.facet",
+                            "live.grayhaze.actor.emote"
+                        ] 
+                    }
+                },
+                "reply": { "type": "ref", "ref": "#replyRef" },
+                "langs": {
+                    "type": "array",
+                    "description": "Indicates human language of post primary text content.",
+                    "maxLength": 3,
+                    "items": { "type": "string", "format": "language" }
+                }
+            }
+            }
+        },
+        "replyRef": {
+            "type": "object",
+            "required": ["root", "parent"],
+            "properties": {
+            "root": { "type": "ref", "ref": "com.atproto.repo.strongRef" },
+            "parent": { "type": "ref", "ref": "com.atproto.repo.strongRef" }
+            }
+        }
+    }
+}

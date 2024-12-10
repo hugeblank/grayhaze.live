@@ -1,0 +1,47 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.actor.channel",
+    "defs": {
+      "main": {
+        "type": "record",
+        "description": "A declaration of a Grayhaze channel.",
+        "key": "literal:self",
+        "record": {
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 640,
+              "minGraphemes": 1,
+              "maxGraphemes": 64
+            },
+            "description": {
+              "type": "string",
+              "description": "Free-form channel description text.",
+              "maxGraphemes": 2048,
+              "maxLength": 16384
+            },
+            "avatar": {
+              "type": "blob",
+              "description": "Small image to be displayed in user card and on channel page. AKA, 'profile picture'",
+              "accept": ["image/png", "image/jpeg"],
+              "maxSize": 1000000
+            },
+            "banner": {
+              "type": "blob",
+              "description": "Larger landscape image to be used behind profile card, and in place of the channel player when offline.",
+              "accept": ["image/png", "image/jpeg"],
+              "maxSize": 1000000
+            },
+            "labels": {
+              "type": "union",
+              "description": "Self-label values, specific to the Bluesky application, on the overall account.",
+              "refs": ["com.atproto.label.defs#selfLabels"]
+            },
+            "createdAt": { "type": "string", "format": "datetime" }
+          }
+        }
+      }
+    }
+  }

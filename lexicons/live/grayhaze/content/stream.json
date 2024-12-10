@@ -1,0 +1,47 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.content.stream",
+    "defs": {
+        "main": {
+            "type": "record",
+            "description": "A declaration of a livestream.",
+            "key": "tid",
+            "record": {
+                "type": "object",
+                "required": [
+                    "content",
+                    "startedAt",
+                    "title",
+                    "duration"
+                ],
+                "properties": {
+                    "content": {
+                        "type": "union",
+                        "description": "An open union of formats, allowing us to support more than hls in the future.",
+                        "refs": [
+                            "live.grayhaze.format.hls"
+                        ]
+                    },
+                    "startedAt": {
+                        "type": "string",
+                        "format": "datetime"
+                    },
+                    "title": {
+                        "type": "string",
+                        "maxLength": 1000,
+                        "maxGraphemes": 100
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "description": "Duration in seconds"
+                    },
+                    "tags": {
+                        "type": "string",
+                        "maxLength": 640,
+                        "maxGraphemes": 64
+                    }
+                }
+            }
+        }
+    }
+}

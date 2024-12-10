@@ -1,0 +1,32 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.content.emote",
+    "defs": {
+        "main": {
+            "type": "record",
+            "description": "Record containing a user made emote.",
+            "key": "tid",
+            "record": {
+                "type": "object",
+                "required": ["name", "icon"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 320,
+                        "maxGraphemes": 32,
+                        "description": "The emote name, to be wrapped in colons (:name:)"
+                    },
+                    "icon": {
+                        "type": "blob",
+                        "accept": [
+                            "image/png",
+                            "image/jpeg",
+                            "image/gif",
+                            "image/webp"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

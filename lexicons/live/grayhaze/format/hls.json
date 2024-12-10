@@ -1,0 +1,26 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.format.hls",
+    "defs": {
+        "main": {
+            "type": "record",
+            "key": "tid",
+            "description": "An HLS playlist",
+            "record": {
+                "type": "object",
+                "required": [
+                    "version",
+                    "mediaSequence",
+                    "segments",
+                    "end"
+                ],
+                "properties": {
+                    "version": { "type": "integer" },
+                    "mediaSequence": { "type": "integer" },
+                    "segments": { "type": "ref", "ref": "live.grayhaze.format#hlsSegments" },
+                    "end": { "type": "boolean", "default": "false" }
+                }
+            }
+        }
+    }
+}
