@@ -3,6 +3,7 @@
     <head>
         <meta charset=utf-8/>
         <title>Grayhaze.live</title>
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     </head>
     <body>
         <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
@@ -12,7 +13,7 @@
         </div>
         <script>
             var video = document.getElementById('video');
-            var videoSrc = ':host/adapt/:repo/:rkey.m3u8';
+            var videoSrc = '/adapt/:repo/:rkey.m3u8';
             if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = videoSrc;
                 console.log("HLS very supported")
