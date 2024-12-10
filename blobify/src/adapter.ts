@@ -25,6 +25,10 @@ interface HlsData {
     end?: boolean,
 }
 
+const segmentMimes: Map<string, string> = new Map()
+segmentMimes.set("ts", "video/MP2T")
+segmentMimes.set("m4s", "video/mp4") // I don't think this is correct but whatever
+
 class RecordHandler {
     private agent: Agent
     private rkey: string
@@ -32,10 +36,12 @@ class RecordHandler {
     private data: HlsData
 
     static async uploadSegment(agent: Agent, pth: PathLike) {
-        let buf = await fs.readFile(path.join(outputPath, pth.toString()))
+        const pstr = pth.toString()
+        let buf = await fs.readFile(path.join(outputPath, pstr))
+        const split = pstr.split(".")
         const { data, success } = await agent.uploadBlob(buf, {
             headers: {
-                ["Content-Type"]: "video/MP2T",
+                ["Content-Type"]: segmentMimes.get(split[split.length-1])!,
                 ["Content-Length"]: buf.length.toString()
             }
         })

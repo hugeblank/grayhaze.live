@@ -79,56 +79,56 @@ async function loadClient() {
 
 async function authenticate(client: NodeOAuthClient): Promise<Agent | undefined > {
     const app = express()
-    let agent: Agent | undefined = undefined
-
-    const server = app.listen(6090, () => {
-        // Create an endpoint to initiate the OAuth flow
-        app.get('/', async (req, res, next) => {
-            try {
+    return await new Promise((resolve, reject) => {
+        const server = app.listen(6090, () => {
+            // Create an endpoint to initiate the OAuth flow
+            app.get('/', async (req, res, next) => {
+                try {
+            
+                    // Revoke any pending authentication requests if the connection is closed (optional)
+                    const ac = new AbortController()
+                    req.on('close', () => ac.abort())
         
-                // Revoke any pending authentication requests if the connection is closed (optional)
-                const ac = new AbortController()
-                req.on('close', () => ac.abort())
-    
-                if (!process.env.DID) {
-                    throw new Error("Set DID in .env before attempting to log in")
+                    if (!process.env.DID) {
+                        reject("Set DID in .env before attempting to log in")
+                    }
+            
+                    const url = await client.authorize(process.env.DID as string, {
+                        signal: ac.signal,
+                    })
+            
+                    res.redirect(url.toString())
+                } catch (err) {
+                    next(err)
                 }
-        
-                const url = await client.authorize(process.env.DID as string, {
-                    signal: ac.signal,
-                })
-        
-                res.redirect(url.toString())
-            } catch (err) {
-                next(err)
-            }
+            })
+            
+            // Create an endpoint to handle the OAuth callback
+            app.get('/callback', async (req, res, next) => {
+                try {
+                    const params = new URLSearchParams(req.url.split('?')[1])
+            
+                    const { session } = await client.callback(params)
+            
+                    console.log('Authenticated as:', session.did)
+            
+                    const agent = new Agent(session)
+                    resolve(agent)
+            
+                    // Make Authenticated API calls
+                    const profile = await agent.getProfile({ actor: agent.did! })
+                    console.log('Bsky profile:', profile.data)
+            
+                    res.json({ ok: true })
+                    server.close()
+                } catch (err) {
+                    next(err)
+                }
+            })
+    
+            console.log("Log into your PDS via: http://localhost:6090")
         })
-        
-        // Create an endpoint to handle the OAuth callback
-        app.get('/callback', async (req, res, next) => {
-            try {
-                const params = new URLSearchParams(req.url.split('?')[1])
-        
-                const { session } = await client.callback(params)
-        
-                console.log('Authenticated as:', session.did)
-        
-                agent = new Agent(session)
-        
-                // Make Authenticated API calls
-                const profile = await agent.getProfile({ actor: agent.did! })
-                console.log('Bsky profile:', profile.data)
-        
-                res.json({ ok: true })
-                server.close()
-            } catch (err) {
-                next(err)
-            }
-        })
-
-        console.log("Log into your PDS via: http://localhost:6090")
     })
-    return agent
 }
 
 async function restore(client: NodeOAuthClient) {
@@ -136,17 +136,8 @@ async function restore(client: NodeOAuthClient) {
         throw new Error("Set DID in .env before attempting to log in")
     }
     const oauthSession = await client.restore(process.env.DID as string)
-  
-    // Note: If the current access_token is expired, the session will automatically
-    // (and transparently) refresh it. The new token set will be saved though
-    // the client's session store.
-  
-    const agent = new Agent(oauthSession)
-  
-    // Make Authenticated API calls
-    const profile = await agent.getProfile({ actor: agent.did! })
 
-    return agent
+    return new Agent(oauthSession)
 }
 
 
@@ -158,6 +149,7 @@ export async function getAgent(): Promise<Agent> {
     } catch {
         agent = await authenticate(client)
     }
+    console.log(`Logged in as ${agent?.did}`)
     if (!agent) {
         throw new Error("could not load agent")
     } else {
