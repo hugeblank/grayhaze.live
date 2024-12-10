@@ -12,9 +12,26 @@
                 "segments": {
                     "type": "array",
                     "items": {
-                        "type": "blob",
-                        "accept": [ "video/MP2T" ]
+                        "type": "ref",
+                        "ref": "#hlsSegment"
                     }
+                }
+            }
+        },
+        "hlsSegment": {
+            "type": "object",
+            "description": "A single hls segment with a duration and source blob",
+            "required": [
+                "src",
+                "duration"
+            ],
+            "properties": {
+                "src": {
+                    "type": "blob",
+                    "accept": [ "video/MP2T" ]
+                },
+                "duration": {
+                    "type": "integer"
                 }
             }
         }
