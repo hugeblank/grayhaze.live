@@ -2,12 +2,16 @@
 
 Live streaming over ATProto
 
-## Objectives
+## In this Repo
 
 1. Lexicons
 2. Blobify
-   - RTMP server that chunks the stream from the client, and uploads blobs to users PDS
-   - Isolated from the AppView to allow for other users to run their own Blobify instances
-3. AppView
-4. GrayHaze.live
-   - Web Frontend 
+   - Watches for HLS playlists and their respective segments generally provided by OBS
+   - Uploads segments as blobs, and creates/updates record on PDS
+   - Check out [this forum post](https://obsproject.com/forum/resources/how-to-do-hls-streaming-in-obs-open-broadcast-studio.945/) for info on how to set up hls recording.
+   - Recommended settings: 
+     - Video Bitrate: 9000 Kbps
+     - Keyframe Interval: 300
+3. GrayHaze.live
+   - Middleman for HLS records, transforming them back into an m3u8 playlist file
+   - Web Frontend
