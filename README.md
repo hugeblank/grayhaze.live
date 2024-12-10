@@ -2,6 +2,8 @@
 
 Live streaming over ATProto
 
+Please note that absolutely nothing in this repo is final and I'm only sharing everything here because I want to show off the work. Please take the lexicons and lack of documentation with a grain of salt.
+
 ## In this Repo
 
 1. Lexicons
