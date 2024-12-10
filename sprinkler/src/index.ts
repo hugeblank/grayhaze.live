@@ -1,5 +1,7 @@
 import express from 'express'
 import { readFile } from 'fs/promises'
+import dotenv from 'dotenv'
+dotenv.config()
 
 function adapt(repo: string, value: any) {
     let segments = ""
@@ -32,10 +34,10 @@ app.use(express.static('static'))
 
 app.get("/:repo/:rkey", async (req, res) => {
     let file = (await readFile("index.html")).toString()
-    file = file.replace(":repo", req.params.repo).replace(":rkey", req.params.rkey)
+    file = file.replace(":repo", req.params.repo).replace(":rkey", req.params.rkey).replace(":host", process.env.HOST as string)
     res.status(200).setHeader("Access-Control-Allow-Origin", "*").send(file)
 })
 
 app.listen(6080, () => {
-    console.log("http://localhost:6080/did:web:hugeblank.dev/3lcwgxk5qc22w")
+    console.log("Ready")
 })
