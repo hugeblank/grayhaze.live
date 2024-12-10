@@ -13,7 +13,7 @@
                     "type": "array",
                     "items": {
                         "type": "blob",
-                        "accept": "video/MP2T"
+                        "accept": [ "video/MP2T" ]
                     }
                 }
             }

@@ -18,7 +18,7 @@
                     "version": { "type": "integer" },
                     "mediaSequence": { "type": "integer" },
                     "segments": { "type": "ref", "ref": "live.grayhaze.format#hlsSegments" },
-                    "end": { "type": "boolean", "default": "false" }
+                    "end": { "type": "boolean", "default": false }
                 }
             }
         }
