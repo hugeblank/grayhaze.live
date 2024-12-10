@@ -1,2 +1,5 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+    import Player from "$lib/components/Player.svelte";
+
+</script>
+<Player repo="did:web:hugeblank.dev" rkey="3lcxogjre6k2w" />
