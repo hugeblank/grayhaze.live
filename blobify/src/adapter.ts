@@ -27,7 +27,7 @@ interface HlsData {
 
 const segmentMimes: Map<string, string> = new Map()
 segmentMimes.set("ts", "video/MP2T")
-segmentMimes.set("m4s", "video/mp4") // I don't think this is correct but whatever
+segmentMimes.set("m4s", "video/iso.segment")
 
 class RecordHandler {
     private agent: Agent
