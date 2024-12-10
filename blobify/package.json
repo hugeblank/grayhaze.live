@@ -21,6 +21,7 @@
     "@atproto-labs/simple-store": "^0.1.1",
     "@atproto/api": "^0.13.19",
     "@atproto/jwk-jose": "^0.1.2",
+    "@atproto/lexicon": "^0.4.3",
     "@atproto/oauth-client-node": "^0.2.3",
     "@types/express": "^5.0.0",
     "chokidar": "^4.0.1",

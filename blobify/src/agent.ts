@@ -5,8 +5,6 @@ import fs from "fs/promises";
 import { PathLike } from "fs";
 import express from "express";
 import { Agent } from "@atproto/api";
-import dotenv from 'dotenv'
-dotenv.config()
 
 async function writeIfNotExists(path: PathLike, data: string) {
     await fs.stat(path).catch(async () => {
