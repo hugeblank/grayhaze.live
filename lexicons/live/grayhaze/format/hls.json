@@ -11,8 +11,7 @@
                 "required": [
                     "version",
                     "mediaSequence",
-                    "segments",
-                    "end"
+                    "segments"
                 ],
                 "properties": {
                     "version": { "type": "integer" },

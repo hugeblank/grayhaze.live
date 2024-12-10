@@ -12,11 +12,16 @@ const playlistCache: Map<string, PlaylistHandler> = new Map()
 
 const outputPath = process.env.OUTPUT_PATH as string
 
+interface SegmentData {
+    src: JsonBlobRef,
+    duration: number
+}
+
 interface HlsData {
     $type: "live.grayhaze.format.hls",
     version: number,
     mediaSequence: number,
-    sequence: JsonBlobRef[],
+    sequence: SegmentData[],
     end?: boolean,
 }
 
@@ -62,7 +67,7 @@ class RecordHandler {
         const emsg = `Could not put record ${this.rkey}, skipping segment ${segment.uri}`
         const blob = await this.uploadSegment(segment.uri)
         if (blob) {
-            this.data.sequence.push(blob)
+            this.data.sequence.push({ src: blob, duration: segment.duration })
             const { success, data } = await this.agent.com.atproto.repo.putRecord({
                 repo: this.agent.did!,
                 rkey: this.rkey,
@@ -82,7 +87,7 @@ class RecordHandler {
         this.data = data
     }
 
-    static async create(agent: Agent, playlist: MediaPlaylist, blobs: JsonBlobRef[]) {
+    static async create(agent: Agent, playlist: MediaPlaylist, blobs: SegmentData[]) {
         const data: HlsData = {
             $type: "live.grayhaze.format.hls",
             version: playlist.version || 3,
@@ -142,7 +147,7 @@ class PlaylistHandler {
         for (let segment of parsed.segments) {
             const blob = await RecordHandler.uploadSegment(agent, segment.uri)
             if (blob) {
-                blobs.push(blob)
+                blobs.push({ src: blob, duration: segment.duration })
             } else {
                 console.error(`Failed to upload segment ${segment.uri}`)
             }
