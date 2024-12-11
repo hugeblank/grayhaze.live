@@ -73,7 +73,7 @@ class RecordHandler {
         const emsg = `Could not put record ${this.rkey}, skipping segment ${segment.uri}`
         const blob = await this.uploadSegment(segment.uri)
         if (blob) {
-            this.data.sequence.push({ src: blob, duration: segment.duration })
+            this.data.sequence.push({ src: blob, duration: Math.floor(segment.duration * 1000000 ) })
             const { success, data } = await this.agent.com.atproto.repo.putRecord({
                 repo: this.agent.did!,
                 rkey: this.rkey,
@@ -114,7 +114,7 @@ class RecordHandler {
     }
 }
 
-// Class for handling pushing mpegts files up as blobs to the users PDS, then updating the live.grayhaze.content.hls record
+// Class for handling pushing mpegts files up as blobs to the users PDS, then updating the live.grayhaze.format.hls record
 class PlaylistHandler {
     private path: string
     private playlist: MediaPlaylist
@@ -153,7 +153,7 @@ class PlaylistHandler {
         for (let segment of parsed.segments) {
             const blob = await RecordHandler.uploadSegment(agent, segment.uri)
             if (blob) {
-                blobs.push({ src: blob, duration: segment.duration })
+                blobs.push({ src: blob, duration: Math.floor(segment.duration*1000000) })
             } else {
                 console.error(`Failed to upload segment ${segment.uri}`)
             }

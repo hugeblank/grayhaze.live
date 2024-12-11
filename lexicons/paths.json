@@ -1,0 +1,12 @@
+{
+    "paths": [
+        "live/grayhaze/actor/channel.json",
+        "live/grayhaze/content/emote.json",
+        "live/grayhaze/content/stream.json",
+        "live/grayhaze/format/defs.json",
+        "live/grayhaze/format/hls.json",
+        "live/grayhaze/interaction/ban.json",
+        "live/grayhaze/interaction/chat.json",
+        "live/grayhaze/interaction/follow.json"
+    ]
+}

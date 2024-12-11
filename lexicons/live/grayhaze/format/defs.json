@@ -2,22 +2,6 @@
     "lexicon": 1,
     "id": "live.grayhaze.format.defs",
     "defs": {
-        "hlsSegments": {
-            "type": "object",
-            "description": "List of TS or fmp4 segments in an HLS playlist",
-            "required": [
-                "segments"
-            ],
-            "properties": {
-                "segments": {
-                    "type": "array",
-                    "items": {
-                        "type": "ref",
-                        "ref": "#hlsSegment"
-                    }
-                }
-            }
-        },
         "hlsSegment": {
             "type": "object",
             "description": "A single hls segment with a duration and source blob",
@@ -31,7 +15,8 @@
                     "accept": [ "video/MP2T", "video/iso.segment" ]
                 },
                 "duration": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "Floating point duration in seconds multiplied by 1000000 then floored"
                 }
             }
         }

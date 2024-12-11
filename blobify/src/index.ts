@@ -14,7 +14,7 @@ async function importLex(path: PathLike) {
     await Promise.all((await readdir(path, { recursive: true })).map(async (file) => {
         let fpath = `${path}/${file}`
         let stats = await stat(fpath)
-        if (!stats.isDirectory()) {
+        if (!stats.isDirectory() && !file.endsWith("paths.json")) {
             const doc = JSON.parse((await readFile(fpath)).toString())
             //console.log(`Parsing ${doc['id']}`)
             if (!isValidLexiconDoc(doc)) console.error(`${fpath} is not a valid LexiconDoc`)

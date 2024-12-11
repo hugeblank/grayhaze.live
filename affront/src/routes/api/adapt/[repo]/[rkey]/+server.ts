@@ -1,0 +1,32 @@
+import { ATPUser } from "$lib/ATPUser.js"
+import type { BlobRef } from "@atproto/api"
+
+function adapt(repo: string, value: any) {
+    let segments = ""
+    let sum = 0
+    let isfmp4 = false
+    for (let segment of value["sequence"]) {
+        const src = segment["src"] as BlobRef
+        const duration = (segment["duration"] as number) / 1000000
+        isfmp4 = (src.mimeType === "video/mp4" || src.mimeType === "video/iso.segment")
+        sum += duration
+        segments += `#EXTINF:${duration},\n/api/blob/${repo}/${src.ref}\n`
+    }
+    return `#EXTM3U
+#EXT-X-PLAYLIST-TYPE:${(value["end"] ? "VOD" : "EVENT")}
+#EXT-X-VERSION:${value["version"]}
+#EXT-X-MEDIA-SEQUENCE:${value["mediaSequence"] + (isfmp4 ? ("\n#EXT-X-MAP:URI=/public/init.mp4") : "")}
+#EXT-X-TARGETDURATION:${Math.floor(sum / value["sequence"].length)}
+${segments + (value["end"] ? "#EXT-X-ENDLIST" : "")}`
+
+}
+
+export async function GET({ params }) {
+    const record = await (await ATPUser.fromDID(params.repo)).getRecord("live.grayhaze.format.hls", params.rkey)
+    const adapted = adapt(params.repo, record.value)
+    return new Response(adapted, {
+        headers: {
+            ["Content-Type"]: "application/vnd.apple.mpegurl"
+        }
+    })
+}
