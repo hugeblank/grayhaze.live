@@ -9,11 +9,10 @@
 </script>
 
 <div>
-    <h1>GrayHaze</h1>
     <h2>@{data.user.getHandle()}</h2>
     {#each rkeys as rkey}
         <p>
-            <Link to="/@{data.user.getHandle().replace("at://", "")}/{rkey}">{rkey}</Link>
+            <Link to="/@{data.user.getHandle()}/{rkey}">{rkey}</Link>
         </p>
     {/each}
 </div>

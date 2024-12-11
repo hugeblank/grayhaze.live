@@ -1,7 +1,7 @@
 import { lexicons } from "@atproto/api"
 import { isValidLexiconDoc, parseLexiconDoc } from "@atproto/lexicon"
 
-export const load = async ({ fetch }) => { 
+export const load = async ({ fetch, data }) => { 
     const paths: string[] = (await (await fetch("/public/lexicons/paths.json")).json())["paths"]
     await Promise.all(paths.map(async (url) => {
         let fpath = `/public/lexicons/${url}`
@@ -11,4 +11,7 @@ export const load = async ({ fetch }) => {
         let ldoc = parseLexiconDoc(doc)
         lexicons.add(ldoc)
     }))
+    return {
+        placeholder: data.placeholder
+    }
 }

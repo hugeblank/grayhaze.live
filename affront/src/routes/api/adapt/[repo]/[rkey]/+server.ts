@@ -21,8 +21,8 @@ ${segments + (value["end"] ? "#EXT-X-ENDLIST" : "")}`
 
 }
 
-export async function GET({ params }) {
-    const record = await (await ATPUser.fromDID(params.repo)).getRecord("live.grayhaze.format.hls", params.rkey)
+export async function GET({ params, fetch }) {
+    const record = await (await ATPUser.fromDID(params.repo, fetch)).getRecord("live.grayhaze.format.hls", params.rkey)
     const adapted = adapt(params.repo, record.value)
     return new Response(adapted, {
         headers: {

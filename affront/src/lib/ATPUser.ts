@@ -1,5 +1,6 @@
 import { Agent, lexicons } from "@atproto/api";
 import { isRecord } from "@atproto/api/dist/client/types/com/atproto/repo/listRecords";
+import { buildFetchHandler } from "@atproto/xrpc";
 import { error } from "@sveltejs/kit"
 
 const resolvers: Map<string, (structure: string) => string> = new Map([
@@ -15,7 +16,7 @@ const resolvers: Map<string, (structure: string) => string> = new Map([
 export interface DIDDoc {
     ["@context"]: string[],
     id: string,
-    alsoKnownAs: string[],
+    alsoKnownAs: string[] | string,
     verificationMethod: VerificationMethod[],
     service: Service[]
 }
@@ -40,13 +41,13 @@ export class ATPUser {
     private diddoc: DIDDoc
     private agent: Agent
 
-    static async resolveDID(did: string) {
+    static async resolveDID(did: string, fetchFunc: typeof globalThis.fetch = fetch) {
         if (cachedDocs.has(did)) return cachedDocs.get(did)! // If cached immediately return
         const [type, method, structure] = did.split(":") // Break up DID into components
         if (type !== "did") error(500, "Invalid DID"); // Drop anything that isn't a DID
         if (!resolvers.has(method)) error(500, `Method ${method} is not blessed`); // Drop methods that aren't blessed
         const url = resolvers.get(method)!(structure) // Get resolver and throw DID structure at it
-        const response = await fetch(url) // Fetch from the URL given
+        const response = await fetchFunc(url) // Fetch from the URL given
         if (!response.ok) error(response.status, response.statusText) // Throw an error if the fetch fails
         // Parse the document, cache and return
         const doc = JSON.parse(await response.text()) as DIDDoc
@@ -69,7 +70,12 @@ export class ATPUser {
     }
 
     public getHandle() {
-        return this.diddoc.alsoKnownAs[0]
+        if (typeof this.diddoc.alsoKnownAs === "string") {
+            return this.diddoc.alsoKnownAs.replace("at://", "")
+        } else {
+            const aka = this.diddoc.alsoKnownAs.at(0)
+            return aka ? aka.replace("at://", "") : this.diddoc.id
+        }
     }
 
     public getDID() {
@@ -120,14 +126,14 @@ export class ATPUser {
         this.diddoc = diddoc
     }
 
-    static async fromHandle(handle: string) {
-        const apiResponse = await fetch(`https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`)
+    static async fromHandle(handle: string, fetchFunc: typeof globalThis.fetch = fetch) {
+        const apiResponse = await fetchFunc(`https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`)
         if (!apiResponse.ok) error(404, `Could not resolve handle ${handle}`)
-        return ATPUser.fromDID((await apiResponse.json())["did"])
+        return ATPUser.fromDID((await apiResponse.json())["did"], fetchFunc)
     }
 
-    static async fromDID(did: string) {
-        const diddoc = await ATPUser.resolveDID(did)
+    static async fromDID(did: string, fetchFunc: typeof globalThis.fetch = fetch) {
+        const diddoc = await ATPUser.resolveDID(did, fetchFunc)
         const pds = await ATPUser.resolvePDS(diddoc)
         const agent = new Agent(new URL(pds))
         return new ATPUser(agent, diddoc)

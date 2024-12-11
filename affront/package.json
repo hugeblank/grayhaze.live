@@ -30,10 +30,13 @@
 	"dependencies": {
 		"@atproto/api": "^0.13.19",
 		"@atproto/lexicon": "^0.4.3",
+		"@atproto/oauth-client-node": "^0.2.3",
+		"@atproto/xrpc": "^0.6.4",
 		"@sveltejs/adapter-node": "^5.2.9",
 		"@tailwindcss/container-queries": "^0.1.1",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
-		"hls.js": "^1.5.17"
+		"hls.js": "^1.5.17",
+		"iovalkey": "^0.2.1"
 	}
 }
