@@ -16,7 +16,6 @@ async function importLex(path: PathLike) {
         let stats = await stat(fpath)
         if (!stats.isDirectory() && !file.endsWith("paths.json")) {
             const doc = JSON.parse((await readFile(fpath)).toString())
-            //console.log(`Parsing ${doc['id']}`)
             if (!isValidLexiconDoc(doc)) console.error(`${fpath} is not a valid LexiconDoc`)
             let ldoc = parseLexiconDoc(doc)
             lexicons.add(ldoc)
