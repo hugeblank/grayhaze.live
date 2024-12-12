@@ -10,7 +10,7 @@
             "type": "object",
             "required": ["text"],
             "properties": {
-                "stream-uri": { "type": "string", "format": "at-uri" },
+                "stream_uri": { "type": "string", "format": "at-uri" },
                 "text": {
                     "type": "string",
                     "maxLength": 1500,
@@ -24,7 +24,7 @@
                         "type": "union", 
                         "refs": [
                             "app.bsky.richtext.facet",
-                            "live.grayhaze.actor.emote"
+                            "live.grayhaze.content.emote"
                         ] 
                     }
                 },

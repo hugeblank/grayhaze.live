@@ -10,9 +10,7 @@
                 "type": "object",
                 "required": [
                     "content",
-                    "startedAt",
-                    "title",
-                    "duration"
+                    "title"
                 ],
                 "properties": {
                     "content": {
@@ -22,24 +20,38 @@
                             "live.grayhaze.format.hls"
                         ]
                     },
-                    "startedAt": {
-                        "type": "string",
-                        "format": "datetime"
-                    },
                     "title": {
                         "type": "string",
                         "maxLength": 1000,
                         "maxGraphemes": 100
                     },
-                    "duration": {
-                        "type": "integer",
-                        "description": "Duration in seconds"
+                    "thumbnail": {
+                        "type": "ref",
+                        "ref": "#thumbnail"
                     },
                     "tags": {
-                        "type": "string",
-                        "maxLength": 640,
-                        "maxGraphemes": 64
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 640,
+                            "maxGraphemes": 64
+                        }
                     }
+                }
+            }
+        },
+        "thumbnail": {
+            "type": "object",
+            "required": ["image"],
+            "properties": {
+                "image": {
+                    "type": "blob",
+                    "accept": ["image/*"],
+                    "maxSize": 1000000
+                },
+                "alt": {
+                    "type": "string",
+                    "description": "Alt text description of the image, for accessibility."
                 }
             }
         }

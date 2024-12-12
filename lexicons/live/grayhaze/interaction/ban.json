@@ -1,6 +1,6 @@
 {
     "lexicon": 1,
-    "id": "app.grayhaze.interaction.ban",
+    "id": "live.grayhaze.interaction.ban",
     "defs": {
       "main": {
         "type": "record",
