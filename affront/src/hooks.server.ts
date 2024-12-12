@@ -2,6 +2,8 @@ import { TokenBucket } from "$lib/rate-limit";
 import { sequence } from "@sveltejs/kit/hooks";
 import type { Handle } from "@sveltejs/kit";
 import { client, localSessionStore, type LocalSession } from "$lib/session";
+import { ATPUser } from "$lib/ATPUser";
+import { Agent } from "@atproto/api";
 
 const bucket = new TokenBucket<string>(100, 1);
 
@@ -25,13 +27,14 @@ const rateLimitHandle: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-
 const authHandle: Handle = async ({ event, resolve }) => {
 	if (event.url.pathname.startsWith("/api")) return resolve(event)
 	const locals = event.locals as LocalSession
 	function clear(key?: string) {
 		// Clears the browser session in the event something doesn't look right
-		locals.session = null;
+		locals.session = undefined;
+		locals.diddoc = undefined;
+		locals.user = undefined;
 		event.cookies.delete("session", { path: "/" })
 		if (key) localSessionStore.del(key)
 		return resolve(event);
@@ -41,6 +44,8 @@ const authHandle: Handle = async ({ event, resolve }) => {
 	const did = await localSessionStore.get(skey) // get the user did from this session key
 	if (!did) return clear() // If there was no matching session key in the store
 	locals.session = await client.restore(did); // Restore the oauth session
+	locals.diddoc = await ATPUser.resolveDID(did, event.fetch); // Restore the oauth session
+	locals.user = ATPUser.fromDIDDoc(locals.diddoc, new Agent(locals.session))
 	// At this point if the session restore causes an error I deserve it.
 	return resolve(event);
 };

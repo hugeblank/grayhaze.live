@@ -47,7 +47,7 @@
                             const split = pds?.split(".")
                             const mushroom = split[0].replace(/http[s]?:\/\//, "")
                             entry2.text = `🍄 ${mushroom.at(0)?.toLocaleUpperCase() + mushroom.substring(1)}`
-                            entry1.text = `✨ of ${split[0].replace(mushroom, "")}bsky.network`
+                            entry1.text = `✨ of ${split[0].replace(mushroom, "")}bsky.social`
                         } else if (user.getDID().split(":")[1] === "web") {
                             entry2.ok = true
                             entry2.text = `🌐 did:web user!`

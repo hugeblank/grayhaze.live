@@ -11,6 +11,7 @@
 		"lint": "eslint ."
 	},
 	"devDependencies": {
+		"@atproto/lex-cli": "^0.5.3",
 		"@eslint/compat": "^1.2.3",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.9.0",
@@ -29,6 +30,7 @@
 	},
 	"dependencies": {
 		"@atcute/base32": "^1.0.1",
+		"@atcute/tid": "^1.0.1",
 		"@atproto-labs/simple-store": "^0.1.1",
 		"@atproto/api": "^0.13.19",
 		"@atproto/jwk-jose": "^0.1.2",

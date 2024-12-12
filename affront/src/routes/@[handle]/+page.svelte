@@ -1,18 +1,24 @@
 <script lang="ts">
-    import Link from "$lib/components/Link.svelte";
+    import Grid from "$lib/components/streams/unlisted/Grid.svelte";
+    import { parse } from "@atcute/tid"
 
     let { data } = $props();
-    const rkeys = data.records.map((record) => {
+    const handle = data.user.getHandle()
+    const records = data.records.map((record) => {
         const split = record.uri.split("/")
-        return split[split.length-1]
+        return {
+            to: `/@${handle}/unlisted/${split[split.length-1]}`,
+            rkey: split[split.length-1],
+            timestamp: (new Date(parse(split[split.length-1]).timestamp/1000)).toLocaleString()
+        }
     })
+
 </script>
 
 <div>
-    <h2>@{data.user.getHandle()}</h2>
-    {#each rkeys as rkey}
-        <p>
-            <Link to="/@{data.user.getHandle()}/{rkey}">{rkey}</Link>
-        </p>
-    {/each}
+    <h3 class="my-1">@{handle}</h3>
+    {#if data.self}
+        <h4 class="my-1">Unlisted Content</h4>
+        <Grid items={records}/>
+    {/if}
 </div>

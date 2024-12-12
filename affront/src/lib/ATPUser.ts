@@ -1,5 +1,6 @@
 import { Agent, lexicons } from "@atproto/api";
 import { error } from "@sveltejs/kit"
+import { AtpBaseClient, LiveNS } from "./lexicons";
 
 const resolvers: Map<string, (structure: string) => string> = new Map([
     ["plc", (structure) => {
@@ -35,9 +36,11 @@ interface Service {
 const cachedDocs: Map<string, DIDDoc> = new Map()
 const cacheTimeout = 1000 * 60 * 15;
 
+type GrayhazeAgent = Agent & AtpBaseClient
+
 export class ATPUser {
     private diddoc: DIDDoc
-    private agent: Agent
+    private agent: GrayhazeAgent
 
     static async resolveDID(did: string, fetchFunc: typeof globalThis.fetch = fetch) {
         if (cachedDocs.has(did)) return cachedDocs.get(did)! // If cached immediately return
@@ -54,13 +57,17 @@ export class ATPUser {
         return doc
     }
 
-    static async resolvePDS(doc: DIDDoc) {
+    static resolvePDS(doc: DIDDoc) {
         for (let service of doc.service) {
             if (service.id === "#atproto_pds") {
                 return service.serviceEndpoint
             }
         }
         error(500, `did ${doc.id} has no ATProto PDS`)
+    }
+
+    public getAgent() {
+        return this.agent
     }
 
     public getAKA() {
@@ -119,7 +126,7 @@ export class ATPUser {
         return response.data
     }
 
-    private constructor(agent: Agent, diddoc: DIDDoc) {
+    private constructor(agent: GrayhazeAgent, diddoc: DIDDoc) {
         this.agent = agent
         this.diddoc = diddoc
     }
@@ -135,9 +142,10 @@ export class ATPUser {
         return ATPUser.fromDIDDoc(diddoc)
     }
 
-    static async fromDIDDoc(diddoc: DIDDoc) {
-        const pds = await ATPUser.resolvePDS(diddoc)
-        const agent = new Agent(new URL(pds))
-        return new ATPUser(agent, diddoc)
+    static fromDIDDoc(diddoc: DIDDoc, agent?: Agent) {
+        const pds = new URL(ATPUser.resolvePDS(diddoc))
+        const agenta = agent ? agent : new Agent(pds)
+        const agentb = new AtpBaseClient(agenta)
+        return new ATPUser({ ...agenta, ...agentb } as GrayhazeAgent, diddoc)
     }
 }

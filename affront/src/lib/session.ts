@@ -5,13 +5,15 @@ import { NodeOAuthClient, OAuthSession } from "@atproto/oauth-client-node"
 import { JoseKey } from "@atproto/jwk-jose";
 import dotenv from 'dotenv'
 import { NamespacedStore } from "./NamespacedStore";
-import { createHash } from "crypto";
+import type { ATPUser, DIDDoc } from "./ATPUser";
 dotenv.config()
 
 export const localSessionStore = NamespacedStore.of("localsession")
 
 export interface LocalSession extends App.Locals {
-    session: OAuthSession | null
+	session?: OAuthSession,
+	diddoc?: DIDDoc,
+	user?: ATPUser
 }
 export const client = await NodeOAuthClient.fromClientId({
     clientId: "https://grayhaze.live/oauth/client-metadata.json",

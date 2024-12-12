@@ -3,7 +3,8 @@ import { isValidLexiconDoc, parseLexiconDoc } from "@atproto/lexicon"
 
 export const load = async ({ fetch, data }) => { 
     const paths: string[] = (await (await fetch("/public/lexicons/paths.json")).json())["paths"]
-    await Promise.all(paths.map(async (url) => {
+    // Not too bothered about when these load in for now.
+    Promise.all(paths.map(async (url) => {
         let fpath = `/public/lexicons/${url}`
         const doc = await (await fetch(fpath)).json()
         if (lexicons.get(doc["id"])) return
@@ -12,6 +13,6 @@ export const load = async ({ fetch, data }) => {
         lexicons.add(ldoc)
     }))
     return {
-        placeholder: data.placeholder
+        ...data
     }
 }

@@ -1,13 +1,18 @@
 <script lang="ts">
+    import { ATPUser } from '$lib/ATPUser';
 	import '../app.css';
 	let { children, data } = $props();
+
+	const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
+	const handle = user?.getHandle()
 </script>
 
 <svelte:head>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 </svelte:head>
 
-<header class="mx-auto px-8 pb-8 max-w-screen-2xl">
+<header class="mx-auto px-8 pb-4 max-w-screen-2xl">
 	<div class="flex justify-between items-center m-3">
 		<!-- Maybe one day we'll have a logo -->
 		<a class="hover:underline" href="/"><h1>GrayHaze</h1></a>
@@ -17,7 +22,11 @@
 				<i class="bi-search text-xl text-slate-300"></i>
 			</button>
 		</div>
-		<a href="/login"><h2>Log in</h2></a>
+		{#if user}
+			<a href="/@{handle}"><h2>@{handle}</h2></a>
+		{:else}
+			<a href="/login"><h2>Log in</h2></a>
+		{/if}
 	</div>
 </header>
 <div class="box-border mx-auto px-8 max-w-7xl pb-8">
