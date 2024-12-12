@@ -1,0 +1,42 @@
+{
+    "scopes_supported": [
+        "atproto",
+        "transition:generic"
+    ],
+    "redirect_uris": [
+        "https://grayhaze.live/oauth/callback/"
+    ],
+    "response_types": [
+        "code"
+    ],
+    "grant_types": [
+        "authorization_code",
+        "refresh_token"
+    ],
+    "scope": "atproto transition:generic",
+    "token_endpoint_auth_method": "private_key_jwt",
+    "token_endpoint_auth_signing_alg": "ES256",
+    "jwks": {
+        "keys": [
+            {
+                "kty": "RSA",
+                "kid": "2f49d966b3688d47cce4d3555889a3d54ddffcbea365bcaca7c43f3a9c8df75e",
+                "use": "sig",
+                "n": "5PiBB12RSXaSvGWeOu1xgcbS5KOc5yD0zUWQhuJD1MhjNRmLtbI_WA_i8_MPGcaZXokOTR2Gla7OBBBrmebEJg-lEEZSVpq_oa9BdxiY6_l9sMkOsu4QQdPoncAGNvB7AgSeguNP5P6YnOlRsn-emJzyWNzFBwlDYTTz1e0fCsZGfFZ5p-HI5aXXM67KZjgc-YbDIE7XrzAvb9TvOzrGPkgHh_45oZSIkcbE_OIY44vco0W549f6OHcOuXK6oq20hHT4kgAjv0pa6Cb03Cy5nM6txC1Li6cOgo3mQom-T2sLtoUK1hRjx-EL8lye3bghyqacFq87GMWCHX-bV_9Rx8HFkqlZL0e1xzlols2BnMabOjpIrIGczt_gmYgpldSUIvBYnDkLI4m9WvoG720CY67OjSCvrVUhzSc0Tc3cwq-nLET_vq7UZ92rLROMqUFsxLEm9caq0wlMDP-zh9WKmYUfg0raCNn0A8dOnmxu8zwhKXHf4q4l5ydtra04i0vlipW_53uoCQ4bEdrEsJEiu8Zo35Z6TtP_i7Pq5ACC68dJMk8pzgoghaDuvzghrMNxqqXy3LgmdxMu0g98i2cYyRg8ZpgWGGaSaAfHvfSd29W4raiIN3QDsH4PoqVPGlR1Avsn49GoFSBzaOyTsCXnzw-3Q0MpRaN7a8xliaRaED0",
+                "e": "AQAB",
+                "p": "9IyQxTDYpWCLNumZv0pHBuIb-9zgdMVo5hu2mpqxGtphFN7R_LXH-b0YlkQ4XUuaqN8DLmo-KEnG0ZftXdql_U5Xc4NEUSsSR1F20Wtnurmiz8MOOSaPDWzXOJbgCSsXjUvQROBp6ED2de0LrP9AdhJqhx5JZwoyAbxKfwqUKJQ-24mt0O9YDmzavrSF1VWeAFcDLPA70DS3Mkjd8FYWn_txhscZiuNVJjqIB0iRMncmh60wd9MLEo4WMS8YjrQbYwgnOOezaUH5AUvsAqwC_Lbn7jDSyjD_pi2nbCquiPGE6jlutRqJek41nWQmuY5mBrk53mZI4KZrb7HMROAc4Q",
+                "q": "77Ey9sHzi_AvQcA3lxhVRtue2GwQsHUr766DPENX1VyWolhPc0Rljm0yCBokVqTApydjhtwXltnULw-f5NMq93aZ7rGtlsFdc8Ybr3W-5SgQngqLxeEtdQ25chHirL8QUTUSXJ5_Ld2bsEN7_D57HhMOOrteiMQiNVYuHQajNRtvVENcnDDFbSAn_6e8ZlZ7leKzDAvShqM2Nyi1L27E4zOMLLoHsP6gEKLOISxpk6VV_lOiJJKOMJ03cFDd-gw9Nk4OBMW3TaNIb7WSj-zqjLL__7koplnfWaU4VrkK3Gx60CtmGJhQQms24Uw1LIE4zq9OeNoJOs3-b9_YAzNi3Q",
+                "dp": "KzXbLryeyznv31gPbpl1S2YQg8RXdMqc6mvjLBZBTPlhRgrJF9oW563d9k8_llyRi108dqsXKI9ArjAmJPtJcSSylxqOq7jsleVzFTXhMkEy33sbvEVv6XNd5AXkuDoBA1puBn2QuRUhd1zXP04q2bIPWKilV6uZgmz-zMvVugXXxXriV5Sy_nmFfUTwkO176Zt2WC5qozNtW1k8vga4ILSRLrtna_8XQJX_CyprXXtoN3kGo2WLA1BP44jq0exJGoqKQ6fNL8AUe4IqxZ4XOQgomxHNbSSTR42xk49HH7NtROW5Bg8WU6IWHyVfIlJi_LUl4II6RlehjC7iZRkkgQ",
+                "dq": "nMmHcbvayL3a26KVemNzXL9KP30oyZRLoiPAOoo-iRVgf19O0TJ7T9gDsyMOhBKO5ogwZUXQtF9WmVYaHD85StgsxuM4jnV74MBE2dgmf5VekVKKrWynJHtOw9wJL0BntwcFNMqEnIbqUTlDf_OK61hBpY9svf-19LejwF7YIWQJxc-uY4jPi5tOLsAUz8hgXOIGhqmxE1rtmtUo95b4eTn9xkAFyfQ01cz5EuAPS4IKJyuj01J-ajRc0D5FhUu-OqiCKQL_7WwSdOgLr9OkdVadeDQw7-e33tbhbHDsNtVK3KKWzR3M2jVxl5wW6D663w_zP8A361xVw-5jSWyyjQ",
+                "qi": "3QZ0Zcj5DqLVaQTtTpOg9KaFzaIPZO0z92R76PFmuzeBkQb5nK_sP70-28MjrDcKA48opxM2PQfphBQerEJCBFcV5VvRB941DTPoYPXDOnYPsfEd2S5Tpr-4xykk6_AT7G6Y60LaP8gR-hL1bEnxVvepo4Bl8eAm6wPw66D9zjJMJO6t7hG5dXOw0kXt4A7AgncHFGWq3AYa7qkqs8hgiGLMAi-QUAdD09KubrrP9nbCV399ZxIQbTWhGA9dRZpTDezFvkP-n4JgBgd__0V5CkePF38sETAY5z3k4dok0nY4Y8ZYBmhijcgEQtRkQ6tdchoKrTt6IF1WB4VJNJrvAQ"
+            }
+        ]
+    },
+    "client_id": "https://grayhaze.live/oauth/client-metadata.json",
+    "client_name": "GrayHaze",
+    "client_uri": "https://grayhaze.live",
+    "policy_uri": "https://grayhaze.live/policy",
+    "tos_uri": "https://grayhaze.live/tos",
+    "logo_uri": "https://grayhaze.live/favicon.png",
+    "dpop_bound_access_tokens": true
+}

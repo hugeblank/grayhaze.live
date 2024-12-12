@@ -10,6 +10,6 @@ export const load = async () => {
         "Shout into abyss"
     ]
     return {
-        placeholder: placeholders[Math.floor(Math.random()*placeholders.length)]
+        placeholder: placeholders[Math.floor(Math.random() * placeholders.length)],
     }
 }

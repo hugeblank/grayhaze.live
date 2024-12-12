@@ -1,6 +1,4 @@
 import { Agent, lexicons } from "@atproto/api";
-import { isRecord } from "@atproto/api/dist/client/types/com/atproto/repo/listRecords";
-import { buildFetchHandler } from "@atproto/xrpc";
 import { error } from "@sveltejs/kit"
 
 const resolvers: Map<string, (structure: string) => string> = new Map([
@@ -134,6 +132,10 @@ export class ATPUser {
 
     static async fromDID(did: string, fetchFunc: typeof globalThis.fetch = fetch) {
         const diddoc = await ATPUser.resolveDID(did, fetchFunc)
+        return ATPUser.fromDIDDoc(diddoc)
+    }
+
+    static async fromDIDDoc(diddoc: DIDDoc) {
         const pds = await ATPUser.resolvePDS(diddoc)
         const agent = new Agent(new URL(pds))
         return new ATPUser(agent, diddoc)

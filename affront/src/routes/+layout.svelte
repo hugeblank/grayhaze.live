@@ -10,19 +10,19 @@
 <header class="mx-auto px-8 pb-8 max-w-screen-2xl">
 	<div class="flex justify-between items-center m-3">
 		<!-- Maybe one day we'll have a logo -->
-		<h1>GrayHaze</h1> 
+		<a class="hover:underline" href="/"><h1>GrayHaze</h1></a>
 		<div class="flex mx-3 flex-grow max-w-screen-md h-11">
 			<input class="w-[90%] px-5 rounded-l-xl bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="searchbar" type="text" name="searchbar" placeholder={data.placeholder}/>
 			<button class="w-[10%] bg-neutral-600 hover:bg-neutral-500 rounded-r-xl content-center" aria-label="Search">
 				<i class="bi-search text-xl text-slate-300"></i>
 			</button>
 		</div>
-		<h2>AAA</h2>
+		<a href="/login"><h2>Log in</h2></a>
 	</div>
 </header>
 <div class="box-border mx-auto px-8 max-w-7xl pb-8">
 	{@render children()}
-	<footer class="fixed bottom-0 object-center mx-auto">
-		<p class="text-center">Patent Pending: User-Unfriendly Interface</p>
-	</footer>
 </div>
+<footer class="mx-auto">
+	<p class="text-center">Patent Pending: User-Unfriendly Interface</p>
+</footer>

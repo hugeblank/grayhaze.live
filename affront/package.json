@@ -28,7 +28,10 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@atcute/base32": "^1.0.1",
+		"@atproto-labs/simple-store": "^0.1.1",
 		"@atproto/api": "^0.13.19",
+		"@atproto/jwk-jose": "^0.1.2",
 		"@atproto/lexicon": "^0.4.3",
 		"@atproto/oauth-client-node": "^0.2.3",
 		"@atproto/xrpc": "^0.6.4",
@@ -36,6 +39,7 @@
 		"@tailwindcss/container-queries": "^0.1.1",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"dotenv": "^16.4.7",
 		"hls.js": "^1.5.17",
 		"iovalkey": "^0.2.1"
 	}
