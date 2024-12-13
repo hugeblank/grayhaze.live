@@ -4,4 +4,4 @@
     let { data } = $props();
 </script>
 
-<Player repo={data.user.getDID()} rkey={data.rkey} />
+<Player repo={data.user.did} rkey={data.rkey} />

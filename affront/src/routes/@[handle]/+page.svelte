@@ -62,12 +62,12 @@
 
 <div>
     <h3 class="my-1">@{data.user.handle}</h3>
-    {#if data.self && mappedRawMedia}
+    {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
         <h4 class="my-1">Unlisted Content</h4>
         <Grid items={mappedRawMedia}>
             {#snippet renderer({ record, to, duration })}
                 <RecordForm name="publish" {record}>
-                    <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration} >
+                    <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration}>
                         <!-- Title -->
                         <div class="flex w-full h-8 items-center my-2">
                             <input class="w-full px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="title" type="text" name="title" placeholder="Title" title="Stream Title"/>
@@ -79,7 +79,7 @@
                                 <i class="align-middle pt-1 text-inherit bi bi-film"></i> <i class="align-middle pt-1 text-inherit bi bi-box-arrow-up-right"></i>
                             </a>
                             <!-- Upload Image -->
-                            <input {onchange} id="upload-image-{record.uri.rkey}" type="file" hidden accept="image/png,image/jpeg"/>
+                            <input {onchange} id="upload-image-{record.uri.rkey}" name="thumbnail" type="file" hidden accept="image/png,image/jpeg"/>
                             <label for="upload-image-{record.uri.rkey}">
                                 <button onclick={() => document.getElementById(`upload-image-${record.uri.rkey}`)?.click()} class="bg-green-600 hover:bg-green-800 text-neutral-100 hover:text-neutral-500 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" aria-label="Upload Thumbnail" title="Upload Thumbnail">
                                     <i class="text-inherit bi bi-image"></i> <i class="text-inherit bi bi-plus-lg"></i>
@@ -96,32 +96,13 @@
     {/if}
     <h4 class="my-1">Streams</h4>
     <Grid items={mappedStreams}>
-        {#snippet renderer({ record, to, duration })}
-            <RecordForm name="publish" {record}>
-                <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration} >
-                    <!-- Title -->
-                    <div class="flex w-full h-8 items-center my-2">
-                        <input class="w-full px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="title" type="text" name="title" placeholder="Title" title="Stream Title"/>
-                    </div>
-                    <!-- TODO: Tags -->
-                    <div class="flex w-full flex-row justify-between mt-4">
-                        <!-- Open Stream -->
-                        <a href={to} target="_blank" class="self-start bg-neutral-500 hover:bg-neutral-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" title="View Content" aria-label="View Content">
-                            <i class="align-middle pt-1 text-inherit bi bi-film"></i> <i class="align-middle pt-1 text-inherit bi bi-box-arrow-up-right"></i>
-                        </a>
-                        <!-- Upload Image -->
-                        <input {onchange} id="upload-image-{record.uri.rkey}" type="file" hidden accept="image/png,image/jpeg"/>
-                        <label for="upload-image-{record.uri.rkey}">
-                            <button onclick={() => document.getElementById(`upload-image-${record.uri.rkey}`)?.click()} class="bg-green-600 hover:bg-green-800 text-neutral-100 hover:text-neutral-500 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" aria-label="Upload Thumbnail" title="Upload Thumbnail">
-                                <i class="text-inherit bi bi-image"></i> <i class="text-inherit bi bi-plus-lg"></i>
-                            </button>
-                        </label>
-                        <!-- Publish Stream -->
-                        <button class="bg-blue-500 hover:bg-blue-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="submit" aria-label="Publish" title="Publish">
-                            <i class="text-inherit bi bi-camera-reels"></i> <i class="text-inherit bi bi-upload"></i>
-                        </button>
-                </ContentCard>
-            </RecordForm>
+        {#snippet renderer({ record, to, duration, thumbnail })}
+            <ContentCard {thumbnail} {record} {duration} >
+                <!-- Title -->
+                <div class="flex w-full h-8 items-center my-2">
+                    <p>{record.value.title}</p>
+                </div>
+            </ContentCard>
         {/snippet}
     </Grid>
     
