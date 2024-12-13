@@ -1,24 +1,128 @@
 <script lang="ts">
-    import Grid from "$lib/components/streams/unlisted/Grid.svelte";
-    import { parse } from "@atcute/tid"
+    import Grid from "$lib/components/Grid.svelte";
+    import { SvelteMap } from "svelte/reactivity";
+    import RecordForm from "$lib/components/RecordForm.svelte";
+    import ContentCard from "$lib/components/ContentCard.svelte";
+    import { WrappedRecord } from "$lib/WrappedRecord.js";
+    import type { Record as HlsRecord } from "$lib/lexicons/types/live/grayhaze/format/hls.js";
+    import { ATURI } from "$lib/ATURI.js";
+    
+    let { data }= $props();
 
-    let { data } = $props();
-    const handle = data.user.getHandle()
-    const records = data.records.map((record) => {
-        const split = record.uri.split("/")
+    function getDuration(record: WrappedRecord<HlsRecord>) {
+        let dnum = 0
+        record.value.sequence.forEach((seg) => {
+            dnum += seg.duration/1000000
+        })
+        dnum = Math.floor(dnum+0.5)
+        let dchunks = []
+        for (let i = 0; i < 3; i++) {
+            let val = Math.floor(dnum % 60)
+            dchunks.push(":" + ((val < 10) ? "0" + val : val))
+            dnum /= 60
+        }
+        if (dchunks[2] === ":00") dchunks.pop()
+        return dchunks.reverse().join("").substring(1)
+    }
+
+    const mappedRawMedia = data.rawMedia?.map((record) => {
         return {
-            to: `/@${handle}/unlisted/${split[split.length-1]}`,
-            rkey: split[split.length-1],
-            timestamp: (new Date(parse(split[split.length-1]).timestamp/1000)).toLocaleString()
+            record,
+            to: `/@${data.user.handle}/unlisted/${record.uri.rkey}`,
+            duration: getDuration(record),
+            thumbnail: undefined,
+            id: record.uri.toString()
         }
     })
 
+    const mappedStreams = data.publishedStreams?.map(({ streamrecord, hlsrecord }) => {
+        // TODO: Support more than hls record format
+        return {
+            record: streamrecord,
+            to: `/@${data.user.handle}/${streamrecord.uri.rkey}`,
+            duration: getDuration(hlsrecord),
+            thumbnail: `/api/blob/${data.user.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
+            id: streamrecord.uri.toString()
+        }
+    })
+
+    let localSrc: Map<string, ArrayBuffer | string | undefined> = $state(new SvelteMap())
+    function onchange(e: Event & { currentTarget: EventTarget & HTMLInputElement; }) {
+        const files = e.currentTarget.files
+        if (files && files[0]) {
+            const id = e.currentTarget.id.replace("upload-image-", "")
+            var reader = new FileReader();
+            reader.readAsDataURL(files[0])
+            reader.onload = (pe: ProgressEvent<FileReader>) => {
+                if (pe.target && pe.target.result) localSrc.set(id, pe.target.result)
+            }
+        }
+    }
 </script>
 
 <div>
-    <h3 class="my-1">@{handle}</h3>
-    {#if data.self}
+    <h3 class="my-1">@{data.user.handle}</h3>
+    {#if data.self && mappedRawMedia}
         <h4 class="my-1">Unlisted Content</h4>
-        <Grid items={records}/>
+        <Grid items={mappedRawMedia}>
+            {#snippet renderer({ record, to, duration })}
+                <RecordForm name="publish" {record}>
+                    <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration} >
+                        <!-- Title -->
+                        <div class="flex w-full h-8 items-center my-2">
+                            <input class="w-full px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="title" type="text" name="title" placeholder="Title" title="Stream Title"/>
+                        </div>
+                        <!-- TODO: Tags -->
+                        <div class="flex w-full flex-row justify-between mt-4">
+                            <!-- Open Stream -->
+                            <a href={to} target="_blank" class="self-start bg-neutral-500 hover:bg-neutral-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" title="View Content" aria-label="View Content">
+                                <i class="align-middle pt-1 text-inherit bi bi-film"></i> <i class="align-middle pt-1 text-inherit bi bi-box-arrow-up-right"></i>
+                            </a>
+                            <!-- Upload Image -->
+                            <input {onchange} id="upload-image-{record.uri.rkey}" type="file" hidden accept="image/png,image/jpeg"/>
+                            <label for="upload-image-{record.uri.rkey}">
+                                <button onclick={() => document.getElementById(`upload-image-${record.uri.rkey}`)?.click()} class="bg-green-600 hover:bg-green-800 text-neutral-100 hover:text-neutral-500 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" aria-label="Upload Thumbnail" title="Upload Thumbnail">
+                                    <i class="text-inherit bi bi-image"></i> <i class="text-inherit bi bi-plus-lg"></i>
+                                </button>
+                            </label>
+                            <!-- Publish Stream -->
+                            <button class="bg-blue-500 hover:bg-blue-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="submit" aria-label="Publish" title="Publish">
+                                <i class="text-inherit bi bi-camera-reels"></i> <i class="text-inherit bi bi-upload"></i>
+                            </button>
+                    </ContentCard>
+                </RecordForm>
+            {/snippet}
+        </Grid>
     {/if}
+    <h4 class="my-1">Streams</h4>
+    <Grid items={mappedStreams}>
+        {#snippet renderer({ record, to, duration })}
+            <RecordForm name="publish" {record}>
+                <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration} >
+                    <!-- Title -->
+                    <div class="flex w-full h-8 items-center my-2">
+                        <input class="w-full px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="title" type="text" name="title" placeholder="Title" title="Stream Title"/>
+                    </div>
+                    <!-- TODO: Tags -->
+                    <div class="flex w-full flex-row justify-between mt-4">
+                        <!-- Open Stream -->
+                        <a href={to} target="_blank" class="self-start bg-neutral-500 hover:bg-neutral-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" title="View Content" aria-label="View Content">
+                            <i class="align-middle pt-1 text-inherit bi bi-film"></i> <i class="align-middle pt-1 text-inherit bi bi-box-arrow-up-right"></i>
+                        </a>
+                        <!-- Upload Image -->
+                        <input {onchange} id="upload-image-{record.uri.rkey}" type="file" hidden accept="image/png,image/jpeg"/>
+                        <label for="upload-image-{record.uri.rkey}">
+                            <button onclick={() => document.getElementById(`upload-image-${record.uri.rkey}`)?.click()} class="bg-green-600 hover:bg-green-800 text-neutral-100 hover:text-neutral-500 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" aria-label="Upload Thumbnail" title="Upload Thumbnail">
+                                <i class="text-inherit bi bi-image"></i> <i class="text-inherit bi bi-plus-lg"></i>
+                            </button>
+                        </label>
+                        <!-- Publish Stream -->
+                        <button class="bg-blue-500 hover:bg-blue-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="submit" aria-label="Publish" title="Publish">
+                            <i class="text-inherit bi bi-camera-reels"></i> <i class="text-inherit bi bi-upload"></i>
+                        </button>
+                </ContentCard>
+            </RecordForm>
+        {/snippet}
+    </Grid>
+    
 </div>

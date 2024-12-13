@@ -22,7 +22,9 @@ ${segments + (value["end"] ? "#EXT-X-ENDLIST" : "")}`
 }
 
 export async function GET({ params, fetch }) {
-    const record = await (await ATPUser.fromDID(params.repo, fetch)).getRecord("live.grayhaze.format.hls", params.rkey)
+    // TODO: Cache here if event is VOD, and more importantly the HLS segments
+    const user = await ATPUser.fromDID(params.repo, fetch)
+    const record = await user.agent.live.grayhaze.format.hls.get(params)
     const adapted = adapt(params.repo, record.value)
     return new Response(adapted, {
         headers: {

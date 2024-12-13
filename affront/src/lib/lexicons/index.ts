@@ -80,7 +80,7 @@ export class ChannelRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; value: LiveGrayhazeActorChannel.Record }[]
+    records: { uri: string; cid: string; value: LiveGrayhazeActorChannel.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.actor.channel',
@@ -162,7 +162,7 @@ export class EmoteRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; value: LiveGrayhazeContentEmote.Record }[]
+    records: { uri: string; cid: string; value: LiveGrayhazeContentEmote.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.content.emote',
@@ -227,7 +227,7 @@ export class StreamRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; value: LiveGrayhazeContentStream.Record }[]
+    records: { uri: string; cid: string; value: LiveGrayhazeContentStream.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.content.stream',
@@ -302,7 +302,7 @@ export class HlsRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; value: LiveGrayhazeFormatHls.Record }[]
+    records: { uri: string; cid: string; value: LiveGrayhazeFormatHls.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.format.hls',
@@ -381,7 +381,7 @@ export class BanRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; value: LiveGrayhazeInteractionBan.Record }[]
+    records: { uri: string; cid: string; value: LiveGrayhazeInteractionBan.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.interaction.ban',
@@ -446,7 +446,7 @@ export class ChatRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; value: LiveGrayhazeInteractionChat.Record }[]
+    records: { uri: string; cid: string; value: LiveGrayhazeInteractionChat.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.interaction.chat',
@@ -511,7 +511,7 @@ export class FollowRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; value: LiveGrayhazeInteractionFollow.Record }[]
+    records: { uri: string; cid: string; value: LiveGrayhazeInteractionFollow.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.interaction.follow',

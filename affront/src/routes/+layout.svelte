@@ -4,7 +4,7 @@
 	let { children, data } = $props();
 
 	const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
-	const handle = user?.getHandle()
+	const handle = user?.handle
 </script>
 
 <svelte:head>

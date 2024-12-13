@@ -39,8 +39,8 @@ const cacheTimeout = 1000 * 60 * 15;
 type GrayhazeAgent = Agent & AtpBaseClient
 
 export class ATPUser {
-    private diddoc: DIDDoc
-    private agent: GrayhazeAgent
+    private _diddoc: DIDDoc
+    private _agent: GrayhazeAgent
 
     static async resolveDID(did: string, fetchFunc: typeof globalThis.fetch = fetch) {
         if (cachedDocs.has(did)) return cachedDocs.get(did)! // If cached immediately return
@@ -66,29 +66,38 @@ export class ATPUser {
         error(500, `did ${doc.id} has no ATProto PDS`)
     }
 
-    public getAgent() {
-        return this.agent
+    
+    public get agent() : GrayhazeAgent {
+        return this._agent
+    }
+    
+    public get aka(): string | string[] {
+        return this._diddoc.alsoKnownAs
     }
 
-    public getAKA() {
-        return this.diddoc.alsoKnownAs
-    }
-
-    public getHandle() {
-        if (typeof this.diddoc.alsoKnownAs === "string") {
-            return this.diddoc.alsoKnownAs.replace("at://", "")
+    
+    public get handle() : string {
+        if (typeof this._diddoc.alsoKnownAs === "string") {
+            return this._diddoc.alsoKnownAs.replace("at://", "")
         } else {
-            const aka = this.diddoc.alsoKnownAs.at(0)
-            return aka ? aka.replace("at://", "") : this.diddoc.id
+            const aka = this._diddoc.alsoKnownAs.at(0)
+            return aka ? aka.replace("at://", "") : this._diddoc.id
         }
     }
 
-    public getDID() {
-        return this.diddoc.id
+    
+    public get did() : string {
+        return this._diddoc.id
     }
 
-    public getPDS() {
-        for (let service of this.diddoc.service) {
+    
+    public get diddoc() : DIDDoc {
+        return this._diddoc
+    }
+
+    
+    public get pds(): string | undefined {
+        for (let service of this._diddoc.service) {
             if (service.id === "#atproto_pds") {
                 return service.serviceEndpoint
             }
@@ -96,8 +105,8 @@ export class ATPUser {
     }
 
     public async getRecord(collection: string, rkey: string) {
-        const response = await this.agent.com.atproto.repo.getRecord({
-            repo: this.diddoc.id,
+        const response = await this._agent.com.atproto.repo.getRecord({
+            repo: this._diddoc.id,
             collection: collection,
             rkey: rkey
         })
@@ -106,19 +115,19 @@ export class ATPUser {
     }
 
     public async getBlob(cid: string) {
-        const response = await this.agent.com.atproto.sync.getBlob({ did: this.diddoc.id, cid })
+        const response = await this._agent.com.atproto.sync.getBlob({ did: this._diddoc.id, cid })
         if (!response.success) error(404, `Blob ${cid} not found`)
         return response.data
     }
 
     public async listRecords(collection: string, cursor?: string) {
-        const response = await this.agent.com.atproto.repo.listRecords({
-            repo: this.diddoc.id,
+        const response = await this._agent.com.atproto.repo.listRecords({
+            repo: this._diddoc.id,
             collection: collection,
             limit: 20,
             cursor,
         })
-        if (!response.success) error(404, `Collection ${collection} on user ${this.diddoc.id} not found`)
+        if (!response.success) error(404, `Collection ${collection} on user ${this._diddoc.id} not found`)
         response.data.records = response.data.records.filter((record) => {
             const { success } = lexicons.validate(collection, record.value)
             return success
@@ -127,8 +136,8 @@ export class ATPUser {
     }
 
     private constructor(agent: GrayhazeAgent, diddoc: DIDDoc) {
-        this.agent = agent
-        this.diddoc = diddoc
+        this._agent = agent
+        this._diddoc = diddoc
     }
 
     static async fromHandle(handle: string, fetchFunc: typeof globalThis.fetch = fetch) {

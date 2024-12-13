@@ -4,10 +4,10 @@
 import { type ValidationResult, BlobRef } from '@atproto/lexicon'
 import { hasProp, isObj } from '$lib/lexicons/util'
 import { lexicons } from '$lib/lexicons/lexicons'
-import * as LiveGrayhazeFormatHls from '$lib/lexicons/types/live/grayhaze/format/hls'
+import type { ComAtprotoRepoStrongRef } from '@atproto/api'
 
 export interface Record {
-  content: LiveGrayhazeFormatHls.Record | { $type: string; [k: string]: unknown }
+  content: ComAtprotoRepoStrongRef.Main
   title: string
   thumbnail?: Thumbnail
   tags?: string[]

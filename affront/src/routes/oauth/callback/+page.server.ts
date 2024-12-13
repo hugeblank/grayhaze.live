@@ -14,13 +14,13 @@ export const load: PageServerLoad = async ({ locals, cookies, url }) => {
     const agent = new Agent(l.session)
     const user = ATPUser.fromDIDDoc(await ATPUser.resolveDID(session.did), agent)
     try {
-        await user.getAgent().live.grayhaze.actor.channel.get({
-            repo: user.getDID(),
+        await user.agent.live.grayhaze.actor.channel.get({
+            repo: user.did,
             rkey: "self"
         })
     } catch {
-        const channel = await user.getAgent().live.grayhaze.actor.channel.create({
-            repo: user.getDID(),
+        const channel = await user.agent.live.grayhaze.actor.channel.create({
+            repo: user.did,
             rkey: "self"
         }, {})
         console.log(`created channel ${channel.uri}`)

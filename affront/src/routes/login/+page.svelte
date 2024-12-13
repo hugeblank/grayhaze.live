@@ -38,7 +38,7 @@
                     } else {
                         user = await ATPUser.fromHandle(handle)
                     }
-                    const pds = user.getPDS()
+                    const pds = user.pds
                     if (pds) {
                         clazz = style + " border-green-500"
                         entry1.ok = true
@@ -48,7 +48,7 @@
                             const mushroom = split[0].replace(/http[s]?:\/\//, "")
                             entry2.text = `🍄 ${mushroom.at(0)?.toLocaleUpperCase() + mushroom.substring(1)}`
                             entry1.text = `✨ of ${split[0].replace(mushroom, "")}bsky.social`
-                        } else if (user.getDID().split(":")[1] === "web") {
+                        } else if (user.did.split(":")[1] === "web") {
                             entry2.ok = true
                             entry2.text = `🌐 did:web user!`
                         }
@@ -77,7 +77,7 @@
 
     function onclick() {
         if (user) {
-            goto(`/oauth/login?did=${user.getDID()}`)
+            goto(`/oauth/login?did=${user.did}`)
         }
     }
 </script>
