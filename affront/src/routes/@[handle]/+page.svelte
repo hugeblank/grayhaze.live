@@ -97,12 +97,14 @@
     <h4 class="my-1">Streams</h4>
     <Grid items={mappedStreams}>
         {#snippet renderer({ record, to, duration, thumbnail })}
-            <ContentCard {thumbnail} {record} {duration} >
-                <!-- Title -->
-                <div class="flex w-full h-8 items-center my-2">
-                    <p>{record.value.title}</p>
-                </div>
-            </ContentCard>
+            <a href={to}>
+                <ContentCard {thumbnail} {record} {duration} >
+                    <!-- Title -->
+                    <div class="flex w-full place-content-start line-clamp-2">
+                        <b>{record.value.title}</b>
+                    </div>
+                </ContentCard>
+            </a>
         {/snippet}
     </Grid>
     

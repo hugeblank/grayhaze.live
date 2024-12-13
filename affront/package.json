@@ -43,6 +43,7 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"dotenv": "^16.4.7",
 		"hls.js": "^1.5.17",
-		"iovalkey": "^0.2.1"
+		"iovalkey": "^0.2.1",
+		"multiformats": "^13.3.1"
 	}
 }
