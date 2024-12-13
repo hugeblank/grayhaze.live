@@ -8,9 +8,9 @@
             "key": "tid",
             "record": {
             "type": "object",
-            "required": ["text"],
+            "required": ["text", "stream"],
             "properties": {
-                "stream_uri": { "type": "string", "format": "at-uri" },
+                "stream": { "type": "ref", "ref": "com.atproto.repo.strongRef" },
                 "text": {
                     "type": "string",
                     "maxLength": 1500,

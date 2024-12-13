@@ -14,11 +14,9 @@
                 ],
                 "properties": {
                     "content": {
-                        "type": "union",
-                        "description": "An open union of formats, allowing us to support more than hls in the future.",
-                        "refs": [
-                            "live.grayhaze.format.hls"
-                        ]
+                        "type": "ref",
+                        "description": "A ref to a format",
+                        "ref": "com.atproto.repo.strongRef"
                     },
                     "title": {
                         "type": "string",
