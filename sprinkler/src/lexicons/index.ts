@@ -15,7 +15,9 @@ import * as LiveGrayhazeInteractionDefs from './types/live/grayhaze/interaction/
 import * as LiveGrayhazeInteractionFollow from './types/live/grayhaze/interaction/follow.js'
 import * as LiveGrayhazeInteractionPromotion from './types/live/grayhaze/interaction/promotion.js'
 import * as LiveGrayhazeInteractionSubscribeChat from './types/live/grayhaze/interaction/subscribeChat.js'
-import { ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords } from '@atproto/api'
+import { Agent, ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords, lexicons } from '@atproto/api'
+import { LexiconDoc } from '@atproto/lexicon'
+import { SessionManager } from '@atproto/api/dist/session-manager.js'
 
 export * as LiveGrayhazeActorChannel from './types/live/grayhaze/actor/channel.js'
 export * as LiveGrayhazeActorDefs from './types/live/grayhaze/actor/defs.js'
@@ -30,17 +32,21 @@ export * as LiveGrayhazeInteractionFollow from './types/live/grayhaze/interactio
 export * as LiveGrayhazeInteractionPromotion from './types/live/grayhaze/interaction/promotion.js'
 export * as LiveGrayhazeInteractionSubscribeChat from './types/live/grayhaze/interaction/subscribeChat.js'
 
-export class AtpBaseClient extends XrpcClient {
+export type GrayhazeAgent = Agent & AtpBaseClient
+
+export class AtpBaseClient {
+  _client: XrpcClient
   live: LiveNS
 
-  constructor(options: FetchHandler | FetchHandlerOptions) {
-    super(options, schemas)
-    this.live = new LiveNS(this)
+  private constructor(client: XrpcClient) {
+    this._client = client
+    this.live = new LiveNS(client)
   }
 
-  /** @deprecated use `this` instead */
-  get xrpc(): XrpcClient {
-    return this
+  static agent(options: string | URL | SessionManager): GrayhazeAgent {
+    const agent = new Agent(options)
+    const base = new AtpBaseClient(agent)
+    return {...agent, ...base} as GrayhazeAgent
   }
 }
 

@@ -1,22 +1,28 @@
+type Message<T> = { done: false, value: T } | { done: true };
+
 export class Pipe<T> {
     private buffer: T[] = []
-    private resolvers: ((value: T | PromiseLike<T>) => void)[] = []
+    private resolvers: ((value: Message<T>) => void)[] = []
 
-    public push(item: T) {
+    public push(value: T) {
         if (this.resolvers.length === 0) {
-            this.buffer.push(item)
+            this.buffer.push(value)
         } else {
-            this.resolvers.shift()!(item)
+            this.resolvers.shift()!({ done: false, value })
         }
     }
 
-    public async shift(): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
-            if (this.buffer.length === 0) {
-                this.resolvers.push(resolve)
-            } else {
-                resolve(this.buffer.shift()!)
+    public [Symbol.asyncIterator]() {
+        return {
+            next: () => {
+                if (this.buffer.length === 0) {
+                    return new Promise<Message<T>>((resolve, reject) => {
+                        this.resolvers.push(resolve)
+                    })
+                } else {
+                    return { done: false, value: this.buffer.shift()! }
+                }
             }
-        })
+        }
     }
 }
