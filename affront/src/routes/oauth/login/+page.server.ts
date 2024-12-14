@@ -3,7 +3,7 @@ import { client, type LocalSession } from "$lib/session"
 
 export const load = async ({ request, locals }) => {
     let l = locals as LocalSession
-    if (l.session) {
+    if (l.user) {
         redirect(302, "/")
     }
     const did = new URL(request.url).searchParams.get("did")

@@ -146,9 +146,9 @@ export class ATPUser {
         return ATPUser.fromDID((await apiResponse.json())["did"], fetchFunc)
     }
 
-    static async fromDID(did: string, fetchFunc: typeof globalThis.fetch = fetch) {
+    static async fromDID(did: string, fetchFunc: typeof globalThis.fetch = fetch, agent?: Agent) {
         const diddoc = await ATPUser.resolveDID(did, fetchFunc)
-        return ATPUser.fromDIDDoc(diddoc)
+        return ATPUser.fromDIDDoc(diddoc, agent)
     }
 
     static fromDIDDoc(diddoc: DIDDoc, agent?: Agent) {
