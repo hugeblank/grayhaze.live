@@ -1,0 +1,36 @@
+{
+  "name": "sprinkler",
+  "version": "1.0.0",
+  "description": "GrayHaze XRPC server",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc; node build/index.js",
+    "build": "tsc"
+  },
+  "keywords": [
+    "atproto",
+    "xrpc",
+    "grayhaze"
+  ],
+  "author": "hugeblank",
+  "license": "MIT",
+  "devDependencies": {
+    "@atproto/lex-cli": "^0.5.3",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@atcute/tid": "^1.0.1",
+    "@atproto/api": "^0.13.20",
+    "@atproto/lexicon": "^0.4.4",
+    "@atproto/xrpc-server": "^0.7.4",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "iovalkey": "^0.2.1",
+    "multiformats": "^13.3.1",
+    "ws": "^8.18.0"
+  }
+}
