@@ -1,0 +1,31 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.actor.defs",
+    "defs": {
+        "profileViewBasic": {
+            "type": "object",
+            "required": [
+                "did"
+            ],
+            "properties": {
+                "did": {
+                    "type": "string",
+                    "format": "did"
+                },
+                "handle": {
+                    "type": "string",
+                    "format": "handle"
+                },
+                "displayName": {
+                    "type": "string",
+                    "maxGraphemes": 64,
+                    "maxLength": 640
+                },
+                "avatar": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        }
+    }
+}

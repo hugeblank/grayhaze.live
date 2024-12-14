@@ -1,0 +1,34 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.interaction.promotion",
+    "defs": {
+        "main": {
+            "type": "record",
+            "description": "A promotion of a user beyond the default chatter. May grant exclusive permissions like chat moderation.",
+            "key": "tid",
+            "record": {
+                "type": "object",
+                "required": [
+                    "target",
+                    "level"
+                ],
+                "properties": {
+                    "target": {
+                        "type": "string",
+                        "format": "did",
+                        "maxLength": 300
+                    },
+                    "level": {
+                        "type": "string",
+                        "description": "vip - purely aesthetic, intended to put a badge next to name | moderator - grants the ability to give timeouts/bans | kitten - undefined effect",
+                        "enum": [
+                            "moderator",
+                            "vip",
+                            "kitten"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

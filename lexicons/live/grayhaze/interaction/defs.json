@@ -1,0 +1,20 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.interaction.defs",
+    "defs": {
+        "chatView": {
+            "type": "object",
+            "required": ["src", "author"],
+            "properties": {
+                "src": {
+                    "type": "ref",
+                    "ref": "live.grayhaze.interaction.chat"
+                },
+                "author": {
+                    "type": "ref",
+                    "ref": "live.grayhaze.actor.defs#profileViewBasic"
+                }
+            }
+        }
+    }
+}

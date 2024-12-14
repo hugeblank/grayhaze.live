@@ -1,0 +1,51 @@
+{
+    "lexicon": 1,
+    "id": "live.grayhaze.interaction.subscribeChat",
+    "defs": {
+        "main": {
+            "type": "subscription",
+            "description": "Subscribe to the chat for a specific stream that is live",
+            "parameters": {
+                "type": "params",
+                "required": [ "stream" ],
+                "properties": {
+                    "stream": {
+                        "type": "string",
+                        "format": "tid"
+                    }
+                }
+            },
+            "message": {
+                "schema": {
+                    "type": "union",
+                    "refs": [
+                        "#commit"
+                    ]
+                }
+            },
+            "errors": [
+                {
+                    "name": "StreamEnded",
+                    "description": "The stream for which the subscription was attempted has ended. Use live.grayhaze.interaction.listChat for VODs."
+                },
+                {
+                    "name": "ConsumerTooSlow",
+                    "description": "If the consumer of the stream can not keep up with events, and a backlog gets too large, the server will drop the connection."
+                }
+            ]
+        },
+        "commit": {
+            "type": "object",
+            "description": "Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature.",
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "message": {
+                    "type": "ref",
+                    "ref": "live.grayhaze.interaction.defs#chatView"
+                }
+            }
+        }
+    }
+}
