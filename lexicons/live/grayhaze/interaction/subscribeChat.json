@@ -12,6 +12,10 @@
                     "stream": {
                         "type": "string",
                         "format": "tid"
+                    },
+                    "did": {
+                        "type": "string",
+                        "format": "did"
                     }
                 }
             },
@@ -19,7 +23,7 @@
                 "schema": {
                     "type": "union",
                     "refs": [
-                        "#commit"
+                        "#message"
                     ]
                 }
             },
@@ -34,9 +38,9 @@
                 }
             ]
         },
-        "commit": {
+        "message": {
             "type": "object",
-            "description": "Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature.",
+            "description": "Represents an event occuring related to the stream chat, like a message, or a ban",
             "required": [
                 "message"
             ],

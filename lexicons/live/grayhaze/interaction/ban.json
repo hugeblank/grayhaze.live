@@ -2,22 +2,28 @@
     "lexicon": 1,
     "id": "live.grayhaze.interaction.ban",
     "defs": {
-      "main": {
-        "type": "record",
-        "description": "Record declaring a 'ban' relationship against another account.",
-        "key": "tid",
-        "record": {
-          "type": "object",
-          "required": ["subject", "createdAt"],
-          "properties": {
-            "subject": {
-              "type": "string",
-              "format": "did",
-              "description": "DID of the account to be blocked."
-            },
-            "createdAt": { "type": "string", "format": "datetime" }
-          }
+        "main": {
+            "type": "record",
+            "description": "Record declaring a 'ban' relationship against another account.",
+            "key": "tid",
+            "record": {
+                "type": "object",
+                "required": [
+                    "subject"
+                ],
+                "properties": {
+                    "subject": {
+                        "type": "string",
+                        "format": "did",
+                        "description": "DID of the account to be blocked."
+                    },
+                    "target": {
+                        "type": "string",
+                        "format": "did",
+                        "description": "DID of the channel owner for which this ban should apply to. Channel moderators must provide this property."
+                    }
+                }
+            }
         }
-      }
     }
-  }
+}

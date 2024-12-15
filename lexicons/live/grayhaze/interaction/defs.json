@@ -6,6 +6,10 @@
             "type": "object",
             "required": ["src", "author"],
             "properties": {
+                "chat_uri": {
+                    "type": "string",
+                    "format": "at-uri"
+                },
                 "src": {
                     "type": "ref",
                     "ref": "live.grayhaze.interaction.chat"
@@ -13,6 +17,20 @@
                 "author": {
                     "type": "ref",
                     "ref": "live.grayhaze.actor.defs#profileViewBasic"
+                }
+            }
+        },
+        "banView": {
+            "type": "object",
+            "required": ["src", "author"],
+            "properties": {
+                "author": {
+                    "type": "ref",
+                    "ref": "live.grayhaze.actor.defs#profileViewBasic"
+                },
+                "src": {
+                    "type": "ref",
+                    "ref": "live.grayhaze.interaction.ban"
                 }
             }
         }
