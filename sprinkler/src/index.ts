@@ -1,12 +1,10 @@
-import { Agent, lexicons } from '@atproto/api'
+import { lexicons } from '@atproto/api'
 import { isValidLexiconDoc, LexiconDoc, parseLexiconDoc } from '@atproto/lexicon'
 import * as xrpc from '@atproto/xrpc-server'
 import express from 'express'
 import { PathLike } from 'fs'
 import { readdir, readFile, stat } from 'fs/promises'
-import { WebSocket } from 'ws'
 import dotenv from 'dotenv'
-import { Commit, JetMessage, Put } from './Jetstream.js'
 import { Pipe } from './Pipe.js'
 import { isRecord } from './lexicons/types/live/grayhaze/interaction/chat.js'
 import { User } from './User.js'
@@ -61,12 +59,7 @@ async function main() {
     server.streamMethod("live.grayhaze.interaction.subscribeChat", async function* ({ params, signal }) {
         console.log(`subscription ${params.stream}`)
         const pipe = new Pipe<Create>()
-        signal.addEventListener("abort", (e) => {
-            pipes.filter((p) => {
-                console.log('found')
-                return p == pipe
-            })
-        })
+        signal.addEventListener("abort", () => pipes.filter((p) => p == pipe))
         pipes.push(pipe)
         for await (const evt of pipe) {
             if (isRecord(evt.record) && typeof params.stream === "string" && params.stream === new ATURI(evt.record.stream.uri).rkey) {

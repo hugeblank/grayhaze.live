@@ -12,15 +12,11 @@ export class Pipe<T> {
         }
     }
 
-    public spout() {
-        
-    }
-
     public [Symbol.asyncIterator]() {
         return {
             next: () => {
                 if (this.buffer.length === 0) {
-                    return new Promise<Message<T>>((resolve, reject) => {
+                    return new Promise<Message<T>>((resolve) => {
                         this.resolvers.push(resolve)
                     })
                 } else {
