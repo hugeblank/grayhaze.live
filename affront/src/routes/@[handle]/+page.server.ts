@@ -119,6 +119,5 @@ export const actions = {
                 console.log("created stream", response.uri)
             }
         }
-        redirect(302, request.url.replace(/\?\/publish$/, ""))
     }
 }

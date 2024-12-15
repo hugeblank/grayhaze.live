@@ -5,7 +5,6 @@
     import ContentCard from "$lib/components/ContentCard.svelte";
     import { WrappedRecord } from "$lib/WrappedRecord.js";
     import type { Record as HlsRecord } from "$lib/lexicons/types/live/grayhaze/format/hls.js";
-    import { ATURI } from "$lib/ATURI.js";
     
     let { data }= $props();
 
@@ -60,7 +59,7 @@
     }
 </script>
 
-<div>
+<div class="mx-auto max-w-screen-2xl h-[90vh]">
     <h3 class="my-1">@{data.user.handle}</h3>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
         <h4 class="my-1">Unlisted Content</h4>
@@ -97,7 +96,7 @@
     <h4 class="my-1">Streams</h4>
     <Grid items={mappedStreams}>
         {#snippet renderer({ record, to, duration, thumbnail })}
-            <a href={to}>
+            <a class="w-fit" href={to}>
                 <ContentCard {thumbnail} {record} {duration} >
                     <!-- Title -->
                     <div class="flex w-full place-content-start line-clamp-2">

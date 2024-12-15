@@ -13,7 +13,7 @@ import { hasProp, isObj } from '$lib/lexicons/util'
 
 
 export interface Record {
-  stream_uri: ComAtprotoRepoStrongRef.Main
+  stream: ComAtprotoRepoStrongRef.Main
   /** The primary post content. May be an empty string, if there are embeds. */
   text: string
   /** Annotations of text (mentions, URLs, hashtags, etc) */
