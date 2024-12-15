@@ -4,10 +4,12 @@
 import { ValidationResult, BlobRef } from '@atproto/lexicon'
 import { isObj, hasProp } from '../../../../util.js'
 import { lexicons } from '../../../../lexicons.js'
+import { CID } from 'multiformats/cid'
 import * as LiveGrayhazeInteractionChat from './chat.js'
 import * as LiveGrayhazeActorDefs from '../actor/defs.js'
 
 export interface ChatView {
+  chat_uri?: string
   src: LiveGrayhazeInteractionChat.Record
   author: LiveGrayhazeActorDefs.ProfileViewBasic
   [k: string]: unknown

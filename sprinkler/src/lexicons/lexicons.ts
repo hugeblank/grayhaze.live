@@ -63,7 +63,7 @@ export const schemaDict = {
     defs: {
       profileViewBasic: {
         type: 'object',
-        required: ['did', 'handle'],
+        required: ['did'],
         properties: {
           did: {
             type: 'string',
@@ -269,8 +269,8 @@ export const schemaDict = {
             },
             text: {
               type: 'string',
-              maxLength: 1500,
-              maxGraphemes: 150,
+              maxLength: 3000,
+              maxGraphemes: 300,
               description:
                 'The primary post content. May be an empty string, if there are embeds.',
             },
@@ -325,8 +325,12 @@ export const schemaDict = {
     defs: {
       chatView: {
         type: 'object',
-        required: ['src'],
+        required: ['src', 'author'],
         properties: {
+          chat_uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
           src: {
             type: 'ref',
             ref: 'lex:live.grayhaze.interaction.chat',
@@ -407,14 +411,18 @@ export const schemaDict = {
           properties: {
             stream: {
               type: 'string',
-              format: 'at-uri',
+              format: 'tid',
+            },
+            did: {
+              type: 'string',
+              format: 'did',
             },
           },
         },
         message: {
           schema: {
             type: 'union',
-            refs: ['lex:live.grayhaze.interaction.subscribeChat#commit'],
+            refs: ['lex:live.grayhaze.interaction.subscribeChat#message'],
           },
         },
         errors: [
@@ -430,10 +438,10 @@ export const schemaDict = {
           },
         ],
       },
-      commit: {
+      message: {
         type: 'object',
         description:
-          'Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature.',
+          'Represents an event occuring related to the stream chat, like a message, or a ban',
         required: ['message'],
         properties: {
           message: {

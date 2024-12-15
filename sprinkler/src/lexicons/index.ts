@@ -1,8 +1,10 @@
+import { ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords } from '@atproto/api'
 /**
  * GENERATED CODE - DO NOT MODIFY
  */
 import { XrpcClient, FetchHandler, FetchHandlerOptions } from '@atproto/xrpc'
 import { schemas } from './lexicons.js'
+import { CID } from 'multiformats/cid'
 import * as LiveGrayhazeActorChannel from './types/live/grayhaze/actor/channel.js'
 import * as LiveGrayhazeActorDefs from './types/live/grayhaze/actor/defs.js'
 import * as LiveGrayhazeContentEmote from './types/live/grayhaze/content/emote.js'
@@ -15,9 +17,6 @@ import * as LiveGrayhazeInteractionDefs from './types/live/grayhaze/interaction/
 import * as LiveGrayhazeInteractionFollow from './types/live/grayhaze/interaction/follow.js'
 import * as LiveGrayhazeInteractionPromotion from './types/live/grayhaze/interaction/promotion.js'
 import * as LiveGrayhazeInteractionSubscribeChat from './types/live/grayhaze/interaction/subscribeChat.js'
-import { Agent, ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords, lexicons } from '@atproto/api'
-import { LexiconDoc } from '@atproto/lexicon'
-import { SessionManager } from '@atproto/api/dist/session-manager.js'
 
 export * as LiveGrayhazeActorChannel from './types/live/grayhaze/actor/channel.js'
 export * as LiveGrayhazeActorDefs from './types/live/grayhaze/actor/defs.js'
@@ -32,21 +31,17 @@ export * as LiveGrayhazeInteractionFollow from './types/live/grayhaze/interactio
 export * as LiveGrayhazeInteractionPromotion from './types/live/grayhaze/interaction/promotion.js'
 export * as LiveGrayhazeInteractionSubscribeChat from './types/live/grayhaze/interaction/subscribeChat.js'
 
-export type GrayhazeAgent = Agent & AtpBaseClient
-
-export class AtpBaseClient {
-  _client: XrpcClient
+export class AtpBaseClient extends XrpcClient {
   live: LiveNS
 
-  private constructor(client: XrpcClient) {
-    this._client = client
-    this.live = new LiveNS(client)
+  constructor(options: FetchHandler | FetchHandlerOptions) {
+    super(options, schemas)
+    this.live = new LiveNS(this)
   }
 
-  static agent(options: string | URL | SessionManager): GrayhazeAgent {
-    const agent = new Agent(options)
-    const base = new AtpBaseClient(agent)
-    return {...agent, ...base} as GrayhazeAgent
+  /** @deprecated use `this` instead */
+  get xrpc(): XrpcClient {
+    return this
   }
 }
 

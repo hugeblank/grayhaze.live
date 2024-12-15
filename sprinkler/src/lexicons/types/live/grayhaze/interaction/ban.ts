@@ -4,6 +4,7 @@
 import { ValidationResult, BlobRef } from '@atproto/lexicon'
 import { isObj, hasProp } from '../../../../util.js'
 import { lexicons } from '../../../../lexicons.js'
+import { CID } from 'multiformats/cid'
 
 export interface Record {
   /** DID of the account to be blocked. */

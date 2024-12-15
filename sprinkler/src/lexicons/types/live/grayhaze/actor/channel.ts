@@ -4,6 +4,7 @@
 import { ValidationResult, BlobRef } from '@atproto/lexicon'
 import { isObj, hasProp } from '../../../../util.js'
 import { lexicons } from '../../../../lexicons.js'
+import { CID } from 'multiformats/cid'
 import { ComAtprotoLabelDefs } from '@atproto/api'
 
 export interface Record {

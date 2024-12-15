@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsc; node build/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "lex": "npx @atproto/lex-cli gen-api --yes ./src/lexicons ../lexicons/live/grayhaze/*/*; tsc; node build/cleanup.js"
   },
   "keywords": [
     "atproto",
@@ -16,7 +17,6 @@
   "author": "hugeblank",
   "license": "MIT",
   "devDependencies": {
-    "@atproto/lex-cli": "^0.5.3",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
     "@types/ws": "^8.5.13",
@@ -26,8 +26,10 @@
     "@atcute/tid": "^1.0.1",
     "@atproto/api": "^0.13.20",
     "@atproto/identity": "^0.4.3",
+    "@atproto/lex-cli": "^0.5.3",
     "@atproto/lexicon": "^0.4.4",
     "@atproto/sync": "^0.1.7",
+    "@atproto/xrpc": "^0.6.5",
     "@atproto/xrpc-server": "^0.7.4",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

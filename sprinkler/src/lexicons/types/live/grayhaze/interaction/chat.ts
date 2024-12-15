@@ -4,8 +4,10 @@
 import { ValidationResult, BlobRef } from '@atproto/lexicon'
 import { isObj, hasProp } from '../../../../util.js'
 import { lexicons } from '../../../../lexicons.js'
+import { CID } from 'multiformats/cid'
+import { ComAtprotoRepoStrongRef } from '@atproto/api'
+import { AppBskyRichtextFacet } from '@atproto/api'
 import * as LiveGrayhazeContentEmote from '../content/emote.js'
-import { AppBskyRichtextFacet, ComAtprotoRepoStrongRef } from '@atproto/api'
 
 export interface Record {
   stream: ComAtprotoRepoStrongRef.Main

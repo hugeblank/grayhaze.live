@@ -1,25 +1,27 @@
 /**
  * GENERATED CODE - DO NOT MODIFY
  */
-import { ValidationResult } from '@atproto/lexicon'
+import { HeadersMap, XRPCError } from '@atproto/xrpc'
+import { ValidationResult, BlobRef } from '@atproto/lexicon'
 import { isObj, hasProp } from '../../../../util.js'
 import { lexicons } from '../../../../lexicons.js'
+import { CID } from 'multiformats/cid'
 import * as LiveGrayhazeInteractionDefs from './defs.js'
 
-/** Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature. */
-export interface Commit {
+/** Represents an event occuring related to the stream chat, like a message, or a ban */
+export interface Message {
   message: LiveGrayhazeInteractionDefs.ChatView
   [k: string]: unknown
 }
 
-export function isCommit(v: unknown): v is Commit {
+export function isMessage(v: unknown): v is Message {
   return (
     isObj(v) &&
     hasProp(v, '$type') &&
-    v.$type === 'live.grayhaze.interaction.subscribeChat#commit'
+    v.$type === 'live.grayhaze.interaction.subscribeChat#message'
   )
 }
 
-export function validateCommit(v: unknown): ValidationResult {
-  return lexicons.validate('live.grayhaze.interaction.subscribeChat#commit', v)
+export function validateMessage(v: unknown): ValidationResult {
+  return lexicons.validate('live.grayhaze.interaction.subscribeChat#message', v)
 }

@@ -8,7 +8,7 @@ import { CID } from 'multiformats/cid'
 
 export interface ProfileViewBasic {
   did: string
-  handle: string
+  handle?: string
   displayName?: string
   avatar?: string
   [k: string]: unknown
