@@ -12,6 +12,10 @@ export class Pipe<T> {
         }
     }
 
+    public spout() {
+        
+    }
+
     public [Symbol.asyncIterator]() {
         return {
             next: () => {

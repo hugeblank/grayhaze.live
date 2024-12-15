@@ -25,7 +25,9 @@
   "dependencies": {
     "@atcute/tid": "^1.0.1",
     "@atproto/api": "^0.13.20",
+    "@atproto/identity": "^0.4.3",
     "@atproto/lexicon": "^0.4.4",
+    "@atproto/sync": "^0.1.7",
     "@atproto/xrpc-server": "^0.7.4",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

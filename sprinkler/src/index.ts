@@ -12,10 +12,12 @@ import { isRecord } from './lexicons/types/live/grayhaze/interaction/chat.js'
 import { User } from './User.js'
 import { AtpBaseClient } from './lexicons/index.js'
 import { ChatView } from './lexicons/types/live/grayhaze/interaction/defs.js'
+import { IdResolver } from '@atproto/identity'
 import { ATURI } from './ATURI.js'
 dotenv.config()
 
 import { logger } from '@atproto/xrpc-server/dist/stream/logger.js'
+import { Create, Firehose } from '@atproto/sync'
 logger.level = 'debug'
 
 // Read in lexicons from given path
@@ -37,36 +39,41 @@ async function importLex(path: PathLike) {
 
 async function main() {
     const app = express()
-
-    if (!process.env.JETSTREAM) throw new Error("Missing JETSTREAM .env variable")
-    const ws = new WebSocket(`${process.env.JETSTREAM}/subscribe?wantedCollections=live.grayhaze.*`)
-    ws.on("open", () => {
-        console.log("connection")
-    })
-
     const docs = await importLex("../lexicons")
     const server = xrpc.createServer(docs)
 
+    const pipes: Pipe<Create>[] = []
 
-    const pipe = new Pipe<Commit<Put>>()
-
-    ws.on("message", async (message) => {
-        const jet = JSON.parse(message.toString()) as JetMessage
-        if (jet.kind === "commit" && jet.commit.operation === "create" && jet.commit.collection === "live.grayhaze.interaction.chat") {
-            console.log("push")
-            pipe.push(jet as Commit<Put>)
-        }
+    const firehose = new Firehose({
+        idResolver: new IdResolver(),
+        unauthenticatedCommits: true,
+        async handleEvent(evt) {
+            if (evt.event === "create" && evt.record["$type"] === "live.grayhaze.interaction.chat") {
+                pipes.forEach((pipe) => pipe.push(evt))
+            }
+        },
+        async onError(err) {
+            console.error(err)
+        },
     })
 
     // Baby's first subscription
-    server.streamMethod("live.grayhaze.interaction.subscribeChat", async function* ({ params }) {
-        console.log("subscription")
-        for await (const jet of pipe) {
-            if (isRecord(jet.commit.record) && typeof params.stream === "string" && params.stream === new ATURI(jet.commit.record.stream.uri).rkey) {
+    server.streamMethod("live.grayhaze.interaction.subscribeChat", async function* ({ params, signal }) {
+        console.log(`subscription ${params.stream}`)
+        const pipe = new Pipe<Create>()
+        signal.addEventListener("abort", (e) => {
+            pipes.filter((p) => {
+                console.log('found')
+                return p == pipe
+            })
+        })
+        pipes.push(pipe)
+        for await (const evt of pipe) {
+            if (isRecord(evt.record) && typeof params.stream === "string" && params.stream === new ATURI(evt.record.stream.uri).rkey) {
                 // TODO: throw new xrpc.InvalidRequestError("This stream has ended.", "StreamEnded")
                 try {
-                    const user = await User.fromDID(jet.did)
-                    if (!user.pds) throw new Error(`${jet.did} has no PDS!?`)
+                    const user = await User.fromDID(evt.did)
+                    if (!user.pds) throw new Error(`${evt.did} has no PDS!?`)
                     const client = AtpBaseClient.agent(new URL(user.pds))
                     const channel = await client.live.grayhaze.actor.channel.get({
                         repo: user.did,
@@ -78,7 +85,7 @@ async function main() {
                         avatar = `${user.pds}/xrpc/com.atproto.sync.getBlob?did=${user.did}&cid=${channel.value.avatar.ref}`
                     }
                     let chatview: ChatView = {
-                        src: jet.commit.record,
+                        src: evt.record,
                         author: {
                             did: user.did,
                             handle: user.handle,
@@ -97,8 +104,9 @@ async function main() {
     })
     
     app.use(server.router)
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT, async () => {
         console.log(`oh no ${process.env.PORT}`)
+        console.log(await firehose.start())
     }).on('all', (e) => {
         console.log(e)
     })
