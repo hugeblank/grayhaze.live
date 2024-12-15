@@ -19,8 +19,8 @@
                     },
                     "text": {
                         "type": "string",
-                        "maxLength": 1500,
-                        "maxGraphemes": 150,
+                        "maxLength": 3000,
+                        "maxGraphemes": 300,
                         "description": "The primary post content. May be an empty string, if there are embeds."
                     },
                     "facets": {
