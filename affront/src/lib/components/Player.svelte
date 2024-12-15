@@ -21,7 +21,7 @@
     })
 </script>
 
-<div class="w-fit">
+<div>
     <!-- svelte-ignore a11y_media_has_caption -->
-    <video class="w-fit" id="video" controls src="/api/adapt/{repo}/{rkey}"></video>
+    <video class="aspect-video" id="video" controls src="/api/adapt/{repo}/{rkey}"></video>
 </div>

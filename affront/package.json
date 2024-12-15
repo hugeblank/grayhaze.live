@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"@atcute/base32": "^1.0.1",
+		"@atcute/cbor": "^1.0.6",
 		"@atcute/tid": "^1.0.1",
 		"@atproto-labs/simple-store": "^0.1.1",
 		"@atproto/api": "^0.13.19",
