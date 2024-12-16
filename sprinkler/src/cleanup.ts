@@ -22,7 +22,7 @@ async function cleanup() {
                 // Add .js all other relative reference imports 
                 .replace(/((import|export) (\{.*\}|\* as .*) from \'\.\.?\/.*)\'/g, "$1.js'")
                 // Replace .Main calls appropriately with .Record
-                .replace(/LiveGrayhaze(.*)\.Main/, "LiveGrayhaze$1.Record")
+                .replace(/LiveGrayhaze(.*)\.Main/g, "LiveGrayhaze$1.Record")
             )
             //console.log(fpath, file.replace(/import \* as (.*) from \'\.\.\/\.\.\/\.\.\/(com\/atproto|app\/bsky)\/.*\'/g, "import { $1 } from '@atproto/api'").replace(/(import \{.*\} from \'\.\.?\/.*)\'/g, "$1.js"))
         }

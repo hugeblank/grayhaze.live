@@ -9,7 +9,8 @@ import { CID } from 'multiformats/cid'
 export interface Record {
   /** DID of the account to be blocked. */
   subject: string
-  createdAt: string
+  /** DID of the channel owner for which this ban should apply to. Channel moderators must provide this property. */
+  target?: string
   [k: string]: unknown
 }
 

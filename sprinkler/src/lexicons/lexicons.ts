@@ -235,16 +235,18 @@ export const schemaDict = {
         key: 'tid',
         record: {
           type: 'object',
-          required: ['subject', 'createdAt'],
+          required: ['subject'],
           properties: {
             subject: {
               type: 'string',
               format: 'did',
               description: 'DID of the account to be blocked.',
             },
-            createdAt: {
+            target: {
               type: 'string',
-              format: 'datetime',
+              format: 'did',
+              description:
+                'DID of the channel owner for which this ban should apply to. Channel moderators must provide this property.',
             },
           },
         },
@@ -338,6 +340,20 @@ export const schemaDict = {
           author: {
             type: 'ref',
             ref: 'lex:live.grayhaze.actor.defs#profileViewBasic',
+          },
+        },
+      },
+      banView: {
+        type: 'object',
+        required: ['src', 'author'],
+        properties: {
+          author: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.actor.defs#profileViewBasic',
+          },
+          src: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.interaction.ban',
           },
         },
       },
