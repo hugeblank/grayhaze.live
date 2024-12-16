@@ -327,9 +327,9 @@ export const schemaDict = {
     defs: {
       chatView: {
         type: 'object',
-        required: ['src', 'author'],
+        required: ['src_uri', 'src', 'author'],
         properties: {
-          chat_uri: {
+          src_uri: {
             type: 'string',
             format: 'at-uri',
           },
@@ -345,15 +345,19 @@ export const schemaDict = {
       },
       banView: {
         type: 'object',
-        required: ['src', 'author'],
+        required: ['src_uri', 'src', 'author'],
         properties: {
-          author: {
-            type: 'ref',
-            ref: 'lex:live.grayhaze.actor.defs#profileViewBasic',
+          src_uri: {
+            type: 'string',
+            format: 'at-uri',
           },
           src: {
             type: 'ref',
             ref: 'lex:live.grayhaze.interaction.ban',
+          },
+          author: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.actor.defs#profileViewBasic',
           },
         },
       },

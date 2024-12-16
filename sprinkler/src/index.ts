@@ -17,31 +17,23 @@ dotenv.config()
 import { logger } from '@atproto/xrpc-server/dist/stream/logger.js'
 import { Create, Firehose } from '@atproto/sync'
 import { Merged } from './Merged.js'
+import { lexicons as lex } from './lexicons/lexicons.js'
 logger.level = 'debug'
 
 interface Params { did: string, stream: string }
 
 // Read in lexicons from given path
-async function importLex(path: PathLike) {
-    const docs: LexiconDoc[] = []
-    await Promise.all((await readdir(path, { recursive: true })).map(async (file) => {
-        let fpath = `${path}/${file}`
-        let stats = await stat(fpath)
-        if (!stats.isDirectory() && !file.endsWith("paths.json")) {
-            const doc = JSON.parse((await readFile(fpath)).toString())
-            if (!isValidLexiconDoc(doc)) console.error(`${fpath} is not a valid LexiconDoc`)
-            let ldoc = parseLexiconDoc(doc)
-            docs.push(ldoc)
-            lexicons.add(ldoc)
-        }
-    }))
-    return docs
+function importLex(server: xrpc.Server) {
+    for (const doc of lex.docs.values()) {
+        server.addLexicon(doc)
+    }
+    return lexicons
 }
 
 async function main() {
     const app = express()
-    const docs = await importLex("../lexicons")
-    const server = xrpc.createServer(docs)
+    const server = xrpc.createServer()
+    importLex(server)
 
     let pipes: Pipe<Create>[] = []
 
