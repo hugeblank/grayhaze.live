@@ -9,8 +9,8 @@ export const transport = {
         decode: (value: string) => new ATURI(value)
     },
     WrappedRecord: {
-        encode: (record: WrappedRecord<any>) => [record.cid, record.uri.toString(), JSON.stringify(record.value)],
-        decode: ([cid, uri, value]: [string, string, string]) => WrappedRecord.wrap({cid, uri, value:JSON.parse(value)})
+        encode: (record: WrappedRecord<any>) => record instanceof WrappedRecord ? [record.cid, record.uri.toString(), record.value] : undefined,
+        decode: ([cid, uri, value]: [string, string, any]) => WrappedRecord.wrap({cid, uri, value})
     },
     BlobRef: {
         encode: (blobref: BlobRef) => {

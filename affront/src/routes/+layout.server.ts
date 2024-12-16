@@ -11,7 +11,6 @@ export const load = async ({ locals }) => {
         "Type here, if you wish",
         "Shout into abyss"
     ]
-    console.log(docs)
     return {
         placeholder: placeholders[Math.floor(Math.random() * placeholders.length)],
         diddoc: (locals as LocalSession).user?.diddoc,

@@ -8,8 +8,6 @@
     import type { Record as StreamRecord, Thumbnail } from '$lib/lexicons/types/live/grayhaze/content/stream'
     
     let { data }= $props();
-    const publishedStreams = JSON.parse(data.publishedStreams) as { hlsrecord: WrappedRecord<HlsRecord>; streamrecord: WrappedRecord<StreamRecord>; }[]
-    const rawMedia = JSON.parse(data.rawMedia) as WrappedRecord<HlsRecord>[] | undefined
 
     function getDuration(record: WrappedRecord<HlsRecord>) {
         let dnum = 0
@@ -27,7 +25,7 @@
         return dchunks.reverse().join("").substring(1)
     }
 
-    const mappedRawMedia = rawMedia?.map((record) => {
+    const mappedRawMedia = data.rawMedia?.map((record) => {
         return {
             record,
             to: `/@${data.user.handle}/unlisted/${record.uri.rkey}`,
@@ -37,7 +35,7 @@
         }
     })
 
-    const mappedStreams = publishedStreams?.map(({ streamrecord, hlsrecord }) => {
+    const mappedStreams = data.publishedStreams?.map(({ streamrecord, hlsrecord }) => {
         // TODO: Support more than hls record format
         return {
             record: streamrecord,

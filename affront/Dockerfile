@@ -18,5 +18,6 @@ COPY --from=builder /app/build ./build
 COPY --from=deps /app/node_modules ./node_modules
 ENV PORT=6080
 ENV NODE_ENV=production
+ENV PRIVATE_VALKEY_URL=redis://valkey:6379
 EXPOSE 6080
 CMD ["node", "build/index.js"]
