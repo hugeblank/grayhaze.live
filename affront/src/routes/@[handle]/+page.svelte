@@ -28,7 +28,7 @@
     const mappedRawMedia = data.rawMedia?.map((record) => {
         return {
             record,
-            live: record.value.end,
+            live: !record.value.end,
             to: `/@${data.user.handle}/unlisted/${record.uri.rkey}`,
             duration: getDuration(record),
             thumbnail: undefined,
@@ -40,7 +40,7 @@
         // TODO: Support more than hls record format
         return {
             record: streamrecord,
-            live: hlsrecord.value.end,
+            live: !hlsrecord.value.end,
             to: `/@${data.user.handle}/${streamrecord.uri.rkey}`,
             duration: getDuration(hlsrecord),
             thumbnail: `/api/blob/${data.user.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
@@ -65,14 +65,16 @@
 <div class="mx-auto max-w-screen-2xl h-[90vh]">
     <div class="flex flex-row justify-between">
         <h3 class="my-1">@{data.user.handle}</h3>
-        <a href="/logout"><h3 class="my-1">Sign out</h3></a>
+        {#if data.self}
+            <a href="/logout"><h3 class="my-1">Sign out</h3></a>
+        {/if}
     </div>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
         <h4 class="my-1">Unlisted Content</h4>
         <Grid items={mappedRawMedia}>
-            {#snippet renderer({ record, to, duration })}
+            {#snippet renderer({ record, to, duration, live })}
                 <RecordForm name="publish" {record}>
-                    <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration}>
+                    <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration} {live}>
                         <!-- Title -->
                         <div class="flex w-full h-8 items-center my-2">
                             <input class="w-full px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="title" type="text" name="title" placeholder="Title" title="Stream Title"/>
@@ -101,9 +103,9 @@
     {/if}
     <h4 class="my-1">Streams</h4>
     <Grid items={mappedStreams}>
-        {#snippet renderer({ record, to, duration, thumbnail })}
+        {#snippet renderer({ record, to, duration, thumbnail, live })}
             <a class="w-fit" href={to}>
-                <ContentCard {thumbnail} {record} {duration} >
+                <ContentCard {thumbnail} {record} {duration} {live}>
                     <!-- Title -->
                     <div class="flex w-full place-content-start line-clamp-2">
                         <b>{record.value.title}</b>

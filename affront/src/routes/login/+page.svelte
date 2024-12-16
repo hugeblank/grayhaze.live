@@ -6,6 +6,7 @@
     const style = "shadow bg-neutral-500 appearance-none placeholder:text-neutral-400 border rounded-xl w-full py-2 px-3 text-neutral-200 leading-tight focus:outline-none focus:shadow-outline"
 
     let value = $state("")
+    let disabled = $state(true)
     let clazz = $state(style)
     let entry1 = $state({
         ok: false,
@@ -19,6 +20,7 @@
     let timeout: ReturnType<typeof setTimeout> | undefined;
 
     function clear() {
+        disabled = true
         user = undefined
         entry2.text = ""
         entry1.text = ""
@@ -40,6 +42,7 @@
                     }
                     const pds = user.pds
                     if (pds) {
+                        disabled = false
                         clazz = style + " border-green-500"
                         entry1.ok = true
                         if (pds?.endsWith("bsky.network")) {
@@ -95,7 +98,7 @@
         </div>
       </div>
       <div class="flex items-center justify-between">
-        <button {onclick} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-7 rounded-xl focus:outline-none focus:shadow-outline" type="button">
+        <button {onclick} {disabled} class="bg-blue-500 hover:bg-blue-700 disabled:bg-gray-500 text-white font-bold py-2 px-7 rounded-xl focus:outline-none focus:shadow-outline" type="button">
           Go
         </button>
         <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/about">
