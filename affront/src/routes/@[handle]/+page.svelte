@@ -61,7 +61,10 @@
 </script>
 
 <div class="mx-auto max-w-screen-2xl h-[90vh]">
-    <h3 class="my-1">@{data.user.handle}</h3>
+    <div class="flex flex-row justify-between">
+        <h3 class="my-1">@{data.user.handle}</h3>
+        <a href="/logout"><h3 class="my-1">Sign out</h3></a>
+    </div>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
         <h4 class="my-1">Unlisted Content</h4>
         <Grid items={mappedRawMedia}>

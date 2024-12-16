@@ -1,20 +1,21 @@
+import { lexicons } from "@atproto/api";
 import { ATURI } from "./ATURI";
 
 export interface RecordLike<T>{
     uri: string,
-    cid: string,
+    cid?: string,
     value: T
 
     
 }
 
 function recordLike<T>(obj: any): obj is RecordLike<T> {
-    return 'uri' in obj && 'cid' in obj && 'value' in obj;
+    return 'uri' in obj && 'value' in obj;
 }
 
 export class WrappedRecord<T> {
     private _uri: ATURI
-    private _cid: string
+    private _cid?: string
     private _value: T
 
     
@@ -22,13 +23,17 @@ export class WrappedRecord<T> {
         return this._uri
     }
 
-    public get cid() : string {
+    public get cid() : string | undefined {
         return this._cid
     }
     
     
     public get value() : T {
         return this._value
+    }
+
+    public get valid(): boolean {
+        return lexicons.validate(this._uri.collection, this._value).success
     }
 
     public constructor(record: RecordLike<T>) {

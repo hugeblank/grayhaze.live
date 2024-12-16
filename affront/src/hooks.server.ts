@@ -3,7 +3,7 @@ import { sequence } from "@sveltejs/kit/hooks";
 import type { Handle } from "@sveltejs/kit";
 import { client, localSessionStore, type LocalSession } from "$lib/session";
 import { ATPUser } from "$lib/ATPUser";
-import { Agent } from "@atproto/api";
+import { grayhazeAgent } from "$lib/Merged";
 
 const bucket = new TokenBucket<string>(100, 1);
 
@@ -41,7 +41,8 @@ const authHandle: Handle = async ({ event, resolve }) => {
 	if (skey === null) return clear() // If it doesn't exist
 	const did = await localSessionStore.get(skey) // get the user did from this session key
 	if (!did) return clear() // If there was no matching session key in the store
-	locals.user = await ATPUser.fromDID(did, event.fetch, new Agent(await client.restore(did))) // Restore the oauth session
+	const session = await client.restore(did)
+	locals.user = await ATPUser.fromDID(did, event.fetch, grayhazeAgent(session)) // Restore the oauth session
 	// At this point if the session restore causes an error I deserve it.
 	return resolve(event);
 };

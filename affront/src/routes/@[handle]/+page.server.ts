@@ -1,9 +1,8 @@
-import type { Record as HlsRecord } from '$lib/lexicons/types/live/grayhaze/format/hls'
+import  { type Record as HlsRecord, isRecord } from '$lib/lexicons/types/live/grayhaze/format/hls'
 import type { Record as StreamRecord, Thumbnail } from '$lib/lexicons/types/live/grayhaze/content/stream'
 import type { LocalSession } from '$lib/session.js'
 import { WrappedRecord } from '$lib/WrappedRecord'
-import { BlobRef, lexicons } from '@atproto/api'
-import { error, redirect } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
 import { ATPUser } from '$lib/ATPUser.js'
 import { ATURI } from '$lib/ATURI.js'
 
@@ -21,7 +20,7 @@ export const load = async ({ locals, params, parent }) => {
     let self = false
     if (l.user && l.user?.handle === params.handle) {
         const hlsdata = await l.user.agent.live.grayhaze.format.hls.list({ repo: l.user.did })
-        rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((record) => lexicons.validate("live.grayhaze.format.hls", record.value).success))
+        rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => record.valid)
         rawMedia.forEach((record) => formap.set(record.uri.rkey, record))
         self = true
     }
@@ -29,8 +28,7 @@ export const load = async ({ locals, params, parent }) => {
     const user = ATPUser.fromDIDDoc(pdata.diddoc)
     const publishedStreams = (await Promise.all(WrappedRecord.wrap<StreamRecord>(
         (await user.agent.live.grayhaze.content.stream.list({ repo: user.did })).records
-            .filter((record) => lexicons.validate("live.grayhaze.content.stream", record.value).success)
-    ).map(async (record) => {
+    ).filter((record) => record.valid).map(async (record) => {
         const mime = record.value.thumbnail?.image.mimeType
         if (!(mime === "image/png" || mime === "image/jpeg") || !user.pds) return undefined
         const uri = new ATURI(record.value.content.uri)
@@ -90,7 +88,7 @@ export const actions = {
             }
             // TODO: Finding a hls record from a stream should be a query
             let cursor
-            let matching: { uri: string; cid: string; value: StreamRecord; } | undefined
+            let matching: { uri: string; cid?: string; value: StreamRecord; } | undefined
             do {
                 const list = await l.user?.agent.live.grayhaze.content.stream.list({ repo: l.user.did, cursor })
                 cursor = list?.cursor

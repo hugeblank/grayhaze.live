@@ -33,5 +33,20 @@ export const actions = {
                 text
             })
         }
+    },
+    ban: async ({ request, locals, params }) => {
+        const l = locals as LocalSession
+        if (!l.user) error(401, "Unauthorized")
+        const data = await request.formData()
+        const did = data.get("did")?.toString()
+
+        console.log("submitted", did)
+        if (did) {
+            return await l.user.agent.live.grayhaze.interaction.ban.create({
+                repo: l.user.did
+            }, {
+                subject: did
+            })
+        }
     }
 }

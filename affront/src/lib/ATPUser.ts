@@ -1,6 +1,7 @@
 import { Agent, lexicons } from "@atproto/api";
 import { error } from "@sveltejs/kit"
-import { AtpBaseClient, LiveNS } from "./lexicons";
+import { AtpBaseClient } from "./lexicons";
+import { grayhazeAgent } from "./Merged";
 
 const resolvers: Map<string, (structure: string) => string> = new Map([
     ["plc", (structure) => {
@@ -152,15 +153,13 @@ export class ATPUser {
         return ATPUser.fromDID((await apiResponse.json())["did"], fetchFunc)
     }
 
-    static async fromDID(did: string, fetchFunc: typeof globalThis.fetch = fetch, agent?: Agent) {
+    static async fromDID(did: string, fetchFunc: typeof globalThis.fetch = fetch, agent?: GrayhazeAgent) {
         const diddoc = await ATPUser.resolveDID(did, fetchFunc)
         return ATPUser.fromDIDDoc(diddoc, agent)
     }
 
-    static fromDIDDoc(diddoc: DIDDoc, agent?: Agent) {
+    static fromDIDDoc(diddoc: DIDDoc, agent?: GrayhazeAgent) {
         const pds = new URL(ATPUser.resolvePDS(diddoc))
-        const agenta = agent ? agent : new Agent(pds)
-        const agentb = new AtpBaseClient(agenta)
-        return new ATPUser({ ...agenta, ...agentb } as GrayhazeAgent, diddoc)
+        return new ATPUser(agent ? agent : grayhazeAgent(pds), diddoc)
     }
 }

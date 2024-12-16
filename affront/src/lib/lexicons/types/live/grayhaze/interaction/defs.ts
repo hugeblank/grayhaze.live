@@ -10,7 +10,7 @@ import * as LiveGrayhazeActorDefs from '$lib/lexicons/types/live/grayhaze/actor/
 import * as LiveGrayhazeInteractionBan from '$lib/lexicons/types/live/grayhaze/interaction/ban'
 
 export interface ChatView {
-  chat_uri?: string
+  src_uri: string
   src: LiveGrayhazeInteractionChat.Record
   author: LiveGrayhazeActorDefs.ProfileViewBasic
   [k: string]: unknown
@@ -29,8 +29,9 @@ export function validateChatView(v: unknown): ValidationResult {
 }
 
 export interface BanView {
-  author: LiveGrayhazeActorDefs.ProfileViewBasic
+  src_uri: string
   src: LiveGrayhazeInteractionBan.Record
+  author: LiveGrayhazeActorDefs.ProfileViewBasic
   [k: string]: unknown
 }
 
