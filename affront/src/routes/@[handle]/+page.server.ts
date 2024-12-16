@@ -51,9 +51,9 @@ export const load = async ({ locals, params, parent }) => {
 
 
     return {
-        rawMedia,
-        publishedStreams,
-        self
+        rawMedia: JSON.stringify(rawMedia),
+        publishedStreams: JSON.stringify(publishedStreams),
+        self: self
     }
 }
 

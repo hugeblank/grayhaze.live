@@ -1,7 +1,7 @@
 import { type LocalSession } from '$lib/session.js'
 
 export const load = async ({ locals }) => { 
-
+    const docs: any[] = await (await fetch("http://localhost:6080/public/lexicons.json")).json()
     const placeholders = [
         "Ponder",
         "I'm feeling lucky",
@@ -11,8 +11,10 @@ export const load = async ({ locals }) => {
         "Type here, if you wish",
         "Shout into abyss"
     ]
+    console.log(docs)
     return {
         placeholder: placeholders[Math.floor(Math.random() * placeholders.length)],
-        diddoc: (locals as LocalSession).user?.diddoc
+        diddoc: (locals as LocalSession).user?.diddoc,
+        docs
     }
 }

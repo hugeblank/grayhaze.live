@@ -9,12 +9,14 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ENV NODE_ENV=production
 RUN npm run build
 
 FROM base AS runner
 WORKDIR /app
 COPY --from=builder /app/build ./build
 COPY --from=deps /app/node_modules ./node_modules
-ENV PORT=3000
-EXPOSE 3000
+ENV PORT=6080
+ENV NODE_ENV=production
+EXPOSE 6080
 CMD ["node", "build/index.js"]

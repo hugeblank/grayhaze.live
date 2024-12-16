@@ -1,6 +1,6 @@
 import { ATURI } from "$lib/ATURI";
 import { WrappedRecord } from "$lib/WrappedRecord";
-import { BlobRef, type JsonBlobRef } from "@atproto/lexicon";
+import { BlobRef } from "@atproto/lexicon";
 import { CID } from 'multiformats'
 
 export const transport = {
@@ -9,8 +9,8 @@ export const transport = {
         decode: (value: string) => new ATURI(value)
     },
     WrappedRecord: {
-        encode: (record: WrappedRecord<any>) => record instanceof WrappedRecord && [record.cid, record.uri.toString(), record.value],
-        decode: ([cid, uri, value]: [string, string, object]) => WrappedRecord.wrap({cid, uri, value})
+        encode: (record: WrappedRecord<any>) => [record.cid, record.uri.toString(), JSON.stringify(record.value)],
+        decode: ([cid, uri, value]: [string, string, string]) => WrappedRecord.wrap({cid, uri, value:JSON.parse(value)})
     },
     BlobRef: {
         encode: (blobref: BlobRef) => {
