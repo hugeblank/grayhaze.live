@@ -8,6 +8,7 @@ import path from 'path'
 async function cleanup() {
     const basepath = './build/lexicons'
     if (!process.env.TARGET) throw new Error("Missing TARGET env variable")
+    const jsons: any[] = []
     await Promise.all((await readdir(basepath, { recursive: true })).map(async (name) => {
         let fpath = path.resolve(`${basepath}/${name}`)
         let stats = await stat(fpath)
@@ -16,9 +17,10 @@ async function cleanup() {
             let file = (await readFile(fpath)).toString()
             if (name === "index.ts") {
                 // Add missing imports
-                file = "import { ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords } from '@atproto/api'\n" + file
+                file = "import { ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords } from '@atproto/api'\n" + file.replace(/export \* as .*/g, "")
             }
             if (process.env.TARGET === "affront") {
+                if (name.startsWith("types")) jsons.push(JSON.parse((await readFile(`${name.replace("types/", "").replace(".ts", ".json")}`)).toString()))
                 await writeFile(fpath, file
                     // Replace all relative reference imports to atproto api classes
                     .replace(/import \* as (.*) from \'\.\.\/\.\.\/\.\.\/(com\/atproto|app\/bsky)\/.*\'/g, "import { $1 } from '@atproto/api'")
@@ -48,6 +50,7 @@ async function cleanup() {
             }
         }
     }))
+    if (process.env.TARGET === "affront") await writeFile("build/lexicons.json", JSON.stringify(jsons))
     console.log("Cleaned.")
 }
 

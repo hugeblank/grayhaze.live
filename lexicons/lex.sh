@@ -4,4 +4,4 @@ npx @atproto/lex-cli gen-api --yes ./build/lexicons ./live/grayhaze/*/*
 tsc
 node build/cleanup.js
 rm -r $1
-mv ./build/lexicons $1
+cp -r ./build/lexicons $1

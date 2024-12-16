@@ -5,8 +5,7 @@
     "main": "build/cleanup.js",
     "type": "module",
     "scripts": {
-        "lex-sprinkler": "TARGET=sprinkler ./lex.sh ../sprinkler/src/lexicons",
-        "lex-affront": "TARGET=affront ./lex.sh ../affront/src/lib/lexicons"
+        "lex": "TARGET=sprinkler ./lex.sh ../sprinkler/src/lexicons; TARGET=affront ./lex.sh ../affront/src/lib/lexicons; cp build/lexicons.json ../affront/static/public/lexicons.json"
     },
     "keywords": [
         "atproto",
