@@ -17,3 +17,5 @@ Please note that absolutely nothing in this repo is final and I'm only sharing e
 3. GrayHaze.live
    - Middleman for HLS records, transforming them back into an m3u8 playlist file
    - Web Frontend
+4. Sprinkler
+   - XRPC server 
