@@ -2,9 +2,10 @@
  * GENERATED CODE - DO NOT MODIFY
  */
 import { type ValidationResult, BlobRef } from '@atproto/lexicon'
-import { hasProp, isObj } from '$lib/lexicons/util'
+import { isObj, hasProp } from '$lib/lexicons/util'
 import { lexicons } from '$lib/lexicons/lexicons'
-import type { ComAtprotoRepoStrongRef } from '@atproto/api'
+import { CID } from 'multiformats/cid'
+import { ComAtprotoRepoStrongRef } from '@atproto/api'
 
 export interface Record {
   content: ComAtprotoRepoStrongRef.Main

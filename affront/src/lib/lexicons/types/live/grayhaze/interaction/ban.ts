@@ -1,17 +1,16 @@
 /**
  * GENERATED CODE - DO NOT MODIFY
  */
-/**
- * GENERATED CODE - DO NOT MODIFY
- */
-import type { ValidationResult } from '@atproto/lexicon'
-import { hasProp, isObj } from '$lib/lexicons/util'
+import { type ValidationResult, BlobRef } from '@atproto/lexicon'
+import { isObj, hasProp } from '$lib/lexicons/util'
 import { lexicons } from '$lib/lexicons/lexicons'
+import { CID } from 'multiformats/cid'
 
 export interface Record {
   /** DID of the account to be blocked. */
   subject: string
-  createdAt: string
+  /** DID of the channel owner for which this ban should apply to. Channel moderators must provide this property. */
+  target?: string
   [k: string]: unknown
 }
 

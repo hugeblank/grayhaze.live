@@ -2,8 +2,9 @@
  * GENERATED CODE - DO NOT MODIFY
  */
 import { type ValidationResult, BlobRef } from '@atproto/lexicon'
-import { hasProp, isObj } from '$lib/lexicons/util'
+import { isObj, hasProp } from '$lib/lexicons/util'
 import { lexicons } from '$lib/lexicons/lexicons'
+import { CID } from 'multiformats/cid'
 
 export interface Record {
   /** The emote name, to be wrapped in colons (:name:) */

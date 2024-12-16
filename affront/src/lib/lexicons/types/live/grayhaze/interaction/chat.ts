@@ -1,16 +1,13 @@
 /**
  * GENERATED CODE - DO NOT MODIFY
  */
-/**
- * GENERATED CODE - DO NOT MODIFY
- */
-import { type ValidationResult } from '@atproto/lexicon'
-import { AppBskyRichtextFacet, ComAtprotoRepoStrongRef } from '@atproto/api'
-import * as LiveGrayhazeContentEmote from '$lib/lexicons/types/live/grayhaze/content/emote'
+import { type ValidationResult, BlobRef } from '@atproto/lexicon'
+import { isObj, hasProp } from '$lib/lexicons/util'
 import { lexicons } from '$lib/lexicons/lexicons'
-import { hasProp, isObj } from '$lib/lexicons/util'
-
-
+import { CID } from 'multiformats/cid'
+import { ComAtprotoRepoStrongRef } from '@atproto/api'
+import { AppBskyRichtextFacet } from '@atproto/api'
+import * as LiveGrayhazeContentEmote from '$lib/lexicons/types/live/grayhaze/content/emote'
 
 export interface Record {
   stream: ComAtprotoRepoStrongRef.Main

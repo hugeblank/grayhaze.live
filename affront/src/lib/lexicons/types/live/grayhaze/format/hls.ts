@@ -1,12 +1,10 @@
 /**
  * GENERATED CODE - DO NOT MODIFY
  */
-/**
- * GENERATED CODE - DO NOT MODIFY
- */
-import type { ValidationResult, BlobRef } from '@atproto/lexicon'
-import { hasProp, isObj } from '$lib/lexicons/util'
+import { type ValidationResult, BlobRef } from '@atproto/lexicon'
+import { isObj, hasProp } from '$lib/lexicons/util'
 import { lexicons } from '$lib/lexicons/lexicons'
+import { CID } from 'multiformats/cid'
 import * as LiveGrayhazeFormatDefs from '$lib/lexicons/types/live/grayhaze/format/defs'
 
 export interface Record {

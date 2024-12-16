@@ -1,35 +1,47 @@
+import { ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords } from '@atproto/api'
 /**
  * GENERATED CODE - DO NOT MODIFY
  */
 import { XrpcClient, type FetchHandler, type FetchHandlerOptions } from '@atproto/xrpc'
 import { schemas } from '$lib/lexicons/lexicons'
+import { CID } from 'multiformats/cid'
 import * as LiveGrayhazeActorChannel from '$lib/lexicons/types/live/grayhaze/actor/channel'
+import * as LiveGrayhazeActorDefs from '$lib/lexicons/types/live/grayhaze/actor/defs'
 import * as LiveGrayhazeContentEmote from '$lib/lexicons/types/live/grayhaze/content/emote'
 import * as LiveGrayhazeContentStream from '$lib/lexicons/types/live/grayhaze/content/stream'
 import * as LiveGrayhazeFormatDefs from '$lib/lexicons/types/live/grayhaze/format/defs'
 import * as LiveGrayhazeFormatHls from '$lib/lexicons/types/live/grayhaze/format/hls'
 import * as LiveGrayhazeInteractionBan from '$lib/lexicons/types/live/grayhaze/interaction/ban'
 import * as LiveGrayhazeInteractionChat from '$lib/lexicons/types/live/grayhaze/interaction/chat'
+import * as LiveGrayhazeInteractionDefs from '$lib/lexicons/types/live/grayhaze/interaction/defs'
 import * as LiveGrayhazeInteractionFollow from '$lib/lexicons/types/live/grayhaze/interaction/follow'
-import type { ComAtprotoRepoCreateRecord, ComAtprotoRepoDeleteRecord, ComAtprotoRepoGetRecord, ComAtprotoRepoListRecords } from '@atproto/api'
+import * as LiveGrayhazeInteractionPromotion from '$lib/lexicons/types/live/grayhaze/interaction/promotion'
+import * as LiveGrayhazeInteractionSubscribeChat from '$lib/lexicons/types/live/grayhaze/interaction/subscribeChat'
 
-// export * as LiveGrayhazeActorChannel from '$lib/lexicons/types/live/grayhaze/actor/channel'
-// export * as LiveGrayhazeContentEmote from '$lib/lexicons/types/live/grayhaze/content/emote'
-// export * as LiveGrayhazeContentStream from '$lib/lexicons/types/live/grayhaze/content/stream'
-// export * as LiveGrayhazeFormatDefs from '$lib/lexicons/types/live/grayhaze/format/defs'
-// export * as LiveGrayhazeFormatHls from '$lib/lexicons/types/live/grayhaze/format/hls'
-// export * as LiveGrayhazeInteractionBan from '$lib/lexicons/types/live/grayhaze/interaction/ban'
-// export * as LiveGrayhazeInteractionChat from '$lib/lexicons/types/live/grayhaze/interaction/chat'
-// export * as LiveGrayhazeInteractionFollow from '$lib/lexicons/types/live/grayhaze/interaction/follow'
+export * as LiveGrayhazeActorChannel from '$lib/lexicons/types/live/grayhaze/actor/channel'
+export * as LiveGrayhazeActorDefs from '$lib/lexicons/types/live/grayhaze/actor/defs'
+export * as LiveGrayhazeContentEmote from '$lib/lexicons/types/live/grayhaze/content/emote'
+export * as LiveGrayhazeContentStream from '$lib/lexicons/types/live/grayhaze/content/stream'
+export * as LiveGrayhazeFormatDefs from '$lib/lexicons/types/live/grayhaze/format/defs'
+export * as LiveGrayhazeFormatHls from '$lib/lexicons/types/live/grayhaze/format/hls'
+export * as LiveGrayhazeInteractionBan from '$lib/lexicons/types/live/grayhaze/interaction/ban'
+export * as LiveGrayhazeInteractionChat from '$lib/lexicons/types/live/grayhaze/interaction/chat'
+export * as LiveGrayhazeInteractionDefs from '$lib/lexicons/types/live/grayhaze/interaction/defs'
+export * as LiveGrayhazeInteractionFollow from '$lib/lexicons/types/live/grayhaze/interaction/follow'
+export * as LiveGrayhazeInteractionPromotion from '$lib/lexicons/types/live/grayhaze/interaction/promotion'
+export * as LiveGrayhazeInteractionSubscribeChat from '$lib/lexicons/types/live/grayhaze/interaction/subscribeChat'
 
-
-export class AtpBaseClient {
-  _client: XrpcClient
+export class AtpBaseClient extends XrpcClient {
   live: LiveNS
 
-  constructor(client: XrpcClient) {
-    this._client = client
-    this.live = new LiveNS(client)
+  constructor(options: FetchHandler | FetchHandlerOptions) {
+    super(options, schemas)
+    this.live = new LiveNS(this)
+  }
+
+  /** @deprecated use `this` instead */
+  get xrpc(): XrpcClient {
+    return this
   }
 }
 
@@ -80,7 +92,7 @@ export class ChannelRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; cid: string; value: LiveGrayhazeActorChannel.Record }[]
+    records: { uri: string; value: LiveGrayhazeActorChannel.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.actor.channel',
@@ -162,7 +174,7 @@ export class EmoteRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; cid: string; value: LiveGrayhazeContentEmote.Record }[]
+    records: { uri: string; value: LiveGrayhazeContentEmote.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.content.emote',
@@ -227,7 +239,7 @@ export class StreamRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; cid: string; value: LiveGrayhazeContentStream.Record }[]
+    records: { uri: string; value: LiveGrayhazeContentStream.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.content.stream',
@@ -302,7 +314,7 @@ export class HlsRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; cid: string; value: LiveGrayhazeFormatHls.Record }[]
+    records: { uri: string; value: LiveGrayhazeFormatHls.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.format.hls',
@@ -361,12 +373,14 @@ export class LiveGrayhazeInteractionNS {
   ban: BanRecord
   chat: ChatRecord
   follow: FollowRecord
+  promotion: PromotionRecord
 
   constructor(client: XrpcClient) {
     this._client = client
     this.ban = new BanRecord(client)
     this.chat = new ChatRecord(client)
     this.follow = new FollowRecord(client)
+    this.promotion = new PromotionRecord(client)
   }
 }
 
@@ -381,7 +395,7 @@ export class BanRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; cid: string; value: LiveGrayhazeInteractionBan.Record }[]
+    records: { uri: string; value: LiveGrayhazeInteractionBan.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.interaction.ban',
@@ -446,7 +460,7 @@ export class ChatRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; cid: string; value: LiveGrayhazeInteractionChat.Record }[]
+    records: { uri: string; value: LiveGrayhazeInteractionChat.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.interaction.chat',
@@ -511,7 +525,7 @@ export class FollowRecord {
     params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
   ): Promise<{
     cursor?: string
-    records: { uri: string; cid: string; value: LiveGrayhazeInteractionFollow.Record }[]
+    records: { uri: string; value: LiveGrayhazeInteractionFollow.Record }[]
   }> {
     const res = await this._client.call('com.atproto.repo.listRecords', {
       collection: 'live.grayhaze.interaction.follow',
@@ -560,6 +574,71 @@ export class FollowRecord {
       'com.atproto.repo.deleteRecord',
       undefined,
       { collection: 'live.grayhaze.interaction.follow', ...params },
+      { headers },
+    )
+  }
+}
+
+export class PromotionRecord {
+  _client: XrpcClient
+
+  constructor(client: XrpcClient) {
+    this._client = client
+  }
+
+  async list(
+    params: Omit<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
+  ): Promise<{
+    cursor?: string
+    records: { uri: string; value: LiveGrayhazeInteractionPromotion.Record }[]
+  }> {
+    const res = await this._client.call('com.atproto.repo.listRecords', {
+      collection: 'live.grayhaze.interaction.promotion',
+      ...params,
+    })
+    return res.data
+  }
+
+  async get(
+    params: Omit<ComAtprotoRepoGetRecord.QueryParams, 'collection'>,
+  ): Promise<{
+    uri: string
+    cid: string
+    value: LiveGrayhazeInteractionPromotion.Record
+  }> {
+    const res = await this._client.call('com.atproto.repo.getRecord', {
+      collection: 'live.grayhaze.interaction.promotion',
+      ...params,
+    })
+    return res.data
+  }
+
+  async create(
+    params: Omit<
+      ComAtprotoRepoCreateRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: LiveGrayhazeInteractionPromotion.Record,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    record.$type = 'live.grayhaze.interaction.promotion'
+    const res = await this._client.call(
+      'com.atproto.repo.createRecord',
+      undefined,
+      { collection: 'live.grayhaze.interaction.promotion', ...params, record },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
+  async delete(
+    params: Omit<ComAtprotoRepoDeleteRecord.InputSchema, 'collection'>,
+    headers?: Record<string, string>,
+  ): Promise<void> {
+    await this._client.call(
+      'com.atproto.repo.deleteRecord',
+      undefined,
+      { collection: 'live.grayhaze.interaction.promotion', ...params },
       { headers },
     )
   }

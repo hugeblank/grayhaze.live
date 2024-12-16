@@ -57,6 +57,35 @@ export const schemaDict = {
       },
     },
   },
+  LiveGrayhazeActorDefs: {
+    lexicon: 1,
+    id: 'live.grayhaze.actor.defs',
+    defs: {
+      profileViewBasic: {
+        type: 'object',
+        required: ['did'],
+        properties: {
+          did: {
+            type: 'string',
+            format: 'did',
+          },
+          handle: {
+            type: 'string',
+            format: 'handle',
+          },
+          displayName: {
+            type: 'string',
+            maxGraphemes: 64,
+            maxLength: 640,
+          },
+          avatar: {
+            type: 'string',
+            format: 'uri',
+          },
+        },
+      },
+    },
+  },
   LiveGrayhazeContentEmote: {
     lexicon: 1,
     id: 'live.grayhaze.content.emote',
@@ -97,10 +126,9 @@ export const schemaDict = {
           required: ['content', 'title'],
           properties: {
             content: {
-              type: 'union',
-              description:
-                'An open union of formats, allowing us to support more than hls in the future.',
-              refs: ['lex:live.grayhaze.format.hls'],
+              type: 'ref',
+              description: 'A ref to a format',
+              ref: 'lex:com.atproto.repo.strongRef',
             },
             title: {
               type: 'string',
@@ -207,16 +235,18 @@ export const schemaDict = {
         key: 'tid',
         record: {
           type: 'object',
-          required: ['subject', 'createdAt'],
+          required: ['subject'],
           properties: {
             subject: {
               type: 'string',
               format: 'did',
               description: 'DID of the account to be blocked.',
             },
-            createdAt: {
+            target: {
               type: 'string',
-              format: 'datetime',
+              format: 'did',
+              description:
+                'DID of the channel owner for which this ban should apply to. Channel moderators must provide this property.',
             },
           },
         },
@@ -233,16 +263,16 @@ export const schemaDict = {
         key: 'tid',
         record: {
           type: 'object',
-          required: ['text'],
+          required: ['text', 'stream'],
           properties: {
-            stream_uri: {
-              type: 'string',
-              format: 'at-uri',
+            stream: {
+              type: 'ref',
+              ref: 'lex:com.atproto.repo.strongRef',
             },
             text: {
               type: 'string',
-              maxLength: 1500,
-              maxGraphemes: 150,
+              maxLength: 3000,
+              maxGraphemes: 300,
               description:
                 'The primary post content. May be an empty string, if there are embeds.',
             },
@@ -291,6 +321,44 @@ export const schemaDict = {
       },
     },
   },
+  LiveGrayhazeInteractionDefs: {
+    lexicon: 1,
+    id: 'live.grayhaze.interaction.defs',
+    defs: {
+      chatView: {
+        type: 'object',
+        required: ['src', 'author'],
+        properties: {
+          chat_uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          src: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.interaction.chat',
+          },
+          author: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.actor.defs#profileViewBasic',
+          },
+        },
+      },
+      banView: {
+        type: 'object',
+        required: ['src', 'author'],
+        properties: {
+          author: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.actor.defs#profileViewBasic',
+          },
+          src: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.interaction.ban',
+          },
+        },
+      },
+    },
+  },
   LiveGrayhazeInteractionFollow: {
     lexicon: 1,
     id: 'live.grayhaze.interaction.follow',
@@ -317,17 +385,105 @@ export const schemaDict = {
       },
     },
   },
+  LiveGrayhazeInteractionPromotion: {
+    lexicon: 1,
+    id: 'live.grayhaze.interaction.promotion',
+    defs: {
+      main: {
+        type: 'record',
+        description:
+          'A promotion of a user beyond the default chatter. May grant exclusive permissions like chat moderation.',
+        key: 'tid',
+        record: {
+          type: 'object',
+          required: ['target', 'level'],
+          properties: {
+            target: {
+              type: 'string',
+              format: 'did',
+              maxLength: 300,
+            },
+            level: {
+              type: 'string',
+              description:
+                'vip - purely aesthetic, intended to put a badge next to name | moderator - grants the ability to give timeouts/bans | kitten - undefined effect',
+              enum: ['moderator', 'vip', 'kitten'],
+            },
+          },
+        },
+      },
+    },
+  },
+  LiveGrayhazeInteractionSubscribeChat: {
+    lexicon: 1,
+    id: 'live.grayhaze.interaction.subscribeChat',
+    defs: {
+      main: {
+        type: 'subscription',
+        description: 'Subscribe to the chat for a specific stream that is live',
+        parameters: {
+          type: 'params',
+          required: ['stream'],
+          properties: {
+            stream: {
+              type: 'string',
+              format: 'tid',
+            },
+            did: {
+              type: 'string',
+              format: 'did',
+            },
+          },
+        },
+        message: {
+          schema: {
+            type: 'union',
+            refs: ['lex:live.grayhaze.interaction.subscribeChat#message'],
+          },
+        },
+        errors: [
+          {
+            name: 'StreamEnded',
+            description:
+              'The stream for which the subscription was attempted has ended. Use live.grayhaze.interaction.listChat for VODs.',
+          },
+          {
+            name: 'ConsumerTooSlow',
+            description:
+              'If the consumer of the stream can not keep up with events, and a backlog gets too large, the server will drop the connection.',
+          },
+        ],
+      },
+      message: {
+        type: 'object',
+        description:
+          'Represents an event occuring related to the stream chat, like a message, or a ban',
+        required: ['message'],
+        properties: {
+          message: {
+            type: 'ref',
+            ref: 'lex:live.grayhaze.interaction.defs#chatView',
+          },
+        },
+      },
+    },
+  },
 } as const satisfies Record<string, LexiconDoc>
 
 export const schemas = Object.values(schemaDict)
 export const lexicons: Lexicons = new Lexicons(schemas)
 export const ids = {
   LiveGrayhazeActorChannel: 'live.grayhaze.actor.channel',
+  LiveGrayhazeActorDefs: 'live.grayhaze.actor.defs',
   LiveGrayhazeContentEmote: 'live.grayhaze.content.emote',
   LiveGrayhazeContentStream: 'live.grayhaze.content.stream',
   LiveGrayhazeFormatDefs: 'live.grayhaze.format.defs',
   LiveGrayhazeFormatHls: 'live.grayhaze.format.hls',
   LiveGrayhazeInteractionBan: 'live.grayhaze.interaction.ban',
   LiveGrayhazeInteractionChat: 'live.grayhaze.interaction.chat',
+  LiveGrayhazeInteractionDefs: 'live.grayhaze.interaction.defs',
   LiveGrayhazeInteractionFollow: 'live.grayhaze.interaction.follow',
+  LiveGrayhazeInteractionPromotion: 'live.grayhaze.interaction.promotion',
+  LiveGrayhazeInteractionSubscribeChat:
+    'live.grayhaze.interaction.subscribeChat',
 }
