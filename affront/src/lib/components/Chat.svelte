@@ -2,6 +2,7 @@
     import { enhance } from '$app/forms';
 
     interface ChatView {
+        src_uri: string, // AT-URI
         src: {
             stream: {
                 uri: string,
@@ -22,13 +23,14 @@
     import {
 		PUBLIC_SPRINKLER,
 	} from '$env/static/public';
+    import type { ATPUser } from '$lib/ATPUser';
     import { decode, decodeFirst } from '@atcute/cbor';
     import { onMount } from 'svelte';
-    let { rkey, authed } = $props();
+    let { rkey, authed, user }: {rkey: string, authed: boolean, user: ATPUser} = $props();
 
     const chats: ChatView[] = $state([])
     onMount(() => {
-        const ws = new WebSocket(`${PUBLIC_SPRINKLER}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}`)
+        const ws = new WebSocket(`${PUBLIC_SPRINKLER}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`)
         ws.onopen = () => {
             console.log("chat socket: subscription")
         }

@@ -57,6 +57,7 @@
             }
         }
     }
+    console.log(mappedRawMedia, mappedStreams)
 </script>
 
 <div class="mx-auto max-w-screen-2xl h-[90vh]">

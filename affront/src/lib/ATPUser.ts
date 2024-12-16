@@ -104,6 +104,12 @@ export class ATPUser {
         }
     }
 
+    public getName() {
+        // TODO: getProfile here
+        if (this.handle) return "@" + this.handle
+        return this.did
+    }
+
     public async getRecord(collection: string, rkey: string) {
         const response = await this._agent.com.atproto.repo.getRecord({
             repo: this._diddoc.id,

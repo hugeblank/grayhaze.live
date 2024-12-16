@@ -6,7 +6,7 @@
 </script>
 <div class="flex lg:flex-row flex-col">
     <Player repo={data.user.did} rkey={data.formatrkey} />
-    <Chat authed={data.authed} rkey={data.streamrkey}/>
+    <Chat authed={data.authed} rkey={data.streamrkey} user={data.user}/>
 </div>
 {#if data.title}
     <h3 class="py-2">{data.title}</h3>
