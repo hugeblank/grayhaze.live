@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
-    import {
-		PUBLIC_SPRINKLER,
-	} from '$env/static/public';
+    import { enhance } from '$app/forms';;
+    import { env } from '$env/dynamic/public';
     import type { ATPUser } from '$lib/ATPUser';
     import { ATURI } from '$lib/ATURI';
     import type { BanView, ChatView } from '$lib/lexicons/types/live/grayhaze/interaction/defs';
@@ -12,7 +10,7 @@
 
     let chats: ChatView[] = $state([])
     onMount(() => {
-        const ws = new WebSocket(`${PUBLIC_SPRINKLER}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`)
+        const ws = new WebSocket(`${env.PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`)
         ws.onopen = () => {
             console.log("chat socket: subscription")
         }

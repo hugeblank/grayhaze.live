@@ -28,7 +28,7 @@ export class ATURI {
 
     public async fetch<T>(cid?: string): Promise<RecordLike<T>> {
         // This is not that big of a deal because we *probably* have the DID cached.
-        return (await (await ATPUser.fromDID(this._repo)).agent._client.call("com.atproto.repo.getRecord", {
+        return (await (await ATPUser.fromDID(this._repo)).agent.call("com.atproto.repo.getRecord", {
             collection: this._collection,
             repo: this._repo,
             rkey: this._rkey,

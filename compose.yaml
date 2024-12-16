@@ -1,0 +1,38 @@
+services:
+  valkey:
+    image: docker.io/bitnami/valkey:8.0
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - VALKEY_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    hostname: "valkey"
+    volumes:
+      - 'valkey_data:/bitnami/valkey/data'
+  affront:
+    container_name: affront
+    pull_policy: build
+    build: 
+      context: ./affront
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./affront/.env
+    ports:
+      - 6080:3000 # host:container
+  sprinkler:
+    container_name: sprinkler
+    pull_policy: build
+    build: 
+      context: ./sprinkler
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 6070:3000
+volumes:
+  valkey_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: "./data"

@@ -3,10 +3,9 @@ import { SessionStore } from "./Stores";
 import { StateStore } from "./Stores";
 import { NodeOAuthClient } from "@atproto/oauth-client-node"
 import { JoseKey } from "@atproto/jwk-jose";
-import dotenv from 'dotenv'
 import { EphemeralStore } from "./Stores";
 import type { ATPUser } from "./ATPUser";
-dotenv.config()
+import { PRIVATE_KEY } from "$env/static/private";
 
 export const localSessionStore = EphemeralStore.of("localsession")
 
@@ -18,7 +17,7 @@ export const client = await NodeOAuthClient.fromClientId({
     sessionStore: new SessionStore(),
 	stateStore: new StateStore(1000 * 60 * 60),
 	keyset: [
-		await JoseKey.fromImportable(process.env.PRIVATE_KEY as string, "2f49d966b3688d47cce4d3555889a3d54ddffcbea365bcaca7c43f3a9c8df75e")
+		await JoseKey.fromImportable(PRIVATE_KEY, "2f49d966b3688d47cce4d3555889a3d54ddffcbea365bcaca7c43f3a9c8df75e")
 	]
 })
 
