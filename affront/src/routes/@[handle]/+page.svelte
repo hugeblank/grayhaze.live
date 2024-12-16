@@ -28,6 +28,7 @@
     const mappedRawMedia = data.rawMedia?.map((record) => {
         return {
             record,
+            live: record.value.end,
             to: `/@${data.user.handle}/unlisted/${record.uri.rkey}`,
             duration: getDuration(record),
             thumbnail: undefined,
@@ -39,6 +40,7 @@
         // TODO: Support more than hls record format
         return {
             record: streamrecord,
+            live: hlsrecord.value.end,
             to: `/@${data.user.handle}/${streamrecord.uri.rkey}`,
             duration: getDuration(hlsrecord),
             thumbnail: `/api/blob/${data.user.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
