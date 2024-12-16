@@ -1,0 +1,32 @@
+{
+    "name": "lexicons",
+    "version": "1.0.0",
+    "description": "GrayHaze Lexicon class adapter",
+    "main": "build/cleanup.js",
+    "type": "module",
+    "scripts": {
+        "lex-sprinkler": "TARGET=sprinkler ./lex.sh ../sprinkler/src/lexicons",
+        "lex-affront": "TARGET=affront ./lex.sh ../affront/src/lib/lexicons"
+    },
+    "keywords": [
+        "atproto",
+        "grayhaze",
+        "lexicon"
+    ],
+    "author": "hugeblank",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^22.10.2",
+        "typescript": "^5.7.2"
+    },
+    "dependencies": {
+        "@atproto/api": "^0.13.20",
+        "@atproto/identity": "^0.4.3",
+        "@atproto/lex-cli": "^0.5.3",
+        "@atproto/lexicon": "^0.4.4",
+        "@atproto/sync": "^0.1.7",
+        "@atproto/xrpc": "^0.6.5",
+        "dotenv": "^16.4.7",
+        "multiformats": "^13.3.1"
+    }
+}
