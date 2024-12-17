@@ -7,15 +7,36 @@
     import { decode, decodeFirst } from '@atcute/cbor';
     import { onMount } from 'svelte';
     let { rkey, authed, user }: {rkey: string, authed: boolean, user: ATPUser} = $props();
+    const wsurl = `${env.PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`
+
+    const testchat = {
+        src: {
+            "text": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+            "$type": "live.grayhaze.interaction.chat",
+            "stream": {
+                "cid": "bafyreih6th7mhszduwp3kmoyza26nle6x5eq7wdtv7jt5nilrvtq22utr4",
+                "uri": "at://did:web:hugeblank.dev/live.grayhaze.content.stream/3ld6chveh2s2w"
+            }
+        },
+        src_uri: "at://did:web:hugeblank.dev/live.grayhaze.interaction.chat/3ldhjrgpxhk2w",
+        author: {
+            did: "did:web:hugeblank.dev",
+            handle: "hugeblank.dev"
+        }
+    }
 
     let chats: ChatView[] = $state([])
-    onMount(() => {
-        const ws = new WebSocket(`${env.PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`)
+
+    function makesocket() {
+        let ws = new WebSocket(wsurl)
+        let opened = false
         ws.onopen = () => {
             console.log("chat socket: subscription")
+            opened = true
         }
         ws.onclose = () => {
             console.log("chat socket: closed")
+            if (opened) makesocket()
         }
         ws.onerror = () => {
             console.log("chat socket: errored")
@@ -40,13 +61,18 @@
                 }
             }
         }
+        return ws
+    }
+
+    onMount(() => {
+        makesocket()
     })
 
 </script>
 
-<div class="lg:min-w-96 md:min-w-full border-neutral-500 border">
+<div class="lg:min-w-96 lg:w-96 md:min-w-full md:w-full border-neutral-500 border">
     <div class="h-full flex flex-col">
-        <div class="px-2 grow min-h-64">
+        <div class="px-2 grow h-64">
         {#each chats as chat}
             <!-- TODO: Usercard on click -->
             <div class="flex flex-row">
@@ -58,8 +84,8 @@
                         </form>
                     </div>
                 {/if}
-                <div>
-                    <p>&lt;<a href="/{chat.author.did}"><b>{chat.author.displayName ?? chat.author.handle ? `@${chat.author.handle}` : chat.author.did}</b></a>&gt; {chat.src.text}</p>
+                <div class="min-w-0 text-wrap break-words line-clamp-6">
+                    <p class="">&lt;<a href="/{chat.author.did}"><b>{chat.author.displayName ?? chat.author.handle ? `@${chat.author.handle}` : chat.author.did}</b></a>&gt; {chat.src.text}</p>
                 </div>
             </div>
         {/each}
