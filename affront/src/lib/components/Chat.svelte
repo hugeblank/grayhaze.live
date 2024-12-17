@@ -6,24 +6,24 @@
     import type { BanView, ChatView } from '$lib/lexicons/types/live/grayhaze/interaction/defs';
     import { decode, decodeFirst } from '@atcute/cbor';
     import { onMount } from 'svelte';
-    let { rkey, authed, user }: {rkey: string, authed: boolean, user: ATPUser} = $props();
+    let { rkey, authed, user, owner }: {rkey: string, authed: boolean, user: ATPUser, owner: boolean} = $props();
     const wsurl = `${env.PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`
 
-    const testchat = {
-        src: {
-            "text": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
-            "$type": "live.grayhaze.interaction.chat",
-            "stream": {
-                "cid": "bafyreih6th7mhszduwp3kmoyza26nle6x5eq7wdtv7jt5nilrvtq22utr4",
-                "uri": "at://did:web:hugeblank.dev/live.grayhaze.content.stream/3ld6chveh2s2w"
-            }
-        },
-        src_uri: "at://did:web:hugeblank.dev/live.grayhaze.interaction.chat/3ldhjrgpxhk2w",
-        author: {
-            did: "did:web:hugeblank.dev",
-            handle: "hugeblank.dev"
-        }
-    }
+    // const testchat = {
+    //     src: {
+    //         "text": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+    //         "$type": "live.grayhaze.interaction.chat",
+    //         "stream": {
+    //             "cid": "bafyreih6th7mhszduwp3kmoyza26nle6x5eq7wdtv7jt5nilrvtq22utr4",
+    //             "uri": "at://did:web:hugeblank.dev/live.grayhaze.content.stream/3ld6chveh2s2w"
+    //         }
+    //     },
+    //     src_uri: "at://did:web:hugeblank.dev/live.grayhaze.interaction.chat/3ldhjrgpxhk2w",
+    //     author: {
+    //         did: "did:web:hugeblank.dev",
+    //         handle: "hugeblank.dev"
+    //     }
+    // }
 
     let chats: ChatView[] = $state([])
 
@@ -72,11 +72,11 @@
 
 <div class="lg:min-w-96 lg:w-96 md:min-w-full md:w-full border-neutral-500 border">
     <div class="h-full flex flex-col">
-        <div class="px-2 grow h-64">
+        <div class="px-2 grow h-64 overflow-auto">
         {#each chats as chat}
             <!-- TODO: Usercard on click -->
             <div class="flex flex-row">
-                {#if authed}
+                {#if owner}
                     <div class="pr-2">
                         <form method="POST" enctype="multipart/form-data" action="?/ban" use:enhance>
                             <input type="hidden" name="did" id="did" value="{chat.author.did}">

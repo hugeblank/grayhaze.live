@@ -14,7 +14,8 @@ export const load = async ({ params, parent, data}) => {
             thumbnail: value.thumbnail,
             tags: value.tags,
             streamrkey: params.rkey,
-            formatrkey: new ATURI(value.content.uri).rkey
+            formatrkey: new ATURI(value.content.uri).rkey,
+            owner: pdata.owner
         }
     } catch {
         error(400, "No stream Found")
