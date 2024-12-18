@@ -24,6 +24,7 @@
                         "enum": [
                             "moderator",
                             "vip",
+                            "wage_slave",
                             "kitten"
                         ]
                     }

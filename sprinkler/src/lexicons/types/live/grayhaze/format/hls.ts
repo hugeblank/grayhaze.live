@@ -8,10 +8,12 @@ import { CID } from 'multiformats/cid'
 import * as LiveGrayhazeFormatDefs from './defs.js'
 
 export interface Record {
-  version: number
-  mediaSequence: number
+  version?: number
+  mediaSequence?: number
   sequence: LiveGrayhazeFormatDefs.HlsSegment[]
   end: boolean
+  next?: string
+  prev?: string
   [k: string]: unknown
 }
 

@@ -200,7 +200,7 @@ export const schemaDict = {
         description: 'An HLS playlist',
         record: {
           type: 'object',
-          required: ['version', 'mediaSequence', 'sequence'],
+          required: ['sequence'],
           properties: {
             version: {
               type: 'integer',
@@ -214,10 +214,19 @@ export const schemaDict = {
                 type: 'ref',
                 ref: 'lex:live.grayhaze.format.defs#hlsSegment',
               },
+              maxLength: 512,
             },
             end: {
               type: 'boolean',
               default: false,
+            },
+            next: {
+              type: 'string',
+              format: 'tid',
+            },
+            prev: {
+              type: 'string',
+              format: 'tid',
             },
           },
         },
@@ -411,7 +420,7 @@ export const schemaDict = {
               type: 'string',
               description:
                 'vip - purely aesthetic, intended to put a badge next to name | moderator - grants the ability to give timeouts/bans | kitten - undefined effect',
-              enum: ['moderator', 'vip', 'kitten'],
+              enum: ['moderator', 'vip', 'wage_slave', 'kitten'],
             },
           },
         },

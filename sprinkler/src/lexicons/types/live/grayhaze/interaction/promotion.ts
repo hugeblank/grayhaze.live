@@ -9,7 +9,7 @@ import { CID } from 'multiformats/cid'
 export interface Record {
   target: string
   /** vip - purely aesthetic, intended to put a badge next to name | moderator - grants the ability to give timeouts/bans | kitten - undefined effect */
-  level: 'moderator' | 'vip' | 'kitten'
+  level: 'moderator' | 'vip' | 'wage_slave' | 'kitten'
   [k: string]: unknown
 }
 

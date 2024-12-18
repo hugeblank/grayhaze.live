@@ -9,8 +9,6 @@
             "record": {
                 "type": "object",
                 "required": [
-                    "version",
-                    "mediaSequence",
                     "sequence"
                 ],
                 "properties": {
@@ -21,9 +19,12 @@
                         "items": {
                             "type": "ref",
                             "ref": "live.grayhaze.format.defs#hlsSegment"
-                        }
+                        },
+                        "maxLength": 512
                     },
-                    "end": { "type": "boolean", "default": false }
+                    "end": { "type": "boolean" },
+                    "next": { "type": "string", "format": "tid" },
+                    "prev": { "type": "string", "format": "tid" }
                 }
             }
         }
