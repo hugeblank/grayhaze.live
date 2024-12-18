@@ -1,41 +1,32 @@
-import { parse, stringify } from 'hls-parser'
+import { parse } from 'hls-parser'
 import fs, { readdir } from 'fs/promises'
 import chokidar from 'chokidar'
 import { MediaPlaylist, Segment } from 'hls-parser/types'
-import { Agent } from '@atproto/api'
-import { JsonBlobRef } from '@atproto/lexicon'
 import { PathLike } from 'fs'
 import path from 'path'
+import { GrayhazeAgent } from './Merged'
+import { HlsSegment } from './lexicons/types/live/grayhaze/format/defs'
+import { Record } from './lexicons/types/live/grayhaze/format/hls'
+import { ComAtprotoRepoPutRecord } from '@atproto/api'
 
 // State of media in the stream directory
 const playlistCache: Map<string, PlaylistHandler> = new Map()
 
 const outputPath = process.env.OUTPUT_PATH as string
 
-interface SegmentData {
-    src: JsonBlobRef,
-    duration: number
-}
-
-interface HlsData {
-    $type: "live.grayhaze.format.hls",
-    version: number,
-    mediaSequence: number,
-    sequence: SegmentData[],
-    end?: boolean,
-}
-
 const segmentMimes: Map<string, string> = new Map()
 segmentMimes.set("ts", "video/MP2T")
 segmentMimes.set("m4s", "video/iso.segment")
 
-class RecordHandler {
-    private agent: Agent
-    private rkey: string
-    private segments: Segment[]
-    private data: HlsData
+const collection = "live.grayhaze.format.hls"
 
-    static async uploadSegment(agent: Agent, pth: PathLike) {
+class RecordHandler {
+    private agent: GrayhazeAgent
+    private rkey: string
+    private playlist: MediaPlaylist
+    private record: Record
+
+    private static async uploadSegment(agent: GrayhazeAgent, pth: PathLike) {
         const pstr = pth.toString()
         let buf = await fs.readFile(path.join(outputPath, pstr))
         const split = pstr.split(".")
@@ -45,86 +36,107 @@ class RecordHandler {
                 ["Content-Length"]: buf.length.toString()
             }
         })
-        if (success) return data.blob.original
+        if (success) return data.blob
     }
     private async uploadSegment(pth: PathLike) {
         return await RecordHandler.uploadSegment(this.agent, pth)
     }
 
     public peek(): Segment {
-        return this.segments[this.segments.length-1]
+        return this.playlist.segments[this.playlist.segments.length-1]
+    }
+
+    public get length(): number {
+        return this.playlist.segments.length
     }
 
     public async close() {
-        this.data.end = true
-        const { success, data } = await this.agent.com.atproto.repo.putRecord({
-            repo: this.agent.did!,
-            rkey: this.rkey,
-            collection: this.data.$type,
-            record: this.data
-        })
+        this.record.end = true
+        const { success, data } = await this.update()
         if (success) {
             return data
         } else console.error(`Could not put record ${this.rkey}, failed to mark as ended`)
     }
 
+    public async update(): Promise<{ success: boolean, data: ComAtprotoRepoPutRecord.OutputSchema}> {
+        return await this.agent.com.atproto.repo.putRecord({
+            repo: this.agent.did!,
+            rkey: this.rkey,
+            record: this.record,
+            collection
+        })
+    }
+
     public async push(segment: Segment) {
-        this.segments.push(segment)
+        this.playlist.segments.push(segment)
         const emsg = `Could not put record ${this.rkey}, skipping segment ${segment.uri}`
         const blob = await this.uploadSegment(segment.uri)
         if (blob) {
-            this.data.sequence.push({ src: blob, duration: Math.floor(segment.duration * 1000000 ) })
-            const { success, data } = await this.agent.com.atproto.repo.putRecord({
-                repo: this.agent.did!,
-                rkey: this.rkey,
-                collection: this.data.$type,
-                record: this.data
-            })
+            this.record.sequence.push({ src: blob, duration: Math.floor(segment.duration * 1000000 ) })
+            const { success, data } = await this.update()
             if (success) {
                 return data
             } else console.error(emsg)
         } else console.error(emsg)
     }
 
-    constructor(agent: Agent, rkey: string, segments: Segment[], data: HlsData) {
-        this.agent = agent
-        this.rkey = rkey
-        this.segments = segments
-        this.data = data
+    public async next() {
+        const { record, rkey } = await RecordHandler.makeRecord(this.agent, this.playlist, [], this.rkey)
+        if (!rkey) throw new Error("Failed to push next record")
+        this.record.next = rkey
+        const { success } = await this.update()
+        if (!success) throw new Error("Could not append next reference onto old record")
+        return new RecordHandler(this.agent, rkey, this.playlist, record)
     }
 
-    static async create(agent: Agent, playlist: MediaPlaylist, blobs: SegmentData[]) {
-        const data: HlsData = {
+    constructor(agent: GrayhazeAgent, rkey: string, playlist: MediaPlaylist, record: Record) {
+        this.agent = agent
+        this.rkey = rkey
+        this.playlist = playlist
+        this.record = record
+    }
+
+    private static async makeRecord(agent: GrayhazeAgent, playlist: MediaPlaylist, blobs: HlsSegment[], prev?: string): Promise<{ record: Record, rkey: string }> {
+        const record = {
             $type: "live.grayhaze.format.hls",
             version: playlist.version || 3,
             mediaSequence: playlist.mediaSequenceBase || 0,
-            sequence: blobs
+            sequence: blobs,
+            prev
         }
-        const response = await agent.com.atproto.repo.createRecord({
+        const response = await agent.live.grayhaze.format.hls.create({
             repo: agent.did!,
-            collection: data.$type,
-            record: data
-        })
-        if (response.success) {
-            const aturi = response.data.uri.split("/")
-            return new RecordHandler(agent, aturi[aturi.length-1], playlist.segments, data)
+        }, record)
+        if (response) {
+            const aturi = response.uri.split("/")
+            return { record, rkey: aturi[aturi.length-1] }
         } else {
             throw new Error("Could not create HLS Record")
         }
+    }
+
+    static async create(agent: GrayhazeAgent, playlist: MediaPlaylist) {
+        let blobs: HlsSegment[] = []
+        for (let segment of playlist.segments) {
+            const blob = await RecordHandler.uploadSegment(agent, segment.uri)
+            if (blob) {
+                blobs.push({ src: blob, duration: Math.floor(segment.duration*1000000) })
+            } else {
+                console.error(`Failed to upload segment ${segment.uri}`)
+            }
+        }
+        const { record, rkey } = await this.makeRecord(agent, playlist, blobs)
+        return new RecordHandler(agent, rkey, playlist, record)
     }
 }
 
 // Class for handling pushing mpegts files up as blobs to the users PDS, then updating the live.grayhaze.format.hls record
 class PlaylistHandler {
     private path: string
-    private playlist: MediaPlaylist
     private handler: RecordHandler
 
-    private static async readPlaylist(path: PathLike): Promise<MediaPlaylist> {
-        return parse((await fs.readFile(path)).toString()) as MediaPlaylist
-    }
     private async readPlaylist(): Promise<MediaPlaylist> {
-        return PlaylistHandler.readPlaylist(this.path)
+        return parse((await fs.readFile(this.path)).toString()) as MediaPlaylist
     }
 
     async update() {
@@ -133,36 +145,28 @@ class PlaylistHandler {
         if (this.handler.peek().uri !== nsegment.uri) {
             console.log(`Push segment ${nsegment.uri}`)
             await this.handler.push(nsegment)
+            if (this.handler.length >= 512) {
+                console.log("Creating next record")
+                this.handler = await this.handler.next()
+            }
         }
         if (newpl.endlist) {
-            this.playlist.endlist = true
             await this.handler.close()
             console.log("done")
         }
     }
 
-    private constructor(path: string, playlist: MediaPlaylist, record: RecordHandler) {
+    private constructor(path: string, record: RecordHandler) {
         this.path = path
-        this.playlist = playlist
         this.handler = record
     }
 
-    static async create(agent: Agent, pth: string) {
-        const parsed = await PlaylistHandler.readPlaylist(pth)
-        let blobs = []
-        for (let segment of parsed.segments) {
-            const blob = await RecordHandler.uploadSegment(agent, segment.uri)
-            if (blob) {
-                blobs.push({ src: blob, duration: Math.floor(segment.duration*1000000) })
-            } else {
-                console.error(`Failed to upload segment ${segment.uri}`)
-            }
-        }
-        return new PlaylistHandler(pth, parsed, await RecordHandler.create(agent, parsed, blobs))
+    static async create(agent: GrayhazeAgent, pth: string) {
+        return new PlaylistHandler(pth, await RecordHandler.create(agent, parse((await fs.readFile(pth)).toString()) as MediaPlaylist)) 
     }
 }
 
-export async function watch(agent: Agent) {
+export async function watch(agent: GrayhazeAgent) {
     // add, change, unlink
     await fs.mkdir(outputPath, {
         recursive: true

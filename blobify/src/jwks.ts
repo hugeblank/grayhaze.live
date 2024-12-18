@@ -5,7 +5,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 // Just a little something to generate a jwk
 export async function getJWK() {
-    const pkey = (await fs.readFile("rs256.pem"))
+    if (!process.env.PRIVATE_KEY_PATH) throw Error("Missing PRIVATE_KEY_PATH environment variable")
+    const pkey = (await fs.readFile(process.env.PRIVATE_KEY_PATH))
     return await JoseKey.fromImportable(pkey.toString(), createHash("SHA256").update(pkey).digest('hex'))
 }
 
@@ -16,5 +17,3 @@ export async function showJWKJSON(key: JoseKey) {
 async function main() {
     await showJWKJSON(await getJWK())
 }
-
-main()

@@ -27,7 +27,7 @@ async function main() {
     console.log("Loading agent")
     const agent = await getAgent()
     console.log("Loading lexicons")
-    await importLex("../lexicons")
+    await importLex("../lexicons/live")
     console.log("Initializing watcher")
     await watch(agent)
     console.log("Ready")

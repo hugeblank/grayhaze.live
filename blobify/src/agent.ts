@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import { PathLike } from "fs";
 import express from "express";
 import { Agent } from "@atproto/api";
+import { grayhazeAgent, GrayhazeAgent } from "./Merged";
 
 async function writeIfNotExists(path: PathLike, data: string) {
     await fs.stat(path).catch(async () => {
@@ -77,7 +78,7 @@ async function loadClient() {
     })
 }
 
-async function authenticate(client: NodeOAuthClient): Promise<Agent | undefined > {
+async function authenticate(client: NodeOAuthClient): Promise<GrayhazeAgent | undefined > {
     const app = express()
     return await new Promise((resolve, reject) => {
         const server = app.listen(6090, () => {
@@ -112,7 +113,7 @@ async function authenticate(client: NodeOAuthClient): Promise<Agent | undefined 
             
                     console.log('Authenticated as:', session.did)
             
-                    const agent = new Agent(session)
+                    const agent = grayhazeAgent(session)
                     resolve(agent)
             
                     // Make Authenticated API calls
@@ -137,13 +138,13 @@ async function restore(client: NodeOAuthClient) {
     }
     const oauthSession = await client.restore(process.env.DID as string)
 
-    return new Agent(oauthSession)
+    return grayhazeAgent(oauthSession)
 }
 
 
-export async function getAgent(): Promise<Agent> {
+export async function getAgent(): Promise<GrayhazeAgent> {
     const client = await loadClient()
-    let agent: Agent | undefined;
+    let agent: GrayhazeAgent | undefined;
     try {
         agent = await restore(client)
     } catch {
