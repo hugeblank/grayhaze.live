@@ -1,4 +1,5 @@
 import { ATPUser } from "$lib/ATPUser.js"
+import { TempCache } from "$lib/Cache"
 import type { Record } from "$lib/lexicons/types/live/grayhaze/format/hls.js"
 import { EphemeralStore } from "$lib/Stores.js"
 import { error } from "@sveltejs/kit"

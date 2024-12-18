@@ -1,4 +1,4 @@
-class TempCache<K, V> {
+export class TempCache<K, V> {
     private duration: number
     private map: Map<K, { value: V, timeout: NodeJS.Timeout }> = new Map()
     
