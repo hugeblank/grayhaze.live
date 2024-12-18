@@ -66,7 +66,7 @@
     <div class="flex flex-row justify-between">
         <h3 class="my-1">@{data.user.handle}</h3>
         {#if data.self}
-            <a href="/logout"><h3 class="my-1">Sign out</h3></a>
+            <a href="/logout" data-sveltekit-reload><h3 class="my-1">Sign out</h3></a>
         {/if}
     </div>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
