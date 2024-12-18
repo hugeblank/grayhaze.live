@@ -5,37 +5,39 @@ import Redis from "iovalkey";
 
 const valkey = new Redis(PRIVATE_VALKEY_URL)
 
-const duration = 2592000 // 30 days
+const DURATION = 2592000 // 30 days
 export class EphemeralStore {
     private static namespaces: Map<string, EphemeralStore> = new Map()
-    private namespace
+    private namespace: string
+    private duration: number
 
     async get(key: string): Promise<string | undefined> {
         const k = `${this.namespace}:${key}`
         const value = await valkey.get(k)
         // Reset cache countdown
-        await valkey.expire(k, duration)
+        await valkey.expire(k, this.duration)
         if (value) return value
     }
     async set(key: string, value: string): Promise<void> {
         const k = `${this.namespace}:${key}`
         await valkey.set(k, value)
-        await valkey.expire(k, duration)
+        await valkey.expire(k, this.duration)
     }
     async del(key: string): Promise<void> {
         await valkey.del(`${this.namespace}:${key}`)
     }
 
-    private constructor(namespace: string) {
+    private constructor(namespace: string, duration?: number) {
         if (EphemeralStore.namespaces.has(namespace)) throw new Error(`Namespace ${namespace} already exists`)
         this.namespace = namespace
+        this.duration = duration ?? DURATION
         EphemeralStore.namespaces.set(namespace, this)
     }
 
-    static of(namespace: string): EphemeralStore {
+    static of(namespace: string, duration?: number): EphemeralStore {
         return EphemeralStore.namespaces.has(namespace) ?
             EphemeralStore.namespaces.get(namespace)! :
-            new EphemeralStore(namespace)
+            new EphemeralStore(namespace, duration)
     }
 
 }

@@ -14,13 +14,13 @@ export const load = async ({ locals, params, parent }) => {
     const existsfilter: Set<string> = new Set()
 
     // Get list of records, validate, then map to a typed WrappedRecord
-    // Do this for content that's not associated to a stream, then 
+    // Do this for content that's not associated to a stream 
     const l = locals as LocalSession
     let rawMedia: WrappedRecord<HlsRecord>[] | undefined
     let self = false
     if (l.user && l.user?.handle === params.handle) {
         const hlsdata = await l.user.agent.live.grayhaze.format.hls.list({ repo: l.user.did })
-        rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => record.valid)
+        rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => record.valid && !record.value.prev)
         rawMedia.forEach((record) => formap.set(record.uri.rkey, record))
         self = true
     }
