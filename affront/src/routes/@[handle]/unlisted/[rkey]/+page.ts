@@ -1,5 +1,7 @@
-export const load = async ({ params }) => {
+export const load = async ({ params, parent }) => {
+    const pdata = await parent()
     return {
-        rkey: params.rkey
+        rkey: params.rkey,
+        ...pdata
     }
 }

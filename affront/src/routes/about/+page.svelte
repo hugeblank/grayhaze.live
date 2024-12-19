@@ -1,3 +1,11 @@
+<script lang="ts">
+    import { ATPUser } from "$lib/ATPUser";
+    import Header from "$lib/components/Header.svelte";
+
+    const { data } = $props()
+    const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
+</script>
+<Header {user}/>
 <h2>What is GrayHaze?</h2>
 <p>
     GrayHaze is a live streaming service built on top of ATProto. ATProto is an open source protocol for building decentralized social applications.

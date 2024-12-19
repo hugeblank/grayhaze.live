@@ -1,16 +1,22 @@
 <script lang="ts">
+    import { ATPUser } from "$lib/ATPUser";
     import Chat from "$lib/components/Chat.svelte";
+    import Header from "$lib/components/Header.svelte";
     import Player from "$lib/components/Player.svelte";
 
     let { data } = $props();
+    const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
 </script>
-<div class="flex lg:flex-row flex-col">
-    <Player repo={data.user.did} rkey={data.formatrkey} />
-    <Chat authed={data.authed} rkey={data.streamrkey} user={data.user} owner={data.owner}/>
+<div class="mx-auto">
+    <Header {user}/>
+    <div class="flex lg:flex-row flex-col">
+        <Player repo={data.focus.did} rkey={data.formatrkey} />
+        <Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} user={data.focus} owner={data.owner}/>
+    </div>
+    {#if data.title}
+        <h3 class="py-2">{data.title}</h3>
+    {/if}
+    {#if data.tags}
+        <p>{data.tags.join(", ")}</p>
+    {/if}
 </div>
-{#if data.title}
-    <h3 class="py-2">{data.title}</h3>
-{/if}
-{#if data.tags}
-    <p>{data.tags.join(", ")}</p>
-{/if}

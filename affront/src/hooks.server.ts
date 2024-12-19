@@ -28,7 +28,6 @@ const rateLimitHandle: Handle = async ({ event, resolve }) => {
 };
 
 const authHandle: Handle = async ({ event, resolve }) => {
-	if (event.url.pathname.startsWith("/api")) return resolve(event)
 	const locals = event.locals as LocalSession
 	function clear(key?: string) {
 		// Clears the browser session in the event something doesn't look right
@@ -38,7 +37,7 @@ const authHandle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 	const skey = event.cookies.get("session") ?? null; // get the session key
-	if (skey === null) return clear() // If it doesn't exist
+	if (skey === null) return resolve(event) // If it doesn't exist
 	const did = await localSessionStore.get(skey) // get the user did from this session key
 	if (!did) return clear() // If there was no matching session key in the store
 	const session = await client.restore(did)

@@ -1,25 +1,19 @@
-import { ATPUser } from "$lib/ATPUser.js"
+import { ATPUser } from "$lib/ATPUser"
 import type { LocalSession } from "$lib/session"
 import { error } from "@sveltejs/kit"
 
-export const load = async ({ locals }) => { 
-    const l = locals as LocalSession
-    return {
-        authed: l.user !== undefined
-    }
-}
-
 export const actions = {
-    chat: async ({ request, locals, params }) => {
+    chat: async ({ request, locals }) => {
         const l = locals as LocalSession
         if (!l.user) error(401, "Unauthorized")
-        const [data, user] = await Promise.all([
-            request.formData(),
-            ATPUser.fromHandle(params.handle)
-        ])
+        const data = await request.formData()
+        if (!data.has("did")) error(400, "Missing did")
+        if (!data.has("rkey")) error(400, "Missing rkey")
+        const user = await ATPUser.fromDID(data.get("did")?.toString()!)
+        const rkey = data.get("rkey")?.toString()!
         const record = await user.agent.live.grayhaze.content.stream.get({
             repo: user.did,
-            rkey: params.rkey
+            rkey: rkey
         })
         const text = data.get("chat")?.toString()
         if (text) {
@@ -34,10 +28,11 @@ export const actions = {
             })
         }
     },
-    ban: async ({ request, locals, params }) => {
+    ban: async ({ request, locals }) => {
         const l = locals as LocalSession
         if (!l.user) error(401, "Unauthorized")
         const data = await request.formData()
+        if (!data.has("did")) error(400, "Missing did")
         const did = data.get("did")?.toString()
 
         console.log("submitted", did)

@@ -3,13 +3,12 @@ import type { Record as StreamRecord, Thumbnail } from '$lib/lexicons/types/live
 import type { LocalSession } from '$lib/session.js'
 import { WrappedRecord } from '$lib/WrappedRecord'
 import { error } from '@sveltejs/kit'
-import { ATPUser } from '$lib/ATPUser.js'
 import { ATURI } from '$lib/ATURI.js'
-import type { HlsSegment } from '$lib/lexicons/types/live/grayhaze/format/defs.js'
-import { sequence } from '@sveltejs/kit/hooks'
+import { ATPUser } from '$lib/ATPUser.js'
 
 export const load = async ({ locals, params, parent }) => {
     const pdata = await parent()
+    const focus = ATPUser.fromDIDDoc(pdata.focusedDiddoc)
 
     // TODO: List over cursors
 
@@ -42,12 +41,11 @@ export const load = async ({ locals, params, parent }) => {
         self = true
     }
 
-    const user = ATPUser.fromDIDDoc(pdata.diddoc)
     const publishedStreams = (await Promise.all(WrappedRecord.wrap<StreamRecord>(
-        (await user.agent.live.grayhaze.content.stream.list({ repo: user.did })).records
+        (await focus.agent.live.grayhaze.content.stream.list({ repo: focus.did })).records
     ).filter((record) => record.valid).map(async (record) => {
         const mime = record.value.thumbnail?.image.mimeType
-        if (!(mime === "image/png" || mime === "image/jpeg") || !user.pds) return undefined
+        if (!(mime === "image/png" || mime === "image/jpeg") || !focus.pds) return undefined
         const uri = new ATURI(record.value.content.uri)
         try {
             const hlsrecord = formap.has(uri.rkey) ? formap.get(uri.rkey) : WrappedRecord.wrap<HlsRecord>(await uri.fetch())

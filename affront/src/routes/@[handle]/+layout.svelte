@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-    <title>GrayHaze - {data.user.getName()}</title>
+    <title>GrayHaze - {data.focus.getName()}</title>
 </svelte:head>
 
 {@render children()}

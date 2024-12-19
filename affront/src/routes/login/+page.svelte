@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { ATPUser } from "$lib/ATPUser";
+    import Header from "$lib/components/Header.svelte";
     import ReactiveDetail from "$lib/components/ReactiveDetail.svelte";
 
     const style = "shadow bg-neutral-500 appearance-none placeholder:text-neutral-400 border rounded-xl w-full py-2 px-3 text-neutral-200 leading-tight focus:outline-none focus:shadow-outline"
@@ -85,6 +86,7 @@
     }
 </script>
 
+<Header hide/>
 <div class="w-full max-w-xs mx-auto">
     <form class="bg-neutral-700 shadow-md rounded-xl px-8 pt-6 pb-8 mb-4">
       <div class="mb-4">

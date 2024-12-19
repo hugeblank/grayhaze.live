@@ -5,7 +5,7 @@
     import ContentCard from "$lib/components/ContentCard.svelte";
     import { WrappedRecord } from "$lib/WrappedRecord.js";
     import type { Record as HlsRecord } from "$lib/lexicons/types/live/grayhaze/format/hls.js";
-    import type { Record as StreamRecord, Thumbnail } from '$lib/lexicons/types/live/grayhaze/content/stream'
+    import Header from "$lib/components/Header.svelte";
     
     let { data }= $props();
 
@@ -29,7 +29,7 @@
         return {
             record,
             live: !record.value.end,
-            to: `/@${data.user.handle}/unlisted/${record.uri.rkey}`,
+            to: `/@${data.focus.handle}/unlisted/${record.uri.rkey}`,
             duration: getDuration(record),
             thumbnail: undefined,
             id: record.uri.toString()
@@ -41,9 +41,9 @@
         return {
             record: streamrecord,
             live: !hlsrecord.value.end,
-            to: `/@${data.user.handle}/${streamrecord.uri.rkey}`,
+            to: `/@${data.focus.handle}/${streamrecord.uri.rkey}`,
             duration: getDuration(hlsrecord),
-            thumbnail: `/api/blob/${data.user.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
+            thumbnail: `/api/blob/${data.focus.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
             id: streamrecord.uri.toString()
         }
     })
@@ -62,9 +62,10 @@
     }
 </script>
 
+<Header user={data.focus}/>
 <div class="mx-auto max-w-screen-2xl h-[90vh]">
     <div class="flex flex-row justify-between">
-        <h3 class="my-1">@{data.user.handle}</h3>
+        <h3 class="my-1">@{data.focus.handle}</h3>
         {#if data.self}
             <a href="/logout" data-sveltekit-reload><h3 class="my-1">Sign out</h3></a>
         {/if}

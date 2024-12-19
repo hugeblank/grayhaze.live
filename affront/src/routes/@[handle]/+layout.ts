@@ -1,10 +1,11 @@
-import { ATPUser } from "$lib/ATPUser.js"
+import { ATPUser } from '$lib/ATPUser.js'
 
-export const load = async ({ data }) => {
-    //await parent()
-    const user = ATPUser.fromDIDDoc(data.diddoc)
+export const load = async ({ data, parent }) => {
+    const pdata = await parent()
+    const focus = ATPUser.fromDIDDoc(data.focusedDiddoc)
     return {
-        user,
-        ...data
+        ...pdata,
+        owner: data.owner,
+        focus
     }
 }
