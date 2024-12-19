@@ -5,6 +5,7 @@
     const { repo, rkey } = $props()
     onMount(async () => {
         console.log("mount")
+        console.log(await (await fetch(`http://localhost:6080/api/adapt/${repo}/${rkey}`)).text())
         if (typeof window !== undefined) {
             var video = document.getElementById('video')! as HTMLVideoElement;
             if (video.canPlayType('application/vnd.apple.mpegurl')) {

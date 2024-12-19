@@ -9,6 +9,8 @@ import { ATURI } from '$lib/ATURI.js'
 export const load = async ({ locals, params, parent }) => {
     const pdata = await parent()
 
+    // TODO: List over cursors
+
     // TODO: Database this
     const formap: Map<string, WrappedRecord<HlsRecord>> = new Map()
     const existsfilter: Set<string> = new Set()
@@ -20,7 +22,19 @@ export const load = async ({ locals, params, parent }) => {
     let self = false
     if (l.user && l.user?.handle === params.handle) {
         const hlsdata = await l.user.agent.live.grayhaze.format.hls.list({ repo: l.user.did })
-        rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => record.valid && !record.value.prev)
+        const nextrefs: Map<string, HlsRecord> = new Map()
+        rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => {
+            if (!record.valid) return false
+            if (record.value.next) {
+                nextrefs.set(record.uri.rkey, record.value)
+                return true
+            } else if (record.value.prev) {
+                const wr = nextrefs.get(record.value.prev)!
+                wr.sequence = wr.sequence.concat(record.value.sequence)
+                wr.end = wr.end || record.value.end
+            }
+            return false
+        })
         rawMedia.forEach((record) => formap.set(record.uri.rkey, record))
         self = true
     }

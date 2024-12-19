@@ -1,6 +1,7 @@
 import { ATPUser } from "$lib/ATPUser.js"
 import { TempCache } from "$lib/Cache"
-import type { Record } from "$lib/lexicons/types/live/grayhaze/format/hls.js"
+import type { HlsSegment } from "$lib/lexicons/types/live/grayhaze/format/defs.js"
+import { isRecord, type Record } from "$lib/lexicons/types/live/grayhaze/format/hls.js"
 import { EphemeralStore } from "$lib/Stores.js"
 import { error } from "@sveltejs/kit"
 
@@ -23,38 +24,41 @@ ${segments + (value.end ? "#EXT-X-ENDLIST" : "")}`
 
 }
 const hour = 60*60
-const store = EphemeralStore.of("plrecords", hour*24)
+// const store = EphemeralStore.of("plrecords", hour*24)
 const cache = new TempCache<string, Record>(hour)
 
 
 export async function GET({ params, fetch }) {
     // TODO: Cache here if event is VOD, and more importantly the HLS segments
     const skey = params.repo + ":" + params.rkey
-    let user, record: Record
+    let record: Record
     if (cache.has(skey)) {
         record = cache.get(skey)!
     } else {
-        let storage = await store.get(skey)
-        if (storage) {
-            record = JSON.parse(storage) as Record
-        } else {
-            user = await ATPUser.fromDID(params.repo, fetch)
-            record = (await user.agent.live.grayhaze.format.hls.get(params)).value
-            if (record.next) store.set(skey, JSON.stringify(record))
-        }
-        if (record.next) cache.set(skey, record)
-    }
-    if (record.prev) error(400, "Cannot assemble hls playlist from intermediary record")
-    if (record.next) {
-        if (!user) user = await ATPUser.fromDID(params.repo, fetch)
-        let next: string | undefined = record.next
-        while (next) {
-            const nrecord: Record = (await user.agent.live.grayhaze.format.hls.get({
-                repo: params.repo,
-                rkey: next
-            })).value
-            record.sequence = record.sequence.concat(nrecord.sequence)
-            next = nrecord.next
+        // let storage = await store.get(skey)
+        // if (storage) {
+        //     console.log("valkey")
+        //     const out = JSON.parse(storage)
+        //     isRecord(out)
+        //     record = out
+        // } else {
+        const user = await ATPUser.fromDID(params.repo, fetch)
+        record = (await user.agent.live.grayhaze.format.hls.get(params)).value
+        // if (record.next) store.set(skey, JSON.stringify(record))
+        // }
+        if (record.prev) error(400, "Cannot assemble hls playlist from intermediary record")
+        if (record.next) {
+            cache.set(skey, record)
+            let next: string | undefined = record.next
+            while (next) {
+                const nrecord: Record = (await user.agent.live.grayhaze.format.hls.get({
+                    repo: params.repo,
+                    rkey: next
+                })).value
+                record.sequence = record.sequence.concat(nrecord.sequence) as HlsSegment[]
+                next = nrecord.next
+                record.end = record.end || nrecord.end
+            }
         }
     }
     const adapted = adapt(params.repo, record)
