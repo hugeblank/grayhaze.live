@@ -9,23 +9,23 @@
     let { rkey, authed, user, owner }: {rkey: string, authed: boolean, user: ATPUser, owner: boolean} = $props();
     const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`
 
-    const testchat = {
-        src: {
-            "text": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
-            "$type": "live.grayhaze.interaction.chat",
-            "stream": {
-                "cid": "bafyreih6th7mhszduwp3kmoyza26nle6x5eq7wdtv7jt5nilrvtq22utr4",
-                "uri": "at://did:web:hugeblank.dev/live.grayhaze.content.stream/3ld6chveh2s2w"
-            }
-        },
-        src_uri: "at://did:web:hugeblank.dev/live.grayhaze.interaction.chat/3ldhjrgpxhk2w",
-        author: {
-            did: "did:web:hugeblank.dev",
-            handle: "hugeblank.dev"
-        }
-    }
+    // const testchat = {
+    //     src: {
+    //         "text": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+    //         "$type": "live.grayhaze.interaction.chat",
+    //         "stream": {
+    //             "cid": "bafyreih6th7mhszduwp3kmoyza26nle6x5eq7wdtv7jt5nilrvtq22utr4",
+    //             "uri": "at://did:web:hugeblank.dev/live.grayhaze.content.stream/3ld6chveh2s2w"
+    //         }
+    //     },
+    //     src_uri: "at://did:web:hugeblank.dev/live.grayhaze.interaction.chat/3ldhjrgpxhk2w",
+    //     author: {
+    //         did: "did:web:hugeblank.dev",
+    //         handle: "hugeblank.dev"
+    //     }
+    // }
 
-    let chats: ChatView[] = $state([testchat, testchat, testchat, testchat, testchat, testchat, testchat, testchat, testchat, testchat, testchat, testchat ])
+    let chats: ChatView[] = $state([])
 
     function makesocket(box?: HTMLElement) {
         let ws = new WebSocket(wsurl)
