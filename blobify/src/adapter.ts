@@ -150,7 +150,7 @@ class PlaylistHandler {
             } catch {
                 console.log("failed to write " + this.handler.length.toString())
             }
-            if (this.handler.length % 16 == 0) {
+            if (this.handler.length % 512 == 0) {
                 console.log("Creating next record")
                 this.handler = await this.handler.next()
                 try {
