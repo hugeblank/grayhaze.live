@@ -3,6 +3,7 @@ services:
     image: valkey/valkey:latest
     command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD}
     hostname: "valkey"
+    restart: unless-stopped
     volumes:
       - './data:/data'
   affront:
