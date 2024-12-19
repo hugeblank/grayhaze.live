@@ -5,6 +5,8 @@ import { WrappedRecord } from '$lib/WrappedRecord'
 import { error } from '@sveltejs/kit'
 import { ATPUser } from '$lib/ATPUser.js'
 import { ATURI } from '$lib/ATURI.js'
+import type { HlsSegment } from '$lib/lexicons/types/live/grayhaze/format/defs.js'
+import { sequence } from '@sveltejs/kit/hooks'
 
 export const load = async ({ locals, params, parent }) => {
     const pdata = await parent()
@@ -22,18 +24,19 @@ export const load = async ({ locals, params, parent }) => {
     let self = false
     if (l.user && l.user?.handle === params.handle) {
         const hlsdata = await l.user.agent.live.grayhaze.format.hls.list({ repo: l.user.did })
-        const nextrefs: Map<string, HlsRecord> = new Map()
+        const seqrefs: Map<string, HlsRecord> = new Map()
         rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => {
             if (!record.valid) return false
-            if (record.value.next) {
-                nextrefs.set(record.uri.rkey, record.value)
-                return true
-            } else if (record.value.prev) {
-                const wr = nextrefs.get(record.value.prev)!
-                wr.sequence = wr.sequence.concat(record.value.sequence)
-                wr.end = wr.end || record.value.end
+            if (seqrefs.has(record.uri.rkey)) {
+                const prec = seqrefs.get(record.uri.rkey)!
+                seqrefs.delete(record.uri.rkey)
+                record.value.sequence = record.value.sequence.concat(prec.sequence)
+                record.value.end = prec.end || record.value.end
             }
-            return false
+            if (record.value.prev) {
+                seqrefs.set(record.value.prev, record.value)
+            }
+            return record.value.next && !record.value.prev
         })
         rawMedia.forEach((record) => formap.set(record.uri.rkey, record))
         self = true

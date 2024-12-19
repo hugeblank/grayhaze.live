@@ -5,7 +5,6 @@
     const { repo, rkey } = $props()
     onMount(async () => {
         console.log("mount")
-        console.log(await (await fetch(`http://localhost:6080/api/adapt/${repo}/${rkey}`)).text())
         if (typeof window !== undefined) {
             var video = document.getElementById('video')! as HTMLVideoElement;
             if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -15,6 +14,7 @@
                 var hls = new Hls();
                 hls.loadSource(video.src);
                 hls.attachMedia(video);
+                
             } else {
                 console.error("Can't play hls playlist")
             }
@@ -24,5 +24,5 @@
 
 <div>
     <!-- svelte-ignore a11y_media_has_caption -->
-    <video class="aspect-video" id="video" controls src="/api/adapt/{repo}/{rkey}"></video>
+    <video class="aspect-video" id="video" autoplay controls src="/api/adapt/{repo}/{rkey}"></video>
 </div>
