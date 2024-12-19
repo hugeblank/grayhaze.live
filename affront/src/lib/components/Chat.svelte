@@ -1,13 +1,13 @@
 <script lang="ts">
     import { enhance } from '$app/forms';;
-    import { env } from '$env/dynamic/public';
+    import { PUBLIC_SPRINKLER_URL } from '$env/static/public';
     import type { ATPUser } from '$lib/ATPUser';
     import { ATURI } from '$lib/ATURI';
     import type { BanView, ChatView } from '$lib/lexicons/types/live/grayhaze/interaction/defs';
     import { decode, decodeFirst } from '@atcute/cbor';
     import { onMount } from 'svelte';
     let { rkey, authed, user, owner }: {rkey: string, authed: boolean, user: ATPUser, owner: boolean} = $props();
-    const wsurl = `${env.PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`
+    const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`
 
     // const testchat = {
     //     src: {
