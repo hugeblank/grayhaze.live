@@ -2,6 +2,7 @@
   "name": "blobify",
   "version": "1.0.0",
   "description": "HLS stream to blob",
+  "type": "module",
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",

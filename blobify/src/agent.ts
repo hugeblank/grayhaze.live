@@ -1,11 +1,11 @@
 import { NodeOAuthClient } from "@atproto/oauth-client-node";
 import { SimpleStore, Value } from "@atproto-labs/simple-store"
-import { getJWK } from "./jwks";
+import { getJWK } from "./jwks.js";
 import fs from "fs/promises";
 import { PathLike } from "fs";
 import express from "express";
 import { Agent } from "@atproto/api";
-import { grayhazeAgent, GrayhazeAgent } from "./Merged";
+import { grayhazeAgent, GrayhazeAgent } from "./Merged.js";
 
 async function writeIfNotExists(path: PathLike, data: string) {
     await fs.stat(path).catch(async () => {

@@ -1,6 +1,6 @@
 import { Agent } from "@atproto/api"
-import type { SessionManager } from "@atproto/api/dist/session-manager"
 import { LiveNS } from "./lexicons/index.js"
+import { SessionManager } from "@atproto/api/dist/session-manager.js"
 
 export type GrayhazeAgent = Agent & Merged
 

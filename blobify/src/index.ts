@@ -2,11 +2,11 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 import { lexicons } from "@atproto/api";
-import { getAgent } from "./agent";
+import { getAgent } from "./agent.js";
 import { PathLike } from "fs";
 import { readdir, readFile, stat } from "fs/promises";
 import { isValidLexiconDoc, parseLexiconDoc } from "@atproto/lexicon";
-import { watch } from './adapter';
+import { watch } from './adapter.js';
 
 
 // Read in lexicons from given path

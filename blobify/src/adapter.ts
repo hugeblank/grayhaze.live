@@ -1,12 +1,12 @@
 import { parse } from 'hls-parser'
-import fs, { readdir } from 'fs/promises'
+import fs, { readdir, writeFile } from 'fs/promises'
 import chokidar from 'chokidar'
-import { MediaPlaylist, Segment } from 'hls-parser/types'
+import { MediaPlaylist, Segment } from 'hls-parser/types.js'
 import { PathLike } from 'fs'
 import path from 'path'
-import { GrayhazeAgent } from './Merged'
-import { HlsSegment } from './lexicons/types/live/grayhaze/format/defs'
-import { Record } from './lexicons/types/live/grayhaze/format/hls'
+import { GrayhazeAgent } from './Merged.js'
+import { HlsSegment } from './lexicons/types/live/grayhaze/format/defs.js'
+import { Record } from './lexicons/types/live/grayhaze/format/hls.js'
 import { ComAtprotoRepoPutRecord } from '@atproto/api'
 
 // State of media in the stream directory
@@ -145,9 +145,19 @@ class PlaylistHandler {
         if (this.handler.peek().uri !== nsegment.uri) {
             console.log(`Push segment ${nsegment.uri}`)
             await this.handler.push(nsegment)
-            if (this.handler.length >= 512) {
+            try {
+                await writeFile("temp/counter.txt", "Segments: " + this.handler.length.toString())
+            } catch {
+                console.log("failed to write " + this.handler.length.toString())
+            }
+            if (this.handler.length % 16 == 0) {
                 console.log("Creating next record")
                 this.handler = await this.handler.next()
+                try {
+                    await writeFile("temp/next.txt", "SUCCESS!?")
+                } catch {
+                    console.log("failed to write...")
+                }
             }
         }
         if (newpl.endlist) {
