@@ -1,9 +1,12 @@
+// import whyIsNodeRunning from 'why-is-node-running'
 import { TokenBucket } from "$lib/rate-limit";
 import { sequence } from "@sveltejs/kit/hooks";
 import type { Handle } from "@sveltejs/kit";
 import { client, localSessionStore, type LocalSession } from "$lib/session";
 import { ATPUser } from "$lib/ATPUser";
 import { grayhazeAgent } from "$lib/Merged";
+import { shutdown as storesShutdown } from '$lib/Stores'
+import { appendFile } from 'fs/promises';
 
 const bucket = new TokenBucket<string>(100, 1);
 
@@ -47,3 +50,13 @@ const authHandle: Handle = async ({ event, resolve }) => {
 };
 
 export const handle = sequence(rateLimitHandle, authHandle);
+
+async function shutdown() {
+	await storesShutdown()
+	// setTimeout(() => {
+	// 	console.log("Still shutting down?");
+	// 	whyIsNodeRunning();
+	// }, 1000).unref();
+}
+
+process.on('sveltekit:shutdown', shutdown);

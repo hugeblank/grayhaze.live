@@ -67,7 +67,7 @@ export class StateStore implements NodeSavedStateStore {
         this.state.set(key, value);
         setTimeout(() => {
             this.state.delete(key);
-        }, this.timeout);
+        }, this.timeout).unref()
     }
     del(key: string): Awaitable<void> {
         this.state.delete(key);
@@ -78,3 +78,13 @@ export class StateStore implements NodeSavedStateStore {
     }
 }
 
+export async function shutdown() {
+    try {
+        await valkey.quit()
+        setTimeout(() => {
+            valkey.disconnect()
+        }, 2000).unref()
+    } catch {
+        // cry me a river
+    }
+}

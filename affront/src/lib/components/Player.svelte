@@ -22,7 +22,7 @@
     })
 </script>
 
-<div>
+<div class="w-full">
     <!-- svelte-ignore a11y_media_has_caption -->
     <video class="aspect-video" id="video" autoplay controls src="/api/adapt/{repo}/{rkey}"></video>
 </div>
