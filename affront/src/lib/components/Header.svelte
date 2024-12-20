@@ -21,9 +21,9 @@
                 </div> -->
                 <div>
                     {#if user}
-                        <a href="/{name}"><h2>{name}</h2></a>
+                        <a class="hover:underline" href="/{name}"><h2>{name}</h2></a>
                     {:else}
-                        <a href="/login"><h2>Log in</h2></a>
+                        <a class="hover:underline" href="/login"><h2>Log in</h2></a>
                     {/if}
                 </div>
             {/if}

@@ -11,7 +11,7 @@
     <Header {user}/>
     <div class="flex lg:flex-row flex-col">
         <Player repo={data.focus.did} rkey={data.formatrkey} />
-        <Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} user={data.focus} owner={data.owner}/>
+        <Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} focus={data.focus} {user}/>
     </div>
     {#if data.title}
         <h3 class="py-2">{data.title}</h3>

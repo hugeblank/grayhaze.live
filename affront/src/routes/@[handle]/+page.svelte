@@ -16,13 +16,16 @@
         })
         dnum = Math.floor(dnum+0.5)
         let dchunks = []
+        // TODO: Correctly display over 24 hours
         for (let i = 0; i < 3; i++) {
             let val = Math.floor(dnum % 60)
             dchunks.push(":" + ((val < 10) ? "0" + val : val))
             dnum /= 60
         }
+        let sub = 1
         if (dchunks[2] === ":00") dchunks.pop()
-        return dchunks.reverse().join("").substring(1)
+        if (dchunks.length > 1 && dchunks[dchunks.length-1].startsWith(":0")) sub +=1
+        return dchunks.reverse().join("").substring(sub)
     }
 
     const mappedRawMedia = data.rawMedia?.map((record) => {
@@ -43,7 +46,7 @@
             live: !hlsrecord.value.end,
             to: `/@${data.focus.handle}/${streamrecord.uri.rkey}`,
             duration: getDuration(hlsrecord),
-            thumbnail: `/api/blob/${data.focus.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
+            thumbnail: `/api/blob/image/${data.focus.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
             id: streamrecord.uri.toString()
         }
     })
@@ -67,7 +70,7 @@
     <div class="flex flex-row justify-between">
         <h3 class="my-1">@{data.focus.handle}</h3>
         {#if data.self}
-            <a href="/logout" data-sveltekit-reload><h3 class="my-1">Sign out</h3></a>
+            <a class="hover:underline" href="/logout" data-sveltekit-reload><h3 class="my-1">Sign out</h3></a>
         {/if}
     </div>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
@@ -108,7 +111,7 @@
             <a class="w-fit" href={to}>
                 <ContentCard {thumbnail} {record} {duration} {live}>
                     <!-- Title -->
-                    <div class="flex w-full place-content-start line-clamp-2">
+                    <div class="flex w-full place-content-start line-clamp-2 bg-black bg-opacity-75 rounded-lg p-3">
                         <b>{record.value.title}</b>
                     </div>
                 </ContentCard>

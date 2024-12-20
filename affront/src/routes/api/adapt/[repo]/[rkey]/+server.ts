@@ -1,8 +1,7 @@
 import { ATPUser } from "$lib/ATPUser.js"
-import { TempCache } from "$lib/Cache"
+import { TempCache } from "$lib/TempCache"
 import type { HlsSegment } from "$lib/lexicons/types/live/grayhaze/format/defs.js"
-import { isRecord, type Record } from "$lib/lexicons/types/live/grayhaze/format/hls.js"
-import { EphemeralStore } from "$lib/Stores.js"
+import { type Record } from "$lib/lexicons/types/live/grayhaze/format/hls.js"
 import { error } from "@sveltejs/kit"
 
 function adapt(repo: string, value: Record) {
@@ -13,7 +12,7 @@ function adapt(repo: string, value: Record) {
         const duration = (segment.duration as number) / 1000000
         isfmp4 = (segment.src.mimeType === "video/mp4" || segment.src.mimeType === "video/iso.segment")
         sum += duration
-        segments += `#EXTINF:${duration},\n/api/blob/${repo}/${segment.src.ref}\n`
+        segments += `#EXTINF:${duration},\n/api/blob/segment/${repo}/${segment.src.ref}\n`
     }
     return `#EXTM3U
 #EXT-X-PLAYLIST-TYPE:${(value.end ? "VOD" : "EVENT")}

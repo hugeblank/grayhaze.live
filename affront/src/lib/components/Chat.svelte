@@ -1,13 +1,15 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';;
+    import { applyAction, enhance } from '$app/forms';
     import { PUBLIC_SPRINKLER_URL } from '$env/static/public';
     import type { ATPUser } from '$lib/ATPUser';
     import { ATURI } from '$lib/ATURI';
     import type { BanView, ChatView } from '$lib/lexicons/types/live/grayhaze/interaction/defs';
     import { decode, decodeFirst } from '@atcute/cbor';
+    import type { SubmitFunction } from '@sveltejs/kit';
     import { onMount } from 'svelte';
-    let { rkey, authed, user, owner }: {rkey: string, authed: boolean, user: ATPUser, owner: boolean} = $props();
-    const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${user.did}`
+    import type { ChatActionResponse } from '../../routes/api/action/+page.server';
+    let { rkey, authed, focus, user }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser} = $props();
+    const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${focus.did}`
 
     // const testchat = {
     //     src: {
@@ -26,6 +28,30 @@
     // }
 
     let chats: ChatView[] = $state([])
+    
+    const submitFunction: SubmitFunction = ({ formData }) => {
+        console.log(formData.get("chat"), user)
+        const text = formData.get("chat")?.toString()
+        if (text && user) {
+            return async ({ result, update }) => {
+                if (result.type === "success" && result.data) {
+                    const data = result.data as ChatActionResponse
+                    chats.push({
+                        src_uri: data.chatRef.uri,
+                        src: {
+                            text,
+                            stream: data.streamRef,
+                        },
+                        author: {
+                            did: user.did,
+                            handle: user.handle
+                        },
+                    })
+                }
+                await update({ reset: true })
+            }
+        }
+    }
 
     function makesocket(box?: HTMLElement) {
         let ws = new WebSocket(wsurl)
@@ -52,9 +78,16 @@
                 const view: { src_uri: string } = decode(data as Uint8Array)
                 const uri = new ATURI(view.src_uri)
                 if (uri.collection === "live.grayhaze.interaction.chat") {
+                    const msg = view as ChatView
                     let scroll = false
                     if (box) scroll = box.scrollTop === 0
-                    chats.push(view as ChatView)
+                    let placed = false
+                    chats.forEach((chat) => {
+                        if (chat.src_uri === msg.src_uri) {
+                            placed = true
+                        }
+                    })
+                    if (!placed) chats.push(view as ChatView)
                     if (box && scroll) box.scrollTo(0, 0)
                 } else if (uri.collection === "live.grayhaze.interaction.ban") {
                     // Clear chats from a user that is banned
@@ -83,7 +116,7 @@
             {#each chats as chat}
                 <!-- TODO: Usercard on click -->
                 <div class="flex flex-row">
-                    {#if owner}
+                    {#if user && focus.did === user.did}
                         <div class="pr-2">
                             <form method="POST" enctype="multipart/form-data" action="?/ban" use:enhance>
                                 <input type="hidden" name="did" id="did" value="{chat.author.did}">
@@ -92,7 +125,7 @@
                         </div>
                     {/if}
                     <div class="min-w-0 text-wrap break-words line-clamp-6">
-                        <p class="">&lt;<a href="/{chat.author.did}"><b>{chat.author.displayName ?? chat.author.handle ? `@${chat.author.handle}` : chat.author.did}</b></a>&gt; {chat.src.text}</p>
+                        <p class="{chat.phantom ? "opacity-50" : ""}">&lt;<a href="/{chat.author.did}"><b>{chat.author.displayName ?? chat.author.handle ? `@${chat.author.handle}` : chat.author.did}</b></a>&gt; {chat.src.text}</p>
                     </div>
                 </div>
             {/each}
@@ -100,8 +133,8 @@
         </div>
         {#if authed}
             <div class="place-content-end border-t border-neutral-500">
-                <form method="POST" enctype="multipart/form-data" action="/api/action?/chat" use:enhance>
-                    <input type="hidden" name="did" id="did" value="{user.did}">
+                <form method="POST" enctype="multipart/form-data" action="/api/action?/chat" use:enhance={submitFunction}>
+                    <input type="hidden" name="did" id="did" value="{focus.did}">
                     <input type="hidden" name="rkey" id="rkey" value="{rkey}">
                     <input class="w-full bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" type="text" id="chat" name="chat" title="Chat" placeholder="Say something..."/>
                 </form>
