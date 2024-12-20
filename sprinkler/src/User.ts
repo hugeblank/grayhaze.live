@@ -48,7 +48,7 @@ export class User {
         // Parse the document, cache and return
         const doc = JSON.parse(await response.text()) as DIDDoc
         cachedDocs.set(did, doc)
-        setTimeout(() => cachedDocs.delete(did), cacheTimeout)
+        setTimeout(() => cachedDocs.delete(did), cacheTimeout).unref()
         return doc
     }
 

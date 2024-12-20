@@ -1,9 +1,7 @@
-import { ComAtprotoRepoStrongRef, lexicons } from '@atproto/api'
-import { isValidLexiconDoc, LexiconDoc, parseLexiconDoc, RepoRecord } from '@atproto/lexicon'
+// import whyIsNodeRunning from 'why-is-node-running'
+import { lexicons } from '@atproto/api'
 import * as xrpc from '@atproto/xrpc-server'
 import express from 'express'
-import { PathLike } from 'fs'
-import { readdir, readFile, stat } from 'fs/promises'
 import dotenv from 'dotenv'
 import { Pipe } from './Pipe.js'
 import { isRecord as isChatRecord, Record as ChatRecord } from './lexicons/types/live/grayhaze/interaction/chat.js'
@@ -12,6 +10,7 @@ import { User } from './User.js'
 import { ChatView, BanView } from './lexicons/types/live/grayhaze/interaction/defs.js'
 import { IdResolver } from '@atproto/identity'
 import { ATURI } from './ATURI.js'
+import { shutdown as storesShutdown, updateCache } from './Stores.js'
 dotenv.config()
 
 import { logger } from '@atproto/xrpc-server/dist/stream/logger.js'
@@ -40,8 +39,11 @@ const firehose = new Firehose({
     idResolver: new IdResolver(),
     unauthenticatedCommits: true,
     async handleEvent(evt) {
-        if (evt.event === "create" && typeof evt.record["$type"] === "string" && evt.record["$type"].startsWith("live.grayhaze.interaction.")) {
-            pipes.forEach((pipe) => pipe.push(evt))
+        if (evt.event === "create" || evt.event === "update" || evt.event === "delete") {
+            await updateCache(evt)
+            if (evt.event === "create" && evt.collection.startsWith("live.grayhaze.interaction.")) {
+                pipes.forEach((pipe) => pipe.push(evt))
+            }
         }
     },
     async onError(err) {
@@ -66,27 +68,29 @@ function isBanned(params: Params, evt: Create | NonNullable<Create>) {
 }
 
 async function getProfileView(evt: Create | NonNullable<Create>) {
+    let user: User | undefined
     try {
-        const user = await User.fromDID(evt.did)
-        if (!user.pds) throw new Error(`${evt.did} has no PDS!?`)
-        const client = Merged.agent(new URL(user.pds))
-        const channel = await client.live.grayhaze.actor.channel.get({
-            repo: user.did,
-            rkey: "self"
-        })
-        let avatar
-        if (channel.value.avatar) {
-            // TODO: Cache avatar
-            avatar = `${user.pds}/xrpc/com.atproto.sync.getBlob?did=${user.did}&cid=${channel.value.avatar.ref}`
-        }
-        return {
-            did: user.did,
-            handle: user.handle,
-            ...channel.value.displayName && {displayName: channel.value.displayName},
-            ...avatar && {avatar}
-        }
-    }  catch (e) {
+        user = await User.fromDID(evt.did)
+    } catch (e) {
         console.warn("Failed to resolve user:", e)
+        user = undefined
+    }
+    if (!user || !user.pds) return undefined
+    const client = Merged.agent(new URL(user.pds))
+    const channel = await client.live.grayhaze.actor.channel.get({
+        repo: user.did,
+        rkey: "self"
+    })
+    let avatar
+    if (channel.value.avatar) {
+        // TODO: Cache avatar
+        avatar = `${user.pds}/xrpc/com.atproto.sync.getBlob?did=${user.did}&cid=${channel.value.avatar.ref}`
+    }
+    return {
+        did: user.did,
+        handle: user.handle,
+        ...channel.value.displayName && {displayName: channel.value.displayName},
+        ...avatar && {avatar}
     }
 }
 
@@ -126,9 +130,22 @@ server.streamMethod("live.grayhaze.interaction.subscribeChat", async function* (
 })
 
 app.use(server.router)
-app.listen(process.env.PORT, async () => {
+
+const sprinkler = app.listen(process.env.PORT, async () => {
     console.log(`oh no ${process.env.PORT}`)
-    console.log(await firehose.start())
-}).on('all', (e) => {
-    console.log(e)
+    await firehose.start()
 })
+
+async function shutdown() {
+    sprinkler.close()
+    await firehose.destroy()
+    await storesShutdown()
+	// setTimeout(() => {
+	// 	console.log("Still shutting down?");
+	// 	whyIsNodeRunning();
+	// }, 1000).unref();
+}
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
+
