@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { applyAction, enhance } from '$app/forms';
+    import { enhance } from '$app/forms';
     import { PUBLIC_SPRINKLER_URL } from '$env/static/public';
     import type { ATPUser } from '$lib/ATPUser';
     import { ATURI } from '$lib/ATURI';
@@ -8,7 +8,7 @@
     import type { SubmitFunction } from '@sveltejs/kit';
     import { onMount } from 'svelte';
     import type { ChatActionResponse } from '../../routes/api/action/+page.server';
-    let { rkey, authed, focus, user, style = "standard" }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser, style?: "standard" | "popout" | "raw" } = $props();
+    let { rkey, authed, focus, user, style = "standard" }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser, style?: "standard" | "popout" } = $props();
     const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${focus.did}`
 
     // const testchat = {
@@ -122,7 +122,6 @@
 
 </script>
 
-{#if style === "standard" || style === "popout"}
 <div class={styles[style][0]}>
     <div class={styles[style][1]}>
         <div id="chatbox" class={styles[style][2]}>
@@ -156,6 +155,3 @@
         {/if}
     </div>
 </div>
-{:else}
-<p>NYI</p>
-{/if}
