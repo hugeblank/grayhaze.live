@@ -14,6 +14,7 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 COPY --from=builder /app/build ./
+COPY --from=builder /app/.env ./
 COPY --from=deps /app/node_modules ./node_modules
 ENV PORT=3000
 EXPOSE 3000
