@@ -36,7 +36,6 @@ export const load = async ({ locals, params, parent }) => {
             const prec = seqrefs.get(record.uri.rkey)! 
             seqrefs.delete(record.uri.rkey)
             record.value.sequence = record.value.sequence.concat(prec.sequence)
-            console.log(prec.end, record.value.end, record.uri.rkey)
             record.value.end = prec.end || record.value.end
         }
         if (record.value.prev) {
