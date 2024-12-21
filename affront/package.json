@@ -17,6 +17,7 @@
 		"@sveltejs/adapter-node": "^5.2.9",
 		"@sveltejs/kit": "^2.11.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@types/lodash-es": "^4.17.12",
 		"@types/node": "^22.10.1",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.7.0",
@@ -46,6 +47,7 @@
 		"dotenv": "^16.4.7",
 		"hls.js": "^1.5.17",
 		"iovalkey": "^0.2.1",
+		"lodash-es": "^4.17.21",
 		"multiformats": "^13.3.1"
 	}
 }

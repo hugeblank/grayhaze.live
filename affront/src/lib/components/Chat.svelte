@@ -8,7 +8,7 @@
     import type { SubmitFunction } from '@sveltejs/kit';
     import { onMount } from 'svelte';
     import type { ChatActionResponse } from '../../routes/api/action/+page.server';
-    let { rkey, authed, focus, user }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser} = $props();
+    let { rkey, authed, focus, user, style = "standard" }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser, style?: "standard" | "popout" | "raw" } = $props();
     const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${focus.did}`
 
     // const testchat = {
@@ -107,11 +107,25 @@
         makesocket(box || undefined)
     })
 
+    const styles = {
+        standard: [
+            "lg:min-w-96 lg:w-96 md:min-w-full md:w-full border-neutral-500 border",
+            "h-full flex flex-col",
+            "grow h-64 flex flex-col-reverse overflow-auto overscroll-contain"
+        ],
+        popout: [
+            "w-full h-screen flex border-neutral-500 border",
+            "flex flex-col flex-grow",
+            "grow flex flex-col-reverse overflow-auto overscroll-contain"
+        ]
+    }
+
 </script>
 
-<div class="lg:min-w-96 lg:w-96 md:min-w-full md:w-full border-neutral-500 border">
-    <div class="h-full flex flex-col">
-        <div id="chatbox" class="grow h-64 flex flex-col-reverse overflow-auto overscroll-contain">
+{#if style === "standard" || style === "popout"}
+<div class={styles[style][0]}>
+    <div class={styles[style][1]}>
+        <div id="chatbox" class={styles[style][2]}>
             <div class="px-2 ">
             {#each chats as chat}
                 <!-- TODO: Usercard on click -->
@@ -142,3 +156,6 @@
         {/if}
     </div>
 </div>
+{:else}
+<p>NYI</p>
+{/if}
