@@ -64,7 +64,8 @@
                         entry1.ok = false
                         entry1.text = "No associated ATProto PDS"
                     }
-                } catch {
+                } catch (e) {
+                    console.log(e)
                     clazz = style + " border-red-500"
                     entry1.ok = false
                     if (value.includes(":")) {
