@@ -20,26 +20,31 @@ export const load = async ({ locals, params, parent }) => {
     // Do this for content that's not associated to a stream 
     const l = locals as LocalSession
     let rawMedia: WrappedRecord<HlsRecord>[] | undefined
-    let self = false
-    if (l.user && l.user?.handle === params.handle) {
-        const hlsdata = await l.user.agent.live.grayhaze.format.hls.list({ repo: l.user.did })
-        const seqrefs: Map<string, HlsRecord> = new Map()
-        rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => {
-            if (!record.valid) return false
-            if (seqrefs.has(record.uri.rkey)) {
-                const prec = seqrefs.get(record.uri.rkey)!
-                seqrefs.delete(record.uri.rkey)
-                record.value.sequence = record.value.sequence.concat(prec.sequence)
-                record.value.end = prec.end || record.value.end
-            }
-            if (record.value.prev) {
-                seqrefs.set(record.value.prev, record.value)
-            }
-            return !record.value.prev
-        })
-        rawMedia.forEach((record) => formap.set(record.uri.rkey, record))
-        self = true
+    let self = l.user && l.user?.handle === params.handle
+    let user
+    if (self) {
+        user = l.user!
+    } else {
+        user = await ATPUser.fromHandle(params.handle)
     }
+
+    const hlsdata = await user.agent.live.grayhaze.format.hls.list({ repo: user.did })
+    const seqrefs: Map<string, HlsRecord> = new Map()
+    rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => {
+        if (!record.valid) return false
+        if (seqrefs.has(record.uri.rkey)) { // If there's a prior record that references us
+            const prec = seqrefs.get(record.uri.rkey)! 
+            seqrefs.delete(record.uri.rkey)
+            record.value.sequence = record.value.sequence.concat(prec.sequence)
+            console.log(prec.end, record.value.end, record.uri.rkey)
+            record.value.end = prec.end || record.value.end
+        }
+        if (record.value.prev) {
+            seqrefs.set(record.value.prev, record.value) // Put this record in for the previous record to grab
+        }
+        return !record.value.prev
+    })
+    rawMedia.forEach((record) => formap.set(record.uri.rkey, record))
 
     const publishedStreams = (await Promise.all(WrappedRecord.wrap<StreamRecord>(
         (await focus.agent.live.grayhaze.content.stream.list({ repo: focus.did })).records
@@ -66,7 +71,7 @@ export const load = async ({ locals, params, parent }) => {
 
 
     return {
-        rawMedia,
+        rawMedia: self ? rawMedia : undefined,
         publishedStreams,
         self: self
     }

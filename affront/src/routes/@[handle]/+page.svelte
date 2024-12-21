@@ -6,6 +6,7 @@
     import { WrappedRecord } from "$lib/WrappedRecord.js";
     import type { Record as HlsRecord } from "$lib/lexicons/types/live/grayhaze/format/hls.js";
     import Header from "$lib/components/Header.svelte";
+    import { ATPUser } from "$lib/ATPUser.js";
     
     let { data }= $props();
 
@@ -63,9 +64,10 @@
             }
         }
     }
+    const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
 </script>
 
-<Header user={data.focus}/>
+<Header {user}/>
 <div class="mx-auto max-w-screen-2xl h-[90vh]">
     <div class="flex flex-row justify-between">
         <h3 class="my-1">@{data.focus.handle}</h3>
