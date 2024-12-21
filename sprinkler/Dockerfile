@@ -20,4 +20,4 @@ COPY --from=builder /app/out ./out
 COPY --from=deps /app/node_modules ./node_modules
 ENV PORT=3000
 EXPOSE 3000
-CMD ["run.sh"]
+ENTRYPOINT ["/bin/sh", "run.sh"]

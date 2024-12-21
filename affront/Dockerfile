@@ -21,4 +21,4 @@ COPY --from=builder /app/out ./out
 ENV PORT=6080
 ENV NODE_ENV=production
 EXPOSE 6080
-CMD ["run.sh"]
+ENTRYPOINT ["/bin/sh", "run.sh"]
