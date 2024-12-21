@@ -12,6 +12,8 @@ services:
     build: 
       context: ./affront
       dockerfile: Dockerfile
+    volumes:
+      - './out:/out'
     restart: unless-stopped
     ports:
       - 6080:6080 # host:container
@@ -21,6 +23,8 @@ services:
     build: 
       context: ./sprinkler
       dockerfile: Dockerfile
+    volumes:
+      - './out:/out'
     restart: unless-stopped
     ports:
       - 6070:3000

@@ -16,7 +16,9 @@ FROM base AS runner
 WORKDIR /app
 COPY --from=builder /app/build ./build
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/run.sh ./run.sh
+COPY --from=builder /app/out ./out
 ENV PORT=6080
 ENV NODE_ENV=production
 EXPOSE 6080
-CMD ["node", "build/index.js"]
+CMD ["run.sh"]

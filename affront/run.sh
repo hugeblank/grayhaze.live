@@ -1,0 +1,1 @@
+node build/index.js | tee -a out/affront.log
