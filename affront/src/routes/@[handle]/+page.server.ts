@@ -35,7 +35,7 @@ export const load = async ({ locals, params, parent }) => {
             if (record.value.prev) {
                 seqrefs.set(record.value.prev, record.value)
             }
-            return record.value.next && !record.value.prev
+            return !record.value.prev
         })
         rawMedia.forEach((record) => formap.set(record.uri.rkey, record))
         self = true

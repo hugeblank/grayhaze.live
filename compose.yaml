@@ -21,6 +21,7 @@ services:
     build: 
       context: ./sprinkler
       dockerfile: Dockerfile
+    env_file: ./.env
     restart: unless-stopped
     ports:
       - 6070:3000

@@ -1,1 +1,1 @@
-Segments: 25
+Segments: 21
