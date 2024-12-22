@@ -11,7 +11,7 @@ export interface Record {
   version?: number
   mediaSequence?: number
   sequence: LiveGrayhazeFormatDefs.HlsSegment[]
-  end: boolean
+  end?: boolean
   next?: string
   prev?: string
   [k: string]: unknown

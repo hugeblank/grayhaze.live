@@ -28,28 +28,24 @@ Please note that absolutely nothing in this repo is final and I'm only sharing e
 ### TODO
 The following was done LIVE on GrayHaze with chat. [Check it out!](https://grayhaze.live/@hugeblank.dev/3ldi2vrnn6c2w)
 
-- dedicated chat popout
-- raw chat mode (with css ids)
+- raw chat mode (with css ids) - figure out how to suppress tailwind
 - rich text facets
   - emotes 
   - moderation control over links
 - moderation
   - OAuth style permission scopes
-  - 
 - user cards
   - on click in chat, users basic information pops up
     - followers, profile icon username, handle
     - chat history (maybe moderators only)
 - light mode
 - account settings
-  - username, avatar, offline banner, description
+  - username, avatar, banner, description
   - username color
   - bluesky profile import
   - external account linking
 - stream settings - title & thumbnail update
-- Caching
-  - audio slider sitewide
-  - VOD watch time
+- Downscale & cache thumbnails @ 768x512
 - BETTER SERVERS - development grant :)
 - Emotes
   1. User uploads emote, gets added to their channel
