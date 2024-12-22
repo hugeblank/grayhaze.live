@@ -7,7 +7,7 @@
 
 <div class="mx-auto px-8 max-w-screen-2xl">
     <header class="sticky mx-auto h-fit top-0 bg-[#0f0f0f] z-50">
-        <div class="flex lg:flex-row flex-col justify-between items-center p-3">
+        <div class="flex lg:flex-row flex-col justify-between items-center p-2">
             <!-- Maybe one day we'll have a logo -->
             <div>
                 <a class="hover:underline" href="/"><h1>GrayHaze<sup class="-top-4 text-xs">ALPHA</sup></h1></a>

@@ -82,6 +82,7 @@ export const actions = {
         if (!l.user) error(401, "Unauthorized")
         const data = await request.formData()
         const title = data.get("title") as string
+        const rawtags = data.get("tags") as string
         const thumbfile = data.get("thumbnail") as File | null
         const hlsuri = new ATURI(data.get("uri") as string)
         const cid = data.get("cid") as string
@@ -123,6 +124,9 @@ export const actions = {
                 console.log("matching??")
                 // TODO: Put record
             } else {
+                // Split by comma, trim whitespace, replace spaces with underscore, strip initial octothorpe if present, lowercase, then filter out empty tags.
+                const tags = rawtags.split(",").map((tag) => tag.trim().replace(/\s/g, "_").replace(/^#/, "").toLocaleLowerCase()).filter((tag) => tag.length > 0)
+
                 const response = await l.user?.agent.live.grayhaze.content.stream.create({
                     repo: l.user.did,
                 }, {
@@ -131,7 +135,8 @@ export const actions = {
                     content: {
                         uri: hlsuri.toString(),
                         cid
-                    }
+                    },
+                    tags
                 })
                 console.log("created stream", response.uri)
             }

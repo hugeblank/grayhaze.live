@@ -1,7 +1,6 @@
 
 import { ATPUser } from "$lib/ATPUser.js"
-import { TempCache } from "$lib/TempCache"
-import { type HlsSegment } from "$lib/lexicons/types/live/grayhaze/format/defs.js"
+import { PerItemTempCache, TempCache } from "$lib/TempCache"
 import { type Record } from "$lib/lexicons/types/live/grayhaze/format/hls.js"
 import { error } from "@sveltejs/kit"
 import { cloneDeep } from 'lodash-es'
@@ -23,8 +22,19 @@ function adapt(repo: string, value: Record) {
 const hour = 60*60
 // const store = EphemeralStore.of("plrecords", hour*24)
 const cache = new TempCache<string, Record>(hour)
+const plcache = new PerItemTempCache<string, string>()
 
 export async function GET({ params, fetch }) {
+    const plckey = `${params.repo}|${params.rkey}`
+    if (plcache.has(plckey)) {
+        console.log("playlist cache hit")
+        new Response(plcache.get(plckey), {
+            headers: {
+                ["Content-Type"]: "application/vnd.apple.mpegurl"
+            }
+        })
+    }
+
     // TODO: Cache here if event is VOD, and more importantly the HLS segments
     const user = await ATPUser.fromDID(params.repo, fetch)
     
@@ -66,6 +76,11 @@ export async function GET({ params, fetch }) {
     
     if (initial) {
         const adapted = adapt(params.repo, initial)
+        // If this is a VOD, cache the playlist string for an hour, otherwise keep it for the duration of the last segment.
+        // It seems that most, if not all clients are smart enough to know that if the playlist is a VOD that the document is unchanging.
+        // We cache just in case.
+        console.log("Caching playlist for ", initial.end ? 3600 : initial.sequence[initial.sequence.length-1].duration/1000000)
+        plcache.set(plckey, adapted, initial.end ? 3600 : initial.sequence[initial.sequence.length-1].duration/1000000)
         return new Response(adapted, {
             headers: {
                 ["Content-Type"]: "application/vnd.apple.mpegurl"

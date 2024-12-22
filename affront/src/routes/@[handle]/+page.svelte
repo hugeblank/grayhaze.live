@@ -82,11 +82,13 @@
                 <RecordForm name="publish" {record}>
                     <ContentCard thumbnail={localSrc.get(record.uri.rkey)} {record} {duration} {live}>
                         <!-- Title -->
-                        <div class="flex w-full h-8 items-center my-2">
+                        <div class="flex w-full h-fit items-center pb-1">
                             <input class="w-full px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="title" type="text" name="title" placeholder="Title" title="Stream Title"/>
                         </div>
-                        <!-- TODO: Tags -->
-                        <div class="flex w-full flex-row justify-between mt-4">
+                        <div class="flex w-full h-fit items-center">
+                            <input class="w-full h-8 text-sm px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 placeholder:text-neutral-500 border-none focus:shadow-none focus:ring-transparent" id="tags" type="text" name="tags" placeholder="Tags" title="Stream Tags"/>
+                        </div>
+                        <div class="flex w-full flex-row justify-between mt-1">
                             <!-- Open Stream -->
                             <a href={to} target="_blank" class="self-start bg-neutral-500 hover:bg-neutral-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" title="View Content" aria-label="View Content">
                                 <i class="align-middle pt-1 text-inherit bi bi-film"></i> <i class="align-middle pt-1 text-inherit bi bi-box-arrow-up-right"></i>
@@ -102,6 +104,7 @@
                             <button class="bg-blue-500 hover:bg-blue-700 text-neutral-100 hover:text-neutral-300 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="submit" aria-label="Publish" title="Publish">
                                 <i class="text-inherit bi bi-camera-reels"></i> <i class="text-inherit bi bi-upload"></i>
                             </button>
+                        </div>
                     </ContentCard>
                 </RecordForm>
             {/snippet}
@@ -113,8 +116,11 @@
             <a class="w-fit" href={to}>
                 <ContentCard {thumbnail} {record} {duration} {live}>
                     <!-- Title -->
-                    <div class="flex w-full place-content-start line-clamp-2 bg-black bg-opacity-75 rounded-lg p-3">
+                    <div class="flex w-full place-content-start line-clamp-2">
                         <b>{record.value.title}</b>
+                    </div>
+                    <div class="flex w-full text-sm line-clamp-2">
+                        {record.value.tags?.join(", ")}
                     </div>
                 </ContentCard>
             </a>

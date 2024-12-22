@@ -13,10 +13,14 @@
         <Player repo={data.focus.did} rkey={data.formatrkey} />
         <Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} focus={data.focus} {user}/>
     </div>
-    {#if data.title}
-        <h3 class="py-2">{data.title}</h3>
-    {/if}
-    {#if data.tags}
-        <p>{data.tags.join(", ")}</p>
-    {/if}
+    <div class="m-2">
+        {#if data.title}
+            <h3>{data.title} - <a class="hover:underline text-blue-500" href="/@{data.focus.handle ? data.focus.handle : data.focus.did}">{data.focus.getName()}</a></h3>
+        {/if}
+    </div>
+    <div class="m-2">
+        {#if data.tags}
+            <p>{data.tags.join(", ")}</p>
+        {/if}
+    </div>
 </div>

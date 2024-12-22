@@ -6,10 +6,10 @@
 </script>
 
 <div class="flex flex-col justify-end border rounded-lg border-solid border-gray-500 p-6 h-64 aspect-[3/2] bg-cover bg-center transition ease-in-out hover:-translate-y-2 hover:scale-105" style="background-image: url({thumbnail});" >
-    <div class="grow flex flex-col justify-between">
+    <div class="grow flex flex-col justify-between bg-black bg-opacity-75 rounded-lg p-3">
         {@render children()}
         <div class="flex flex-row w-full justify-between">
-            <div class="bg-black bg-opacity-75 rounded-lg p-3">
+            <div class="p-1">
                 <p class="text-gray-200">{record.uri.timestamp.toLocaleDateString()}</p>
                 <p class="text-gray-200">{record.uri.timestamp.toLocaleTimeString()}</p>
             </div>
@@ -19,7 +19,7 @@
                     <b class="text-neutral-50">Live</b>
                 </div>
             {:else}
-                <div class="bg-black bg-opacity-75 rounded-lg p-3 self-end">
+                <div class="self-end p-1">
                     <p class="text-gray-200">{duration}</p>
                 </div>
             {/if}
