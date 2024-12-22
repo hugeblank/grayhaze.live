@@ -20,9 +20,14 @@
             }
 
             video.volume = Number(sessionStorage.getItem("volume") ?? 1)
+            video.currentTime = Number(sessionStorage.getItem(`${repo}:${rkey}`))
 
-            video.addEventListener("volumechange", (e) => {
+            video.addEventListener("volumechange", () => {
                 sessionStorage.setItem("volume", video.volume.toString())
+            })
+
+            video.addEventListener("timeupdate", () => {
+                sessionStorage.setItem(`${repo}:${rkey}`, video.currentTime.toString())
             })
         }
     })

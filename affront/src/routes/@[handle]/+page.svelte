@@ -3,52 +3,40 @@
     import { SvelteMap } from "svelte/reactivity";
     import RecordForm from "$lib/components/RecordForm.svelte";
     import ContentCard from "$lib/components/ContentCard.svelte";
-    import { WrappedRecord } from "$lib/WrappedRecord.js";
-    import type { Record as HlsRecord } from "$lib/lexicons/types/live/grayhaze/format/hls.js";
     import Header from "$lib/components/Header.svelte";
     import { ATPUser } from "$lib/ATPUser.js";
     
     let { data } = $props();
 
-    function getDuration(record: WrappedRecord<HlsRecord>) {
-        let dnum = 0
-        record.value.sequence.forEach((seg) => {
-            dnum += seg.duration/1000000
-        })
-        dnum = Math.floor(dnum+0.5)
-        let dchunks = []
-        // TODO: Correctly display over 24 hours
-        for (let i = 0; i < 3; i++) {
-            let val = Math.floor(dnum % 60)
-            dchunks.push(":" + ((val < 10) ? "0" + val : val))
-            dnum /= 60
-        }
-        let sub = 1
-        if (dchunks[2] === ":00") dchunks.pop()
-        if (dchunks.length > 1 && dchunks[dchunks.length-1].startsWith(":0")) sub +=1
-        return dchunks.reverse().join("").substring(sub)
-    }
-
     const mappedRawMedia = data.rawMedia?.map((record) => {
+        let duration = 0
+        record.value.sequence.forEach((seg) => {
+            duration += seg.duration/1000000
+        })
         return {
             record,
             live: !record.value.end,
             to: `/@${data.focus.handle}/unlisted/${record.uri.rkey}`,
-            duration: getDuration(record),
             thumbnail: undefined,
-            id: record.uri.toString()
+            id: record.uri.toString(),
+            duration
         }
     })
 
     const mappedStreams = data.publishedStreams?.map(({ streamrecord, hlsrecord }) => {
         // TODO: Support more than hls record format
+        let duration = 0
+        hlsrecord.value.sequence.forEach((seg) => {
+            duration += seg.duration/1000000
+        })
         return {
             record: streamrecord,
+            progress: hlsrecord.uri.rkey,
             live: !hlsrecord.value.end,
             to: `/@${data.focus.handle}/${streamrecord.uri.rkey}`,
-            duration: getDuration(hlsrecord),
             thumbnail: `/api/blob/image/${data.focus.did}/${streamrecord.value.thumbnail?.image.ref.toString()}`,
-            id: streamrecord.uri.toString()
+            id: streamrecord.uri.toString(),
+            duration
         }
     })
 
@@ -112,9 +100,9 @@
     {/if}
     <h4 class="my-1">Streams</h4>
     <Grid items={mappedStreams}>
-        {#snippet renderer({ record, to, duration, thumbnail, live })}
+        {#snippet renderer({ record, to, duration, thumbnail, live, progress })}
             <a class="w-fit" href={to}>
-                <ContentCard {thumbnail} {record} {duration} {live}>
+                <ContentCard {thumbnail} {record} {duration} {live} {progress}>
                     <!-- Title -->
                     <div class="flex w-full place-content-start line-clamp-2">
                         <b>{record.value.title}</b>
