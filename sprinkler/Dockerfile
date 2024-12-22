@@ -14,7 +14,6 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 COPY --from=builder /app/build ./
-COPY --from=builder /app/.env ./
 COPY --from=builder /app/run.sh ./run.sh
 COPY --from=builder /app/out ./out
 COPY --from=deps /app/node_modules ./node_modules

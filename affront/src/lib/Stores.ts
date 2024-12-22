@@ -1,9 +1,9 @@
-import { PRIVATE_VALKEY_URL } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 import type { Awaitable, GetOptions } from "@atproto-labs/simple-store";
 import type { NodeSavedSessionStore, NodeSavedSession, NodeSavedState, NodeSavedStateStore } from "@atproto/oauth-client-node";
 import Redis from "iovalkey";
 
-const valkey = new Redis(PRIVATE_VALKEY_URL)
+const valkey = new Redis(env.PRIVATE_VALKEY_URL)
 
 const DURATION = 2592000 // 30 days
 export class EphemeralStore {

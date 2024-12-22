@@ -1,7 +1,9 @@
 import { type LocalSession } from '$lib/session.js'
 
-export const load = async ({ locals }) => { 
-    const docs: any[] = await (await fetch("http://localhost:6080/public/lexicons.json")).json()
+export const prerender = false;
+
+export const load = async ({ locals, fetch }) => { 
+    const docs: any[] = (await import("../../static/lexicons.json")).default
     const placeholders = [
         "Ponder",
         "I'm feeling lucky",

@@ -7,7 +7,6 @@ export class ATURI {
     private _repo: string
     private _collection: string
     private _rkey: string
-    private _timestamp: Date
 
     public get repo() : string {
         return this._repo
@@ -23,7 +22,7 @@ export class ATURI {
 
     
     public get timestamp() : Date {
-        return this._timestamp
+        return new Date(parse(this._rkey).timestamp/1000)
     }
 
     public async fetch<T>(cid?: string): Promise<RecordLike<T>> {
@@ -46,6 +45,5 @@ export class ATURI {
         this._rkey = data.pop()!
         this._collection = data.pop()!
         this._repo = data.pop()!
-        this._timestamp = new Date(parse(this._rkey).timestamp/1000)
     }
 }

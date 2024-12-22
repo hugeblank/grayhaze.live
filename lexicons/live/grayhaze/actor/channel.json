@@ -33,7 +33,7 @@
                     },
                     "banner": {
                         "type": "blob",
-                        "description": "Larger landscape image to be used behind profile card, and in place of the channel player when offline.",
+                        "description": "Larger landscape image to be used behind profile card",
                         "accept": [
                             "image/png",
                             "image/jpeg"

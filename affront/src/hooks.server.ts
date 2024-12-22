@@ -6,7 +6,6 @@ import { client, localSessionStore, type LocalSession } from "$lib/session";
 import { ATPUser } from "$lib/ATPUser";
 import { grayhazeAgent } from "$lib/Merged";
 import { shutdown as storesShutdown } from '$lib/Stores'
-import { appendFile } from 'fs/promises';
 
 const bucket = new TokenBucket<string>(100, 1);
 

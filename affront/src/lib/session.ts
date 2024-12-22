@@ -5,19 +5,20 @@ import { NodeOAuthClient } from "@atproto/oauth-client-node"
 import { JoseKey } from "@atproto/jwk-jose";
 import { EphemeralStore } from "./Stores";
 import type { ATPUser } from "./ATPUser";
-import { PRIVATE_KEY } from "$env/static/private";
+import { env } from "$env/dynamic/private";
+import { building } from "$app/environment";
 
 export const localSessionStore = EphemeralStore.of("localsession")
 
 export interface LocalSession extends App.Locals {
 	user?: ATPUser
 }
-export const client = await NodeOAuthClient.fromClientId({
-    clientId: "https://grayhaze.live/oauth/client-metadata.json",
+export const client = building ? undefined : await NodeOAuthClient.fromClientId({
+    clientId: env.PRIVATE_CLIENT_META_URL as `https://${string}/${string}`,
     sessionStore: new SessionStore(),
 	stateStore: new StateStore(1000 * 60 * 60),
 	keyset: [
-		await JoseKey.fromImportable(PRIVATE_KEY, "2f49d966b3688d47cce4d3555889a3d54ddffcbea365bcaca7c43f3a9c8df75e")
+		await JoseKey.fromImportable(env.PRIVATE_KEY, env.PRIVATE_KID)
 	]
 })
 

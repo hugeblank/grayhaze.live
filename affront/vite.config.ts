@@ -5,5 +5,8 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
 		port: 6080
+	},
+	build: {
+		sourcemap: "inline"
 	}
 });

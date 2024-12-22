@@ -1,1 +1,1 @@
-node build/index.js | tee -a out/affront.log
+node --enable-source-maps build/index.js | tee -a out/affront.log

@@ -12,17 +12,26 @@ services:
     build: 
       context: ./affront
       dockerfile: Dockerfile
+      args:
+        - PUBLIC_SPRINKLER_URL=${PUBLIC_SPRINKLER_URL}
     volumes:
       - './out:/out'
+    environment:
+      - PRIVATE_VALKEY_URL=${PRIVATE_VALKEY_URL}
+      - PRIVATE_CLIENT_META_URL=${PRIVATE_CLIENT_META_URL}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - PRIVATE_KID=${PRIVATE_KID}
     restart: unless-stopped
     ports:
-      - 6080:6080 # host:container
+      - 6080:3000 # host:container
   sprinkler:
     container_name: sprinkler
     pull_policy: build
     build: 
       context: ./sprinkler
       dockerfile: Dockerfile
+    environment:
+      - PRIVATE_VALKEY_URL=${PRIVATE_VALKEY_URL}
     volumes:
       - './out:/out'
     restart: unless-stopped

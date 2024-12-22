@@ -64,6 +64,13 @@ export const load = async ({ locals, params, parent }) => {
         return records !== undefined
     })
 
+    let channel
+    try {
+        channel = WrappedRecord.wrap(await focus.agent.live.grayhaze.actor.channel.get({ repo: focus.did, rkey: "self" }))
+    } catch {
+        error(404, "Channel not found")
+    }
+
     rawMedia = rawMedia?.filter((record) => {
         return !existsfilter.has(record.uri.toString())
     })
@@ -72,7 +79,8 @@ export const load = async ({ locals, params, parent }) => {
     return {
         rawMedia: self ? rawMedia : undefined,
         publishedStreams,
-        self: self
+        self,
+        channel
     }
 }
 
@@ -86,7 +94,6 @@ export const actions = {
         const thumbfile = data.get("thumbnail") as File | null
         const hlsuri = new ATURI(data.get("uri") as string)
         const cid = data.get("cid") as string
-        console.log("submitted?", title, hlsuri.toString())
         if (title) {
             let thumbnail: Thumbnail | undefined
             if (thumbfile) {

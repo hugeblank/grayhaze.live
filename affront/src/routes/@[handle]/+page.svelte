@@ -5,6 +5,7 @@
     import ContentCard from "$lib/components/ContentCard.svelte";
     import Header from "$lib/components/Header.svelte";
     import { ATPUser } from "$lib/ATPUser.js";
+    import ProfileCard from "$lib/components/ProfileCard.svelte";
     
     let { data } = $props();
 
@@ -57,12 +58,7 @@
 
 <Header {user}/>
 <div class="mx-auto max-w-screen-2xl h-[90vh]">
-    <div class="flex flex-row justify-between">
-        <h3 class="my-1">@{data.focus.handle}</h3>
-        {#if data.self}
-            <a class="hover:underline" href="/logout" data-sveltekit-reload><h3 class="my-1">Sign out</h3></a>
-        {/if}
-    </div>
+    <ProfileCard self={data.self} wrapped={data.channel} focus={data.focus}/>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
         <h4 class="my-1">Unlisted Content</h4>
         <Grid items={mappedRawMedia}>
