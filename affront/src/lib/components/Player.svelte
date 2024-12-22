@@ -18,6 +18,12 @@
             } else {
                 console.error("Can't play hls playlist")
             }
+
+            video.volume = Number(sessionStorage.getItem("volume") ?? 1)
+
+            video.addEventListener("volumechange", (e) => {
+                sessionStorage.setItem("volume", video.volume.toString())
+            })
         }
     })
 </script>

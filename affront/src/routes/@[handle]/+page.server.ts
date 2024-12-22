@@ -81,8 +81,8 @@ export const actions = {
         const l = locals as LocalSession
         if (!l.user) error(401, "Unauthorized")
         const data = await request.formData()
-        const title = data.get("title") as string
-        const rawtags = data.get("tags") as string
+        const title = data.get("title") as string | null
+        const rawtags = (data.get("tags") as string | null) ?? ""
         const thumbfile = data.get("thumbnail") as File | null
         const hlsuri = new ATURI(data.get("uri") as string)
         const cid = data.get("cid") as string

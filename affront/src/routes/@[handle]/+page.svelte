@@ -8,7 +8,7 @@
     import Header from "$lib/components/Header.svelte";
     import { ATPUser } from "$lib/ATPUser.js";
     
-    let { data }= $props();
+    let { data } = $props();
 
     function getDuration(record: WrappedRecord<HlsRecord>) {
         let dnum = 0
