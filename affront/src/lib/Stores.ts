@@ -18,11 +18,21 @@ export class EphemeralStore {
         await valkey.expire(k, this.duration)
         if (value) return value
     }
-    async set(key: string, value: string): Promise<void> {
+
+    async getBuffer(key: string): Promise<Buffer | undefined> {
+        const k = `${this.namespace}:${key}`
+        const value = await valkey.getBuffer(k)
+        // Reset cache countdown
+        await valkey.expire(k, this.duration)
+        if (value) return value
+    }
+
+    async set(key: string, value: string | Buffer): Promise<void> {
         const k = `${this.namespace}:${key}`
         await valkey.set(k, value)
         await valkey.expire(k, this.duration)
     }
+
     async del(key: string): Promise<void> {
         await valkey.del(`${this.namespace}:${key}`)
     }
