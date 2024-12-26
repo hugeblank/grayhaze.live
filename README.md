@@ -45,6 +45,7 @@ The following was done LIVE on GrayHaze with chat. [Check it out!](https://grayh
   - bluesky profile import
   - external account linking
 - stream settings - title & thumbnail update
+- if blob is too large output generic "TooLarge" segment to keep stream going.
 - Downscale & cache thumbnails @ 768x512
 - BETTER SERVERS - development grant :)
 - Emotes

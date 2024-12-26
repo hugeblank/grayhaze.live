@@ -1,8 +1,8 @@
-<script lang="ts" generics="T">
-    import type { WrappedRecord } from '$lib/WrappedRecord';
+<script lang="ts">
+    import type { ATURI } from '$lib/ATURI';
     import { onMount, type Snippet } from 'svelte';
 
-    const { record, duration, thumbnail, live, progress, children }: { record: WrappedRecord<T>, duration: number, thumbnail: string | ArrayBuffer | undefined, live: boolean, progress?: string, children: Snippet<[]> } = $props()
+    const { uri, duration, thumbnail, live, progress, children }: { uri: ATURI, duration: number, thumbnail: string | ArrayBuffer | undefined, live: boolean, progress?: string, children: Snippet<[]> } = $props()
 
     let dnum = Math.floor(duration+0.5)
     let dchunks = []
@@ -20,7 +20,7 @@
     let watched = $state(0)
 
     onMount(() => {
-        if (progress) watched = Math.floor((Number(sessionStorage.getItem(record.uri.repo + ":" + progress) ?? 0)/duration)*100)
+        if (progress) watched = Math.floor((Number(sessionStorage.getItem(uri.repo + ":" + progress) ?? 0)/duration)*100)
     })
 </script>
 
@@ -30,8 +30,8 @@
             {@render children()}
             <div class="flex flex-row w-full justify-between">
                 <div>
-                    <p class="text-gray-200">{record.uri.timestamp.toLocaleDateString()}</p>
-                    <p class="text-gray-200">{record.uri.timestamp.toLocaleTimeString()}</p>
+                    <p class="text-gray-200">{uri.timestamp.toLocaleDateString()}</p>
+                    <p class="text-gray-200">{uri.timestamp.toLocaleTimeString()}</p>
                 </div>
                 {#if live}
                     <div class="flex flex-row self-end bg-red-500 rounded-lg">

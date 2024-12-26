@@ -2,6 +2,7 @@ import { Agent, lexicons } from "@atproto/api";
 import { error } from "@sveltejs/kit"
 import { AtpBaseClient } from "./lexicons";
 import { grayhazeAgent } from "./Merged";
+import type { InputSchema } from "@atproto/api/dist/client/types/com/atproto/repo/uploadBlob";
 
 const resolvers: Map<string, (structure: string) => string> = new Map([
     ["plc", (structure) => {
@@ -128,6 +129,19 @@ export class ATPUser {
         const response = await this._agent.com.atproto.sync.getBlob({ did: this._diddoc.id, cid })
         if (!response.success) error(404, `Blob ${cid} not found`)
         return response.data
+    }
+
+    public async uploadBlob(data: InputSchema, type: string) {
+        try {
+            const response = await this._agent.uploadBlob(data, { headers: { ["Content-Type"]: type } })
+            if (response && response.success) {
+                return response.data.blob
+            } else {
+                throw new Error("how")
+            }
+        } catch {
+            console.warn(`Upload failed for ${this.handle}`)
+        }
     }
 
     public async listRecords(collection: string, cursor?: string) {

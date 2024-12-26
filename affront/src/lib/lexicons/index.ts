@@ -138,6 +138,29 @@ export class ChannelRecord {
     return res.data
   }
 
+  async put(
+    params: Omit<
+      ComAtprotoRepoCreateRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: LiveGrayhazeActorChannel.Record,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    record.$type = 'live.grayhaze.actor.channel'
+    const res = await this._client.call(
+      'com.atproto.repo.putRecord',
+      undefined,
+      {
+        collection: 'live.grayhaze.actor.channel',
+        rkey: 'self',
+        ...params,
+        record,
+      },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
   async delete(
     params: Omit<ComAtprotoRepoDeleteRecord.InputSchema, 'collection'>,
     headers?: Record<string, string>,

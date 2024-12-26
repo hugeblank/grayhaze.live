@@ -131,7 +131,7 @@
                 <div class="flex flex-row">
                     {#if user && focus.did === user.did}
                         <div class="pr-2">
-                            <form method="POST" enctype="multipart/form-data" action="?/ban" use:enhance>
+                            <form method="POST" enctype="multipart/form-data" action="/api/action?/ban" use:enhance>
                                 <input type="hidden" name="did" id="did" value="{chat.author.did}">
                                 <button class="text-red-500 hover:underline" id="ban" name="ban" title="Chat" placeholder="Say something...">Ban</button>
                             </form>

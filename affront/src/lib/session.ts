@@ -13,6 +13,11 @@ export const localSessionStore = EphemeralStore.of("localsession")
 export interface LocalSession extends App.Locals {
 	user?: ATPUser
 }
+
+export interface CertainLocalSession extends App.Locals {
+	user: ATPUser
+}
+
 export const client = building ? undefined : await NodeOAuthClient.fromClientId({
     clientId: env.PRIVATE_CLIENT_META_URL as `https://${string}/${string}`,
     sessionStore: new SessionStore(),
