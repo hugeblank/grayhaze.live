@@ -42,7 +42,7 @@ const authHandle: Handle = async ({ event, resolve }) => {
 	if (skey === null) return resolve(event) // If it doesn't exist
 	const did = await localSessionStore.get(skey) // get the user did from this session key
 	if (!did) return clear() // If there was no matching session key in the store
-	const session = await client.restore(did)
+	const session = await client!.restore(did)
 	locals.user = await ATPUser.fromDID(did, event.fetch, grayhazeAgent(session)) // Restore the oauth session
 	// At this point if the session restore causes an error I deserve it.
 	return resolve(event);

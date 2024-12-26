@@ -9,10 +9,6 @@ export interface RecordLike<T>{
     
 }
 
-function recordLike<T>(obj: any): obj is RecordLike<T> {
-    return 'uri' in obj && 'value' in obj;
-}
-
 export class WrappedRecord<T> {
     private _uri: ATURI
     private _cid?: string

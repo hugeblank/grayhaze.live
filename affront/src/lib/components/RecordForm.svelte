@@ -1,13 +1,13 @@
 <script lang="ts" generics="T">
     import { enhance } from '$app/forms';
-    import type { WrappedRecord } from '$lib/WrappedRecord';
+    import type { ATURI } from '$lib/ATURI';
     import type { Snippet } from 'svelte';
 
-    const { record, name, children }: { record: WrappedRecord<T>, name: string, children: Snippet<[]> } = $props()
+    const { uri, cid, name, children }: { uri: ATURI, cid?: string, name: string, children: Snippet<[]> } = $props()
 </script>
 
 <form method="POST" enctype="multipart/form-data" action="?/{name}" use:enhance>
-    <input type="hidden" name="cid" value="{record.cid}">
-    <input type="hidden" name="uri" value="{record.uri}">
+    {#if cid} <input type="hidden" name="cid" value="{cid}"> {/if}
+    <input type="hidden" name="uri" value="{uri}">
     {@render children()}
 </form>
