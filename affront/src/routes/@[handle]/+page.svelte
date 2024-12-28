@@ -69,7 +69,7 @@
     <h4 class="my-1 mx-8">Streams</h4>
     <Grid items={mappedStreams}>
         {#snippet renderer({ uri, to, duration, details, live })}
-            <a class="w-fit" href={ `/@${data.focus.handle}` + to }>
+            <a class="size-fit" href={ `/@${data.focus.handle}` + to }>
                 <ContentCard thumbnail={details.thumbnail} progress={details.progress} {uri} {duration} {live}>
                     <!-- Title -->
                     <div class="flex w-full place-content-start line-clamp-2">

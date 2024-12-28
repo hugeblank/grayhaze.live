@@ -24,7 +24,7 @@
     })
 </script>
 
-<div class="flex flex-col justify-end border rounded-lg border-solid border-gray-500 p-6 h-64 aspect-[3/2] bg-cover bg-center transition ease-in-out md:hover:-translate-y-2 md:hover:scale-105" style="background-image: url({thumbnail});" >
+<div class="flex flex-col justify-end border rounded-lg border-solid border-gray-500 hover:border-blue-500 p-6 h-64 aspect-[3/2] bg-cover bg-center transition ease-in-out md:hover:-translate-y-2 md:hover:scale-105" style="background-image: url({thumbnail});" >
     <div class="grow flex flex-col bg-black bg-opacity-75 rounded-lg overflow-hidden">
         <div class="grow flex flex-col justify-between p-3">
             {@render children()}
