@@ -6,6 +6,7 @@
     import type { WrappedRecord } from "$lib/WrappedRecord";
     import { BlobRef } from "@atproto/lexicon";
     import type { SubmitFunction } from "@sveltejs/kit";
+    import { onMount } from "svelte";
 
     interface ChannelLike {
         avatar: BiStateHandler<Image>,
@@ -27,6 +28,7 @@
     let save = $derived(validator.avatar.changed || validator.banner.changed || validator.description.changed || validator.displayName.changed)
     let editable = $derived(edit && self)
     let avatarHover = $state(false)
+    let descHeight = $state(0)
     
     function reset() {
         if (validator.avatar.changed) validator.avatar.clear()
@@ -52,6 +54,8 @@
     function setDescription(e: Event & { currentTarget: EventTarget & HTMLTextAreaElement }) {
         // Carriage return added by PDS? Maybe?
         // As a result, to make sure the strings match if they're unchanged, we add them in.
+        e.currentTarget.style.height = "auto"
+        e.currentTarget.style.height = (e.currentTarget.scrollHeight + 1) + "px"
         validator.description.value = e.currentTarget.value.length > 0 ? e.currentTarget.value.replace(/([^\r])?\n/g, "$1\r\n") : undefined
     }
 
@@ -88,9 +92,15 @@
             }
         }
     }
+
+    onMount(() => {
+        const description = document.getElementById("description")
+        if (description) descHeight = description.getClientRects()[0].height
+    })
 </script>
 
-<div class="min-w-96 p-4 bg-local border-gray-500 rounded-lg m-2" style="background-image: url({extractImage(validator.banner.value)}); background-size: cover; background-position: center;">
+<!-- TODO: figure out why min-w-96 won't work here. -->
+<div class="md:w-full w-96 p-4 bg-local border-gray-500 rounded-lg m-2" style="background-image: url({extractImage(validator.banner.value)}); background-size: cover; background-position: center;">
     <div class="flex flex-col md:flex-row m-2 p-3 bg-black bg-opacity-80 rounded-lg">
         <div class="flex flex-row md:flex-col items-start justify-center max-w-96">
             <div class="flex items-center">
@@ -149,11 +159,11 @@
                 {/if}
             </div>
         </div>
-        <div class="p-3 content-stretch items-start w-full grow flex">
+        <div class="p-3 content-stretch items-start w-full h-fit grow flex">
             {#if editable}
-                <textarea value={validator.description.value} onfocusout={setDescription} oninput={setDescription} title="Description" placeholder="Description" class="h-full resize-none self-start w-full bg-transparent border rounded-lg p-1 placeholder:text-gray-500 focus:shadow-none focus:ring-transparent"></textarea>
+                <textarea value={validator.description.value} onfocusout={setDescription} oninput={setDescription} title="Description" placeholder="Description" class="w-full resize-none self-start bg-transparent border rounded-lg p-1 placeholder:text-gray-500 focus:shadow-none focus:ring-transparent" style="height: {descHeight}px;"></textarea>
             {:else}
-                <p class="p-1 line-clamp-[15] break-words text-wrap border border-transparent whitespace-pre text-ellipsis overflow-hidden">{validator.description.value}</p>
+                <p id="description" class="p-1 line-clamp-[15] break-words text-wrap border border-transparent whitespace-pre text-ellipsis overflow-hidden">{validator.description.value}</p>
             {/if}
         </div>
     </div>

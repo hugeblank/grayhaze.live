@@ -29,7 +29,7 @@
 </script>
 
 <Header {user}/>
-<div class="mx-auto max-w-screen-3xl h-[90vh]">
+<div class="mx-auto max-w-screen-3xl">
     <ProfileCard self={data.self} wrapped={data.channel} focus={data.focus}/>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
         <h4 class="my-1 mx-8">Unlisted Content</h4>
