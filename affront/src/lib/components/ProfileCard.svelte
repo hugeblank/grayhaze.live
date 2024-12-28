@@ -65,7 +65,7 @@
         if (validator.displayName && validator.displayName !== channel.displayName) formData.set("displayName", validator.displayName)
         if (validator.description && validator.description !== channel.description) formData.set("description", validator.description)
 
-        return async ({ result, update }) => {
+        return async ({ result }) => {
             if (result.type === "success") {
                 edit = false
                 channel = result.data as Record
@@ -138,7 +138,7 @@
             {#if editable}
                 <textarea value={validator.description ?? channel.description} onfocusout={setDescription} oninput={setDescription} title="Description" placeholder="Description" class="h-full resize-none self-start w-full bg-transparent border rounded-lg p-1 placeholder:text-gray-500 focus:shadow-none focus:ring-transparent"></textarea>
             {:else}
-                <p>{channel.description}</p>
+                <p class="p-1 line-clamp-[15] break-words text-wrap border border-transparent whitespace-pre text-ellipsis overflow-hidden">{channel.description}</p>
             {/if}
         </div>
     </div>
