@@ -29,10 +29,10 @@
 </script>
 
 <Header {user}/>
-<div class="mx-auto max-w-screen-2xl h-[90vh]">
+<div class="mx-auto max-w-screen-3xl h-[90vh]">
     <ProfileCard self={data.self} wrapped={data.channel} focus={data.focus}/>
     {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
-        <h4 class="my-1">Unlisted Content</h4>
+        <h4 class="my-1 mx-8">Unlisted Content</h4>
         <Grid items={mappedRawMedia}>
             {#snippet renderer({ uri, cid, to, duration, live })}
                 <RecordForm name="publish" {uri} {cid}>
@@ -66,7 +66,7 @@
             {/snippet}
         </Grid>
     {/if}
-    <h4 class="my-1">Streams</h4>
+    <h4 class="my-1 mx-8">Streams</h4>
     <Grid items={mappedStreams}>
         {#snippet renderer({ uri, to, duration, details, live })}
             <a class="w-fit" href={ `/@${data.focus.handle}` + to }>

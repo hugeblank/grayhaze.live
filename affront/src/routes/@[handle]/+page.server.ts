@@ -45,6 +45,7 @@ export const load = async ({ locals, params, parent }) => {
         user = await ATPUser.fromHandle(params.handle)
     }
 
+    // TODO: Follow cursor
     const hlsdata = await user.agent.live.grayhaze.format.hls.list({ repo: user.did })
     const seqrefs: Map<string, HlsRecord> = new Map()
     rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => {
@@ -76,6 +77,7 @@ export const load = async ({ locals, params, parent }) => {
         }
     })
 
+    // TODO: Also follow cursor
     const publishedStreams: BasicRecordView<StreamRecordDetails>[] = (await Promise.all(WrappedRecord.wrap<StreamRecord>(
         (await focus.agent.live.grayhaze.content.stream.list({ repo: focus.did })).records
     ).filter((record) => record.valid).map(async (record) => {
@@ -94,11 +96,11 @@ export const load = async ({ locals, params, parent }) => {
     }))).filter((records) => {
         return records !== undefined
     }).map(({ streamrecord, hlsrecord }) => {
-        // TODO: Support more than hls record format
         let duration = 0
         hlsrecord.value.sequence.forEach((seg) => {
-            duration += seg.duration/1000000
+            duration += seg.duration
         })
+        duration /= 1000000
         return {
             uri: streamrecord.uri,
             cid: streamrecord.cid,
