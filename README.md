@@ -40,14 +40,12 @@ The following was done LIVE on GrayHaze with chat. [Check it out!](https://grayh
     - chat history (maybe moderators only)
 - light mode
 - account settings
-  - username, avatar, banner, description
   - username color
-  - bluesky profile import
   - external account linking
 - stream settings - title & thumbnail update
 - if blob is too large output generic "TooLarge" segment to keep stream going.
 - Downscale & cache thumbnails @ 768x512
-- BETTER SERVERS - development grant :)
+- BETTER SERVERS
 - Emotes
   1. User uploads emote, gets added to their channel
   2. Emote owner sends emote in another chat

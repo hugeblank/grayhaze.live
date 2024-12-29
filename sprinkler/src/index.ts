@@ -89,8 +89,8 @@ async function getProfileView(evt: Create | NonNullable<Create>) {
     return {
         did: user.did,
         handle: user.handle,
-        ...channel.value.displayName && {displayName: channel.value.displayName},
-        ...avatar && {avatar}
+        displayName: channel.value.displayName,
+        avatar
     }
 }
 
