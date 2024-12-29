@@ -2,7 +2,8 @@ import { ATPUser } from "$lib/ATPUser"
 import type { CertainLocalSession, LocalSession } from "$lib/session"
 import { TempCache } from "$lib/TempCache.js"
 import type { ComAtprotoRepoStrongRef } from "@atproto/api"
-import { error } from "@sveltejs/kit"
+import { error, type RequestEvent } from "@sveltejs/kit"
+import type { RouteParams } from "./$types"
 
 export interface ChatActionResponse {
     chatRef: ComAtprotoRepoStrongRef.Main,
@@ -11,16 +12,53 @@ export interface ChatActionResponse {
 
 const streamCache = new TempCache<string, ComAtprotoRepoStrongRef.Main>(60*60)
 
-async function unwrap({ request, locals }: { request: Request, locals: App.Locals}) {
+async function unwrap({ request, locals, fetch }: RequestEvent<RouteParams, "/api/action">) {
     const l = locals as LocalSession
     if (!l.user) error(401, "Unauthorized")
     return {
         data: await request.formData(),
-        locals: l as CertainLocalSession
+        locals: l as CertainLocalSession,
+        fetch
     }
 }
 
 export const actions = {
+    frombsky: async (wrapped) => {
+        const { fetch, locals } = await unwrap(wrapped)
+        let response
+        try {
+            response = await locals.user.agent.app.bsky.actor.profile.get({
+                repo: locals.user.did,
+                rkey: "self"
+            })
+        } catch {
+            // TODO: Error popup dialog
+            error(404, `No such record in repo ${locals.user.did}`)
+        }
+        const record = response.value
+        let avatar = undefined
+        let banner = undefined
+        if (record.avatar) {
+            try {
+                avatar = await (await fetch(`/api/blob/image/${locals.user.did}/${record.avatar.ref}`)).arrayBuffer()
+            } catch {
+                console.warn(`failed to fetch avatar at ${record.avatar}`)
+            }
+        }
+        if (record.banner) {
+            try {
+                banner = await (await fetch(`/api/blob/image/${locals.user.did}/${record.banner.ref}`)).arrayBuffer()
+            } catch {
+                console.warn(`failed to fetch banner at ${record.banner}`)
+            }
+        }
+        return {
+            avatar,
+            banner,
+            displayName: record.displayName,
+            description: record.description
+        }
+    },
     profile: async (wrapped) => {
         const { data, locals } = await unwrap(wrapped)
         let currChannel
