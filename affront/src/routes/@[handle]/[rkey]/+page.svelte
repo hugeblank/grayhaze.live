@@ -16,7 +16,7 @@
     <Header {user}/>
     <div class="flex lg:flex-row flex-col">
         <Player repo={data.focus.did} rkey={data.formatrkey} />
-        {#if !hidden} <Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} focus={data.focus} {user}/> {/if}
+        {#if !hidden} <Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} focus={data.focus} {user} userChannel={data.channel}/> {/if}
     </div>
     <div class="m-2 flex flex-row justify-between">
         {#if data.title}

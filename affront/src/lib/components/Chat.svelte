@@ -8,7 +8,8 @@
     import type { SubmitFunction } from '@sveltejs/kit';
     import { onMount } from 'svelte';
     import type { ChatActionResponse } from '../../routes/api/action/+page.server';
-    let { rkey, authed, focus, user, style = "standard" }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser, style?: "standard" | "popout" } = $props();
+    import type { Record } from '$lib/lexicons/types/live/grayhaze/actor/channel';
+    let { rkey, authed, focus, user, userChannel, style = "standard" }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser, userChannel?: Record, style?: "standard" | "popout" } = $props();
     const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${focus.did}`
 
     // const testchat = {
@@ -30,12 +31,16 @@
     let chats: ChatView[] = $state([])
     
     const submitFunction: SubmitFunction = ({ formData }) => {
-        console.log(formData.get("chat"), user)
+        console.log(userChannel?.displayName)
         const text = formData.get("chat")?.toString()
         if (text && user) {
             return async ({ result, update }) => {
                 if (result.type === "success" && result.data) {
                     const data = result.data as ChatActionResponse
+                    let avatar
+                    if (userChannel?.avatar) {
+                        avatar = `${user.pds}/xrpc/com.atproto.sync.getBlob?did=${user.did}&cid=${userChannel.avatar.ref}`
+                    }
                     chats.push({
                         src_uri: data.chatRef.uri,
                         src: {
@@ -44,7 +49,9 @@
                         },
                         author: {
                             did: user.did,
-                            handle: user.handle
+                            handle: user.handle,
+                            displayName: userChannel?.displayName,
+                            avatar
                         },
                     })
                 }
@@ -125,10 +132,10 @@
 <div class={styles[style][0]}>
     <div class={styles[style][1]}>
         <div id="chatbox" class={styles[style][2]}>
-            <div class="px-2 ">
+            <div>
             {#each chats as chat}
                 <!-- TODO: Usercard on click -->
-                <div class="flex flex-row">
+                <div class="px-2 min-w-0 text-wrap break-words line-clamp-6 flex flex-row justify-start items-center border-t border-gray-500">
                     {#if user && focus.did === user.did}
                         <div class="pr-2">
                             <form method="POST" enctype="multipart/form-data" action="/api/action?/ban" use:enhance>
@@ -137,9 +144,12 @@
                             </form>
                         </div>
                     {/if}
-                    <div class="min-w-0 text-wrap break-words line-clamp-6">
-                        <p class="{chat.phantom ? "opacity-50" : ""}">&lt;<a href="/{chat.author.did}"><b>{chat.author.displayName ?? chat.author.handle ? `@${chat.author.handle}` : chat.author.did}</b></a>&gt; {chat.src.text}</p>
-                    </div>
+                    <a class="size-8 shrink-0 rounded-full overflow-hidden m-1" href="/{chat.author.did}">
+                        <img class="size-full" src="{ chat.author.avatar ? chat.author.avatar : "/nanashi.png" }" alt="{chat.author.handle}'s Profile Icon"/>
+                    </a>
+                    <p>&lt;<a href="/{chat.author.did}"><b>{chat.author.displayName ?? (chat.author.handle ? `@${chat.author.handle}` : chat.author.did)}</b></a>&gt;</p>
+                    &nbsp;
+                    <p class="{chat.phantom ? "opacity-50" : ""}">{chat.src.text}</p>
                 </div>
             {/each}
             </div>

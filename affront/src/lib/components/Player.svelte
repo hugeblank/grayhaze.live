@@ -4,13 +4,12 @@
 
     const { repo, rkey } = $props()
     onMount(async () => {
-        console.log("mount")
         if (typeof window !== undefined) {
             var video = document.getElementById('video')! as HTMLVideoElement;
             if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 console.log("HLS very supported")
             } else if (Hls.isSupported()) {
-                console.log("should work...")
+                console.log("HLS should work")
                 var hls = new Hls();
                 hls.loadSource(video.src);
                 hls.attachMedia(video);
@@ -33,7 +32,7 @@
     })
 </script>
 
-<div class="w-full">
+<div>
     <!-- svelte-ignore a11y_media_has_caption -->
-    <video class="aspect-video max-h-screen" id="video" autoplay controls src="/api/adapt/{repo}/{rkey}"></video>
+    <video class="aspect-video h-full" id="video" autoplay controls src="/api/adapt/{repo}/{rkey}"></video>
 </div>

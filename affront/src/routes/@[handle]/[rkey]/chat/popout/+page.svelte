@@ -5,4 +5,4 @@
     let { data } = $props();
     const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
 </script>
-<Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} focus={data.focus} {user} style="popout"/>
+<Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} focus={data.focus} {user} userChannel={data.channel} style="popout"/>

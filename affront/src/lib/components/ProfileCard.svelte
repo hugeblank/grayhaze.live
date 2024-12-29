@@ -123,7 +123,7 @@
 
 
 <!-- TODO: figure out why min-w-96 won't work here. -->
-<div class="w-80 m-8 md:m-8 md:w-auto p-4 bg-local border-gray-500 rounded-lg my-2" style="background-image: url({extractImage(validator.banner.value)}); background-size: cover; background-position: center;">
+<div class="min-w-96 md:m-8 md:w-auto p-4 bg-local border-gray-500 rounded-lg my-2" style="background-image: url({extractImage(validator.banner.value)}); background-size: cover; background-position: center;">
     <div class="flex flex-col md:flex-row m-2 p-3 bg-black bg-opacity-80 rounded-lg">
         <div class="flex flex-col items-start justify-center max-w-96">
             <div class="flex items-center">
