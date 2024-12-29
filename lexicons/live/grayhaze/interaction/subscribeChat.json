@@ -7,7 +7,7 @@
             "description": "Subscribe to the chat for a specific stream that is live",
             "parameters": {
                 "type": "params",
-                "required": [ "stream" ],
+                "required": [ "stream", "did" ],
                 "properties": {
                     "stream": {
                         "type": "string",
