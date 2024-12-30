@@ -25,16 +25,15 @@
             }
         }
     }
-    const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
 </script>
 
-<Header {user}/>
+<Header user={data.user}/>
 <div class="mx-auto max-w-screen-3xl">
-    <ProfileCard self={data.self} wrapped={data.channel} focus={data.focus}/>
-    {#if data.self && mappedRawMedia && mappedRawMedia.length > 0}
+    <ProfileCard self={data.owner} wrapped={data.channel} focus={data.focus}/>
+    {#if mappedRawMedia}
         <h4 class="my-1 mx-8">Unlisted Content</h4>
         <Grid items={mappedRawMedia}>
-            {#snippet renderer({ uri, cid, to, duration, live })}
+            {#snippet renderer({ uri, cid, duration, live })}
                 <RecordForm name="publish" {uri} {cid}>
                     <ContentCard thumbnail={localSrc.get(uri.rkey)} {uri} {duration} {live}>
                         <!-- Title -->
@@ -46,7 +45,7 @@
                         </div>
                         <div class="flex w-full flex-row justify-between mt-1">
                             <!-- Open Stream -->
-                            <a href={ `/@${data.focus.handle}` + to } target="_blank" class="self-start bg-neutral-500 hover:bg-neutral-700 text-neutral-100 hover:text-neutral-400 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" title="View Content" aria-label="View Content">
+                            <a href={ `/@${data.focus.handle}/unlisted/${uri.rkey}`} target="_blank" class="self-start bg-neutral-500 hover:bg-neutral-700 text-neutral-100 hover:text-neutral-400 font-bold py-1 px-4 h-10 rounded-lg focus:outline-none focus:shadow-outline" type="button" title="View Content" aria-label="View Content">
                                 <i class="align-middle pt-1 text-inherit bi bi-film"></i> <i class="align-middle pt-1 text-inherit bi bi-box-arrow-up-right"></i>
                             </a>
                             <!-- Upload Image -->
@@ -68,8 +67,8 @@
     {/if}
     <h4 class="my-1 mx-8">Streams</h4>
     <Grid items={mappedStreams}>
-        {#snippet renderer({ uri, to, duration, details, live })}
-            <a class="size-fit" href={ `/@${data.focus.handle}` + to }>
+        {#snippet renderer({ uri, duration, details, live })}
+            <a class="size-fit" href={ `/@${data.focus.handle}/${uri.rkey}`}>
                 <ContentCard thumbnail={details.thumbnail} progress={details.progress} {uri} {duration} {live}>
                     <!-- Title -->
                     <div class="flex w-full place-content-start line-clamp-2">

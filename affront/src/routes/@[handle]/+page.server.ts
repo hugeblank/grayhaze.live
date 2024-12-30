@@ -5,25 +5,28 @@ import { WrappedRecord } from '$lib/WrappedRecord'
 import { error } from '@sveltejs/kit'
 import { ATURI } from '$lib/ATURI.js'
 import { ATPUser } from '$lib/ATPUser.js'
+import type { HlsSegment } from '$lib/lexicons/types/live/grayhaze/format/defs.js'
 
 interface StreamRecordDetails {
-    progress: string;
-    title: string;
-    thumbnail: string | undefined;
-    tags: string[] | undefined;
+    progress: string,
+    title: string,
+    thumbnail?: string,
+    tags?: string[]
 }
 
-interface BasicRecordView<T> {
+interface ContentView<T> {
     uri: ATURI,
-    cid: string | undefined,
-    live: boolean;
-    to: string; // Relative path to resource, from the user's channel
-    id: string;
-    duration: number;
+    cid?: string,
+    live: boolean,
+    duration: number,
     details: T
 }
 
-export const load = async ({ locals, params, parent }) => {
+function getDuration(segments: HlsSegment[]): number {
+    return segments.reduce((val, segment) => val + segment.duration, 0)/1000000
+}
+
+export const load = async ({ parent }) => {
     const pdata = await parent()
     const focus = ATPUser.fromDIDDoc(pdata.focusedDiddoc)
 
@@ -33,81 +36,56 @@ export const load = async ({ locals, params, parent }) => {
     const formap: Map<string, WrappedRecord<HlsRecord>> = new Map()
     const existsfilter: Set<string> = new Set()
 
-    // Get list of records, validate, then map to a typed WrappedRecord
-    // Do this for content that's not associated to a stream 
-    const l = locals as LocalSession
-    let rawMedia: BasicRecordView<undefined>[] | undefined
-    let self = l.user && l.user?.handle === params.handle
-    let user
-    if (self) {
-        user = l.user!
-    } else {
-        user = await ATPUser.fromHandle(params.handle)
+    let hlsdata, streamdata
+    try {
+        const opt = { repo: focus.did }
+        hlsdata = await focus.agent.live.grayhaze.format.hls.list(opt)
+        streamdata = await focus.agent.live.grayhaze.content.stream.list(opt)
+    } catch(e) {
+        console.error(e)
+        // Presumably this would error if the user has no format.hls and/or content.stream collection. That is fine.
     }
 
-    // TODO: Follow cursor
-    const hlsdata = await user.agent.live.grayhaze.format.hls.list({ repo: user.did })
     const seqrefs: Map<string, HlsRecord> = new Map()
-    rawMedia = WrappedRecord.wrap<HlsRecord>(hlsdata.records.filter((response) => isRecord(response.value))).filter((record) => {
-        if (!record.valid) return false
+    WrappedRecord.wrap<HlsRecord>(hlsdata?.records.filter((response) => isRecord(response.value))).forEach((record) => {
+        // It is assumed that the record list is given to us in chronological order.
+        if (!record.valid) return
         if (seqrefs.has(record.uri.rkey)) { // If there's a prior record that references us
             const prec = seqrefs.get(record.uri.rkey)! 
             seqrefs.delete(record.uri.rkey)
             record.value.sequence = record.value.sequence.concat(prec.sequence)
             record.value.end = prec.end || record.value.end
         }
+
         if (record.value.prev) {
             seqrefs.set(record.value.prev, record.value) // Put this record in for the previous record to grab
-        }
-        return !record.value.prev
-    }).map((record) => {
-        let duration = 0
-        record.value.sequence.forEach((seg) => {
-            duration += seg.duration/1000000
-        })
-        formap.set(record.uri.rkey, record)
-        return {
-            uri: record.uri,
-            cid: record.cid,
-            live: !record.value.end,
-            to: `/unlisted/${record.uri.rkey}`,
-            id: record.uri.toString(),
-            details: undefined,
-            duration
+        } else {
+            formap.set(record.uri.rkey, record)
         }
     })
 
     // TODO: Also follow cursor
-    const publishedStreams: BasicRecordView<StreamRecordDetails>[] = (await Promise.all(WrappedRecord.wrap<StreamRecord>(
-        (await focus.agent.live.grayhaze.content.stream.list({ repo: focus.did })).records
-    ).filter((record) => record.valid).map(async (record) => {
+    const publishedStreams: ContentView<StreamRecordDetails>[] = (await Promise.all(WrappedRecord.wrap<StreamRecord>(streamdata?.records).filter((record) => record.valid).map(async (record) => {
         const mime = record.value.thumbnail?.image.mimeType
         if (!(mime === "image/png" || mime === "image/jpeg") || !focus.pds) return undefined
         const uri = new ATURI(record.value.content.uri)
         try {
             const hlsrecord = formap.has(uri.rkey) ? formap.get(uri.rkey) : WrappedRecord.wrap<HlsRecord>(await uri.fetch())
             if (!hlsrecord) return undefined
-            existsfilter.add(hlsrecord.uri.toString())
+            existsfilter.add(hlsrecord.uri.rkey)
             return { hlsrecord, streamrecord: record }
         } catch (e) {
-            console.log(e)
+            console.log("Failed to fetch hls record:", e)
             return undefined
         }
     }))).filter((records) => {
         return records !== undefined
     }).map(({ streamrecord, hlsrecord }) => {
-        let duration = 0
-        hlsrecord.value.sequence.forEach((seg) => {
-            duration += seg.duration
-        })
-        duration /= 1000000
         return {
             uri: streamrecord.uri,
             cid: streamrecord.cid,
             live: !hlsrecord.value.end,
-            to: `/${streamrecord.uri.rkey}`,
-            id: streamrecord.uri.toString(),
-            duration,
+            duration: getDuration(hlsrecord.value.sequence),
             details: {
                 progress: hlsrecord.uri.rkey,
                 thumbnail: (streamrecord.value.thumbnail !== undefined) ? `/api/blob/image/${streamrecord.uri.repo}/${streamrecord.value.thumbnail.image.ref.toString()}` : undefined,
@@ -121,18 +99,24 @@ export const load = async ({ locals, params, parent }) => {
     try {
         channel = WrappedRecord.wrap(await focus.agent.live.grayhaze.actor.channel.get({ repo: focus.did, rkey: "self" }))
     } catch {
+        // TODO: This is kinda stupid. There's a number of ways this could fail beyond "the record doesn't exist"
         error(404, "Channel not found")
     }
 
-    rawMedia = rawMedia?.filter((record) => {
-        return !existsfilter.has(record.uri.toString())
-    })
-
+    const rawMedia: ContentView<undefined>[] = formap.values().filter((record) => !existsfilter.has(record.uri.rkey)).map((record) => {
+        return {
+            uri: record.uri,
+            cid: record.cid,
+            live: !record.value.end,
+            duration: getDuration(record.value.sequence),
+            details: undefined
+        }
+    }).toArray()
 
     return {
-        rawMedia: self ? rawMedia : undefined,
+        rawMedia: pdata.owner && rawMedia?.length > 0 ? rawMedia : undefined,
         publishedStreams,
-        self,
+        self: pdata.owner,
         channel
     }
 }

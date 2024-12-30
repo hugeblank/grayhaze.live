@@ -38,9 +38,10 @@ export class WrappedRecord<T> {
         this._value = record.value
     }
     
-    public static wrap<T>(record: RecordLike<T>): WrappedRecord<T>
-    public static wrap<T>(records: RecordLike<T>[]): WrappedRecord<T>[]
-    public static wrap<T>(recordz: RecordLike<T> | RecordLike<T>[]): WrappedRecord<T> | WrappedRecord<T>[] {
+    public static wrap<T>(record?: RecordLike<T>): WrappedRecord<T>
+    public static wrap<T>(records?: RecordLike<T>[]): WrappedRecord<T>[]
+    public static wrap<T>(recordz?: RecordLike<T> | RecordLike<T>[]): WrappedRecord<T> | WrappedRecord<T>[] {
+        if (!recordz) return []
         if ("length" in recordz) {
             return recordz.map((recordLike) => new WrappedRecord(recordLike))
         } else {

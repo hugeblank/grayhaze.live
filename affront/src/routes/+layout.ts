@@ -1,3 +1,4 @@
+import { ATPUser } from "$lib/ATPUser.js"
 import { lexicons } from "@atproto/api"
 import { isValidLexiconDoc, parseLexiconDoc } from "@atproto/lexicon"
 
@@ -10,7 +11,7 @@ export const load = async ({ data }) => {
         lexicons.add(ldoc)
     })
     return {
-        diddoc: data.diddoc,
+        user: data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined,
         placeholder: data.placeholder
     }
 }

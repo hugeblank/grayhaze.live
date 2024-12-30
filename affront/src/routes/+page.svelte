@@ -1,12 +1,10 @@
 <script>
-    import { ATPUser } from "$lib/ATPUser";
     import Header from "$lib/components/Header.svelte";
 
     const { data } = $props()
-    const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
 </script>
 
-<Header {user}/>
+<Header user={data.user}/>
 <div class="mx-auto max-w-screen-2xl h-[90vh]">
     <div>
         <b><i>Enjoy a video.</i></b>
