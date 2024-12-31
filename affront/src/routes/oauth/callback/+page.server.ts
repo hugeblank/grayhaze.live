@@ -6,7 +6,7 @@ import { Agent } from "@atproto/api";
 import { grayhazeAgent } from "$lib/Merged";
 
 export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
-    const { session } = await client.callback(url.searchParams)
+    const { session } = await client!.callback(url.searchParams)
     const nkey = generateSessionToken()
 	localSessionStore.set(nkey, session.did)
     cookies.set("session", nkey, { path: "/" })

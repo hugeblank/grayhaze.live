@@ -11,6 +11,6 @@ export const load = async ({ request, locals }) => {
     const [type, method] = did.split(":")
     if (type !== "did") error(500, "Invalid DID");
     if (method !== "plc" && method !== "web") error(500, `Method ${method} is not blessed`);
-    const url = await client.authorize(did)
+    const url = await client!.authorize(did)
     redirect(302, url)
 }
