@@ -5,7 +5,6 @@
     import Player from "$lib/components/Player.svelte";
 
     let { data } = $props();
-    const user = data.diddoc ? ATPUser.fromDIDDoc(data.diddoc) : undefined
 
     let hidden = $state(false)
     let icon = $derived(hidden ? "text-inherit bi bi-plus-square" : "text-inherit bi bi-x-square")
@@ -13,10 +12,10 @@
 
 </script>
 <div class="mx-auto">
-    <Header {user}/>
+    <Header user={data.user}/>
     <div class="flex lg:flex-row flex-col">
         <Player repo={data.focus.did} rkey={data.formatrkey} />
-        {#if !hidden} <Chat authed={data.diddoc !== undefined} rkey={data.streamrkey} focus={data.focus} {user} userChannel={data.channel}/> {/if}
+        {#if !hidden} <Chat rkey={data.streamrkey} focus={data.focus} user={data.user} userChannel={data.channel}/> {/if}
     </div>
     <div class="m-2 flex flex-row justify-between">
         {#if data.title}

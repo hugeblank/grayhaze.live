@@ -9,7 +9,7 @@
     import { onMount } from 'svelte';
     import type { ChatActionResponse } from '../../routes/api/action/+page.server';
     import type { Record } from '$lib/lexicons/types/live/grayhaze/actor/channel';
-    let { rkey, authed, focus, user, userChannel, style = "standard" }: {rkey: string, authed: boolean, focus: ATPUser, user?: ATPUser, userChannel?: Record, style?: "standard" | "popout" } = $props();
+    let { rkey, focus, user, userChannel, style = "standard" }: {rkey: string, focus: ATPUser, user?: ATPUser, userChannel?: Record, style?: "standard" | "popout" } = $props();
     const wsurl = `${PUBLIC_SPRINKLER_URL}/xrpc/live.grayhaze.interaction.subscribeChat?stream=${rkey}&did=${focus.did}`
 
     // const testchat = {
@@ -154,7 +154,7 @@
             {/each}
             </div>
         </div>
-        {#if authed}
+        {#if user}
             <div class="place-content-end border-t border-neutral-500">
                 <form method="POST" enctype="multipart/form-data" action="/api/action?/chat" use:enhance={submitFunction}>
                     <input type="hidden" name="did" id="did" value="{focus.did}">
