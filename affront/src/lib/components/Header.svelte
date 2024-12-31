@@ -21,7 +21,7 @@
                 </div> -->
                 <div>
                     {#if user}
-                        <a class="hover:underline" href="/{name}"><h2>{name}</h2></a>
+                        <a class="hover:underline" href="/{name}" data-sveltekit-reload><h2>{name}</h2></a>
                     {:else}
                         <a class="hover:underline" href="/login"><h2>Log in</h2></a>
                     {/if}
