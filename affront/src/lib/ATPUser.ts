@@ -50,9 +50,7 @@ export class ATPUser {
         if (type !== "did") error(500, "Invalid DID"); // Drop anything that isn't a DID
         if (!resolvers.has(method)) error(500, `Method ${method} is not blessed`); // Drop methods that aren't blessed
         const url = resolvers.get(method)!(structure) // Get resolver and throw DID structure at it
-        console.log(url)
         const response = await fetchFunc(url) // Fetch from the URL given
-        console.log(response)
         if (!response.ok) error(response.status, response.statusText) // Throw an error if the fetch fails
         // Parse the document, cache and return
         const doc = JSON.parse(await response.text()) as DIDDoc
