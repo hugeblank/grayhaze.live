@@ -133,7 +133,7 @@ app.use(server.router)
 
 const sprinkler = app.listen(process.env.PORT, async () => {
     console.log(`oh no ${process.env.PORT}`)
-    await firehose.start()
+    //await firehose.start()
 })
 
 async function shutdown() {
